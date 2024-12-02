@@ -5,7 +5,7 @@ export interface ProductDetails {
   ingredients: string;
   nutritional_info: Record<string, any>;
   image_url: string;
-  barcode: string; // Added barcode to interface
+  barcode: string;
 }
 
 export interface SearchFilters {
@@ -43,7 +43,7 @@ export async function fetchProductDetails(barcode: string): Promise<ProductDetai
       ingredients: product.ingredients_text || "N/A",
       nutritional_info: product.nutriments || {},
       image_url: product.image_url || "N/A",
-      barcode: product.code || barcode // Ensure barcode is returned
+      barcode: product.code || barcode
     };
   } catch (error) {
     console.error("Error fetching product:", error);
@@ -94,15 +94,57 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
     };
   } catch (error) {
     console.error("Error searching products:", error);
-    throw new Error(`Failed to search products: ${error.message}`);
+    return {
+      count: 0,
+      page: 1,
+      products: []
+    };
   }
 }
 
+// Common categories that we'll use as fallback
+const FALLBACK_CATEGORIES = [
+  "Snacks",
+  "Beverages",
+  "Dairy",
+  "Bread",
+  "Cereals",
+  "Fruits",
+  "Vegetables",
+  "Meat",
+  "Fish",
+  "Sweets"
+];
+
+// Common allergens that we'll use as fallback
+const FALLBACK_ALLERGENS = [
+  "Milk",
+  "Eggs",
+  "Fish",
+  "Shellfish",
+  "Tree nuts",
+  "Peanuts",
+  "Wheat",
+  "Soybeans"
+];
+
+// Common brands that we'll use as fallback
+const FALLBACK_BRANDS = [
+  "Nestle",
+  "Kellogg's",
+  "Kraft",
+  "General Mills",
+  "Pepsi",
+  "Coca-Cola",
+  "Unilever",
+  "Mars",
+  "Danone",
+  "Campbell's"
+];
+
 export async function fetchCategories(): Promise<string[]> {
-  const url = `${API_BASE_URL}/categories.json`;
-  
   try {
-    const response = await fetch(url);
+    const response = await fetch(`${API_BASE_URL}/categories.json`);
     if (!response.ok) {
       throw new Error(`Categories API Error: ${response.status}`);
     }
@@ -110,15 +152,14 @@ export async function fetchCategories(): Promise<string[]> {
     const data = await response.json();
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
-    throw new Error(`Failed to fetch categories: ${error.message}`);
+    console.warn("Failed to fetch categories, using fallback data:", error);
+    return FALLBACK_CATEGORIES;
   }
 }
 
 export async function fetchAllergens(): Promise<string[]> {
-  const url = `${API_BASE_URL}/allergens.json`;
-  
   try {
-    const response = await fetch(url);
+    const response = await fetch(`${API_BASE_URL}/allergens.json`);
     if (!response.ok) {
       throw new Error(`Allergens API Error: ${response.status}`);
     }
@@ -126,15 +167,14 @@ export async function fetchAllergens(): Promise<string[]> {
     const data = await response.json();
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
-    throw new Error(`Failed to fetch allergens: ${error.message}`);
+    console.warn("Failed to fetch allergens, using fallback data:", error);
+    return FALLBACK_ALLERGENS;
   }
 }
 
 export async function fetchBrands(): Promise<string[]> {
-  const url = `${API_BASE_URL}/brands.json`;
-  
   try {
-    const response = await fetch(url);
+    const response = await fetch(`${API_BASE_URL}/brands.json`);
     if (!response.ok) {
       throw new Error(`Brands API Error: ${response.status}`);
     }
@@ -142,7 +182,8 @@ export async function fetchBrands(): Promise<string[]> {
     const data = await response.json();
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
-    throw new Error(`Failed to fetch brands: ${error.message}`);
+    console.warn("Failed to fetch brands, using fallback data:", error);
+    return FALLBACK_BRANDS;
   }
 }
 
