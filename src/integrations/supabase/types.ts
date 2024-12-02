@@ -48,6 +48,208 @@ export type Database = {
         }
         Relationships: []
       }
+      compatibility: {
+        Row: {
+          compatible_condition: string
+          created_at: string
+          diet_id: string | null
+          id: string
+          notes: string | null
+        }
+        Insert: {
+          compatible_condition: string
+          created_at?: string
+          diet_id?: string | null
+          id?: string
+          notes?: string | null
+        }
+        Update: {
+          compatible_condition?: string
+          created_at?: string
+          diet_id?: string | null
+          id?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compatibility_diet_id_fkey"
+            columns: ["diet_id"]
+            isOneToOne: false
+            referencedRelation: "diets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      diet_tags: {
+        Row: {
+          created_at: string
+          diet_id: string | null
+          id: string
+          tag: string
+        }
+        Insert: {
+          created_at?: string
+          diet_id?: string | null
+          id?: string
+          tag: string
+        }
+        Update: {
+          created_at?: string
+          diet_id?: string | null
+          id?: string
+          tag?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diet_tags_diet_id_fkey"
+            columns: ["diet_id"]
+            isOneToOne: false
+            referencedRelation: "diets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      diets: {
+        Row: {
+          core_principles: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_therapeutic: boolean | null
+          name: string
+          origin: string | null
+          primary_goal: Database["public"]["Enums"]["diet_goal_type"] | null
+          target_demographic: string | null
+          updated_at: string
+        }
+        Insert: {
+          core_principles?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_therapeutic?: boolean | null
+          name: string
+          origin?: string | null
+          primary_goal?: Database["public"]["Enums"]["diet_goal_type"] | null
+          target_demographic?: string | null
+          updated_at?: string
+        }
+        Update: {
+          core_principles?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_therapeutic?: boolean | null
+          name?: string
+          origin?: string | null
+          primary_goal?: Database["public"]["Enums"]["diet_goal_type"] | null
+          target_demographic?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      food_recommendations: {
+        Row: {
+          created_at: string
+          diet_id: string | null
+          food_category: string | null
+          food_name: string
+          id: string
+          notes: string | null
+        }
+        Insert: {
+          created_at?: string
+          diet_id?: string | null
+          food_category?: string | null
+          food_name: string
+          id?: string
+          notes?: string | null
+        }
+        Update: {
+          created_at?: string
+          diet_id?: string | null
+          food_category?: string | null
+          food_name?: string
+          id?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "food_recommendations_diet_id_fkey"
+            columns: ["diet_id"]
+            isOneToOne: false
+            referencedRelation: "diets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      food_restrictions: {
+        Row: {
+          created_at: string
+          diet_id: string | null
+          food_category: string | null
+          food_name: string
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          diet_id?: string | null
+          food_category?: string | null
+          food_name: string
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          diet_id?: string | null
+          food_category?: string | null
+          food_name?: string
+          id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "food_restrictions_diet_id_fkey"
+            columns: ["diet_id"]
+            isOneToOne: false
+            referencedRelation: "diets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goals_and_benefits: {
+        Row: {
+          created_at: string
+          description: string | null
+          diet_id: string | null
+          goal: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          diet_id?: string | null
+          goal: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          diet_id?: string | null
+          goal?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goals_and_benefits_diet_id_fkey"
+            columns: ["diet_id"]
+            isOneToOne: false
+            referencedRelation: "diets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_health_analysis: {
         Row: {
           created_at: string
@@ -1167,7 +1369,14 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      diet_goal_type:
+        | "Weight Loss"
+        | "Heart Health"
+        | "Digestive Health"
+        | "Wellness"
+        | "Disease Management"
+        | "Sustainability"
+        | "Other"
     }
     CompositeTypes: {
       http_header: {
