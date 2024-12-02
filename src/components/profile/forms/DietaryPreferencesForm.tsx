@@ -14,6 +14,27 @@ interface DietaryPreferencesFormProps {
   profile: any;
 }
 
+const COMMON_ALLERGIES = [
+  "Milk",
+  "Eggs",
+  "Fish",
+  "Shellfish",
+  "Tree Nuts",
+  "Peanuts",
+  "Wheat",
+  "Soybeans",
+  "Sesame",
+  "Celery",
+  "Mustard",
+  "Lupin",
+  "Sulfites",
+  "Gluten",
+  "Corn",
+  "Berries",
+  "Citrus Fruits",
+  "Other"
+];
+
 export function DietaryPreferencesForm({ profile }: DietaryPreferencesFormProps) {
   return (
     <Card>
@@ -45,8 +66,31 @@ export function DietaryPreferencesForm({ profile }: DietaryPreferencesFormProps)
             id="allergies"
             name="allergies"
             defaultValue={profile.allergies?.join(", ") || ""}
-            placeholder="Enter allergies (comma-separated)"
+            placeholder="Enter or select allergies (comma-separated)"
           />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+            {COMMON_ALLERGIES.map((allergy) => (
+              <button
+                key={allergy}
+                type="button"
+                onClick={(e) => {
+                  const input = document.getElementById("allergies") as HTMLInputElement;
+                  const currentAllergies = input.value.split(",").map(a => a.trim()).filter(Boolean);
+                  if (currentAllergies.includes(allergy)) {
+                    input.value = currentAllergies.filter(a => a !== allergy).join(", ");
+                  } else {
+                    input.value = [...currentAllergies, allergy].join(", ");
+                  }
+                }}
+                className={`p-2 text-sm rounded-md border transition-colors
+                  ${profile.allergies?.includes(allergy) 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-background hover:bg-secondary"}`}
+              >
+                {allergy}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="space-y-2">
