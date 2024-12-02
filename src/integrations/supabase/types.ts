@@ -546,6 +546,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          additives_to_avoid: string[] | null
           allergies: string[] | null
           avatar_url: string | null
           avoid_harmful_additives: boolean | null
@@ -554,11 +555,12 @@ export type Database = {
           brands_to_support: string[] | null
           current_weight_kg: number | null
           dietary_preferences: string[] | null
+          first_name: string | null
           fitness_goals: string[] | null
-          full_name: string | null
           health_conditions: string[] | null
           height_cm: number | null
           id: string
+          last_name: string | null
           notification_preferences: Json | null
           preferred_diet_type: string | null
           target_weight_kg: number | null
@@ -567,6 +569,7 @@ export type Database = {
           weight_goals: string | null
         }
         Insert: {
+          additives_to_avoid?: string[] | null
           allergies?: string[] | null
           avatar_url?: string | null
           avoid_harmful_additives?: boolean | null
@@ -575,11 +578,12 @@ export type Database = {
           brands_to_support?: string[] | null
           current_weight_kg?: number | null
           dietary_preferences?: string[] | null
+          first_name?: string | null
           fitness_goals?: string[] | null
-          full_name?: string | null
           health_conditions?: string[] | null
           height_cm?: number | null
           id: string
+          last_name?: string | null
           notification_preferences?: Json | null
           preferred_diet_type?: string | null
           target_weight_kg?: number | null
@@ -588,6 +592,7 @@ export type Database = {
           weight_goals?: string | null
         }
         Update: {
+          additives_to_avoid?: string[] | null
           allergies?: string[] | null
           avatar_url?: string | null
           avoid_harmful_additives?: boolean | null
@@ -596,11 +601,12 @@ export type Database = {
           brands_to_support?: string[] | null
           current_weight_kg?: number | null
           dietary_preferences?: string[] | null
+          first_name?: string | null
           fitness_goals?: string[] | null
-          full_name?: string | null
           health_conditions?: string[] | null
           height_cm?: number | null
           id?: string
+          last_name?: string | null
           notification_preferences?: Json | null
           preferred_diet_type?: string | null
           target_weight_kg?: number | null

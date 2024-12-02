@@ -20,13 +20,15 @@ export function ProfileForm({ profile, loading, onUpdateProfile }: ProfileFormPr
     const formData = new FormData(event.currentTarget);
     
     const updates = {
-      full_name: formData.get("full_name"),
+      first_name: formData.get("first_name"),
+      last_name: formData.get("last_name"),
       username: formData.get("username"),
       preferred_diet_type: formData.get("preferred_diet_type"),
       height_cm: Number(formData.get("height_cm")),
       current_weight_kg: Number(formData.get("current_weight_kg")),
       target_weight_kg: Number(formData.get("target_weight_kg")),
       avoid_harmful_additives: formData.get("avoid_harmful_additives") === "true",
+      additives_to_avoid: formData.get("additives_custom")?.toString().split(",").map(s => s.trim()).filter(Boolean) || [],
       allergies: formData.get("allergies")?.toString().split(",").map(s => s.trim()).filter(Boolean) || [],
       dietary_preferences: formData.get("dietary_preferences")?.toString().split(",").map(s => s.trim()).filter(Boolean) || [],
       fitness_goals: formData.get("fitness_goals")?.toString().split(",").map(s => s.trim()).filter(Boolean) || [],
