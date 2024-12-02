@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ExtractedResult } from "@/types/bloodwork";
+import { cn } from "@/lib/utils";
 
 interface ResultsVerificationProps {
   results: ExtractedResult[];
@@ -45,3 +46,4 @@ export function ResultsVerification({
       </div>
     </Card>
   );
+}

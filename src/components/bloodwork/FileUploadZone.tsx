@@ -45,3 +45,4 @@ export function FileUploadZone({ onFileSelect, disabled }: FileUploadZoneProps) 
       </p>
     </div>
   );
+}
