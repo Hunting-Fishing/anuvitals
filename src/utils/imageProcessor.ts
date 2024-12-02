@@ -29,8 +29,10 @@ export const detectRotation = async (file: File): Promise<number> => {
       logger: () => {},
     });
     
-    // Access the rotation angle from the result
-    const angle = result.data.rotate || 0; // Changed from orientation to rotate
+    // The rotation angle can be found in PSM.rotation
+    // If not available, check orientation or default to 0
+    const angle = (result.data as any).psm?.rotation ?? 
+                 (result.data as any).orientation?.angle ?? 0;
     return angle;
   } catch (error) {
     console.error('Error detecting rotation:', error);
