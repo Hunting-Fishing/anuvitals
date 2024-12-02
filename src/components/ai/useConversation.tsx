@@ -59,7 +59,8 @@ export function useConversation() {
 
     setIsLoading(true);
     const userMessage: Message = { role: 'user', content: message };
-    setMessages((prev: Message[]) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setMessage('');
 
     try {
@@ -97,7 +98,7 @@ export function useConversation() {
         content: response.data.response,
       };
 
-      const newHistory = [...messages, userMessage, aiMessage];
+      const newHistory = [...updatedMessages, aiMessage];
       setMessages(newHistory);
 
       const { error: updateError } = await supabase
