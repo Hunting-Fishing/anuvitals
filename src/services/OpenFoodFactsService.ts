@@ -36,7 +36,7 @@ export async function fetchProductDetails(barcode: string): Promise<ProductDetai
     if (data.status !== 1) {
       throw new Error("Product not found!");
     }
-    
+
     const product = data.product;
     return {
       name: product.product_name || "N/A",
@@ -52,17 +52,23 @@ export async function fetchProductDetails(barcode: string): Promise<ProductDetai
 }
 
 export async function searchProducts(query: string, filters: SearchFilters = {}): Promise<SearchResponse> {
-  // Create search parameters
   const searchParams = new URLSearchParams({
     search_terms: query,
     json: '1',
     page_size: (filters.pageSize || 20).toString(),
     page: (filters.page || 1).toString(),
-    search_simple: '1', // Add simple search for better matches
-    brands_tags: filters.brands || '',
-    categories_tags: filters.categories || '',
-    allergens_tags: filters.allergens || ''
+    search_simple: '1',
   });
+
+  if (filters.brands) {
+    searchParams.append('brands_tags', filters.brands);
+  }
+  if (filters.categories) {
+    searchParams.append('categories_tags', filters.categories);
+  }
+  if (filters.allergens) {
+    searchParams.append('allergens_tags', filters.allergens);
+  }
 
   const url = `${API_BASE_URL}/cgi/search.pl?${searchParams.toString()}`;
   
@@ -73,7 +79,7 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
     }
     
     const data = await response.json();
-    console.log("API Search Results:", data); // Debug log
+    console.log("API Search Results:", data);
 
     return {
       count: data.count,
@@ -100,7 +106,7 @@ export async function fetchCategories(): Promise<string[]> {
     if (!response.ok) {
       throw new Error(`Categories API Error: ${response.status}`);
     }
-    
+
     const data = await response.json();
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
@@ -116,11 +122,27 @@ export async function fetchAllergens(): Promise<string[]> {
     if (!response.ok) {
       throw new Error(`Allergens API Error: ${response.status}`);
     }
-    
+
     const data = await response.json();
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
     throw new Error(`Failed to fetch allergens: ${error.message}`);
+  }
+}
+
+export async function fetchBrands(): Promise<string[]> {
+  const url = `${API_BASE_URL}/brands.json`;
+  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Brands API Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.tags.map((tag: any) => tag.name);
+  } catch (error) {
+    throw new Error(`Failed to fetch brands: ${error.message}`);
   }
 }
 
@@ -141,7 +163,7 @@ export async function contributeProduct(productData: Partial<ProductDetails>, ba
     if (!response.ok) {
       throw new Error(`Contribution API Error: ${response.status}`);
     }
-    
+
     const data = await response.json();
     if (data.status !== 1) {
       throw new Error("Failed to contribute product!");
