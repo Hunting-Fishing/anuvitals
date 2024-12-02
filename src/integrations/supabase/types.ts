@@ -9,6 +9,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      product_health_analysis: {
+        Row: {
+          created_at: string
+          hazard_ingredients: string[] | null
+          health_score: number
+          id: string
+          nutrition_analysis: Json | null
+          product_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          hazard_ingredients?: string[] | null
+          health_score: number
+          id?: string
+          nutrition_analysis?: Json | null
+          product_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          hazard_ingredients?: string[] | null
+          health_score?: number
+          id?: string
+          nutrition_analysis?: Json | null
+          product_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_health_analysis_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           barcode: string
