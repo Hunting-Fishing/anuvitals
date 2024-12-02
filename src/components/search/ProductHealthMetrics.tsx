@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { getMetricColor } from "@/lib/utils";
-import { Beaker, Droplet, Flame, Fish, Wheat, Package, ChevronDown, ChevronUp } from "lucide-react";
+import { Beaker, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AdditiveDetails } from "@/components/additives/AdditiveDetails";
 import { useQuery } from "@tanstack/react-query";
@@ -69,9 +69,10 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
       <h3 className="text-lg font-bold">Product Analysis</h3>
       
       <Tabs defaultValue="risks" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="risks">Health Risks</TabsTrigger>
           <TabsTrigger value="ingredients">Ingredients</TabsTrigger>
+          <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
         </TabsList>
 
         <TabsContent value="risks" className="space-y-4">
@@ -125,58 +126,47 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
                 </Collapsible>
               );
             })}
-
-            <div className="mt-6 space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Droplet className="h-5 w-5" />
-                  <span>Sodium</span>
-                </div>
-                <span className={getMetricColor(80, 'negative')}>
-                  {nutritionalInfo?.salt_100g || 0}g
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Flame className="h-5 w-5" />
-                  <span>Calories</span>
-                </div>
-                <span className={getMetricColor(60, 'negative')}>
-                  {nutritionalInfo?.energy_100g || 0} kcal
-                </span>
-              </div>
-            </div>
           </div>
         </TabsContent>
 
         <TabsContent value="ingredients" className="space-y-4">
-          <div className="space-y-4">
+          <div className="space-y-2">
+            <h4 className="font-semibold">Product Ingredients:</h4>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+              {nutritionalInfo?.ingredients_text || "No ingredients listed"}
+            </p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="nutrition" className="space-y-4">
+          <div className="grid gap-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Fish className="h-5 w-5" />
-                <span>Protein</span>
-              </div>
-              <span className={getMetricColor(80, 'positive')}>
-                {nutritionalInfo?.proteins_100g || 0}g
-              </span>
+              <span>Energy</span>
+              <span>{nutritionalInfo?.energy_100g || 0} kcal</span>
             </div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Wheat className="h-5 w-5" />
-                <span>Fiber</span>
-              </div>
-              <span className={getMetricColor(60, 'positive')}>
-                {nutritionalInfo?.fiber_100g || 0}g
-              </span>
+              <span>Proteins</span>
+              <span>{nutritionalInfo?.proteins_100g || 0}g</span>
             </div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Package className="h-5 w-5" />
-                <span>Sugar</span>
-              </div>
-              <span className={getMetricColor(90, 'positive')}>
-                {nutritionalInfo?.sugars_100g || 0}g
-              </span>
+              <span>Carbohydrates</span>
+              <span>{nutritionalInfo?.carbohydrates_100g || 0}g</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Fat</span>
+              <span>{nutritionalInfo?.fat_100g || 0}g</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Fiber</span>
+              <span>{nutritionalInfo?.fiber_100g || 0}g</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Sugar</span>
+              <span>{nutritionalInfo?.sugars_100g || 0}g</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Salt</span>
+              <span>{nutritionalInfo?.salt_100g || 0}g</span>
             </div>
           </div>
         </TabsContent>
