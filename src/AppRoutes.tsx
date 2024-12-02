@@ -1,28 +1,40 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useSession } from "@supabase/auth-helpers-react";
+import { Routes, Route } from "react-router-dom";
+import { AppSidebar } from "./components/AppSidebar";
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Scan from "./pages/Scan";
-import Profile from "./pages/Profile";
+import AuthPage from "./pages/Auth";
+import ScanPage from "./pages/Scan";
+
+function MainLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <AppSidebar />
+      <main className="flex-1 overflow-auto">
+        {children}
+      </main>
+    </>
+  );
+}
 
 export function AppRoutes() {
-  const session = useSession();
-
-  if (!session) {
-    return (
-      <Routes>
-        <Route path="/auth" element={<Auth />} />
-        <Route path="*" element={<Navigate to="/auth" replace />} />
-      </Routes>
-    );
-  }
-
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/scan" element={<Scan />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/auth" element={<AuthPage />} />
+      <Route
+        path="/"
+        element={
+          <MainLayout>
+            <Index />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/scan"
+        element={
+          <MainLayout>
+            <ScanPage />
+          </MainLayout>
+        }
+      />
     </Routes>
   );
 }

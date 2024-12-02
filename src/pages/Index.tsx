@@ -1,131 +1,101 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import { Header } from "@/components/Header";
+import { MetricsCards } from "@/components/MetricsCards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Scan } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Session } from "@supabase/supabase-js";
 
-export default function Index() {
-  const { data: diets, isLoading } = useQuery({
-    queryKey: ['diets'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('diets')
-        .select(`
-          *,
-          food_recommendations(food_name, food_category, notes),
-          food_restrictions(food_name, food_category, reason),
-          goals_and_benefits(goal, description),
-          diet_tags(tag)
-        `);
-      
-      if (error) throw error;
-      return data;
-    },
-  });
+const Index = () => {
+  const navigate = useNavigate();
+  const [session, setSession] = useState<Session | null>(null);
 
-  if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  useEffect(() => {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  if (!session) {
+    return null;
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Diet Plans</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {diets?.map((diet) => (
-          <Card key={diet.id} className="h-full">
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle>{diet.name}</CardTitle>
-                  <CardDescription>{diet.description}</CardDescription>
-                </div>
-                {diet.is_therapeutic && (
-                  <Badge variant="secondary">Therapeutic</Badge>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="overview" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="foods">Foods</TabsTrigger>
-                  <TabsTrigger value="goals">Goals</TabsTrigger>
-                  <TabsTrigger value="tags">Tags</TabsTrigger>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-gray-50">
+        <AppSidebar />
+        <main className="flex-1">
+          <Header />
+          <div className="p-8">
+            <div className="mb-8 flex items-center justify-between">
+              <h1 className="text-3xl font-bold">Dashboard</h1>
+              <Button className="gap-2">
+                <Scan className="h-5 w-5" />
+                Scan Product
+              </Button>
+            </div>
+            
+            <MetricsCards />
+            
+            <div className="mt-8">
+              <Tabs defaultValue="daily" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="daily">Daily Overview</TabsTrigger>
+                  <TabsTrigger value="insights">Insights</TabsTrigger>
+                  <TabsTrigger value="meal-plans">Meal Plans</TabsTrigger>
+                  <TabsTrigger value="sustainability">Sustainability</TabsTrigger>
                 </TabsList>
-
-                <TabsContent value="overview" className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold">Core Principles</h4>
-                    <p className="text-sm text-muted-foreground">{diet.core_principles}</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Target Demographic</h4>
-                    <p className="text-sm text-muted-foreground">{diet.target_demographic}</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Origin</h4>
-                    <p className="text-sm text-muted-foreground">{diet.origin}</p>
+                <TabsContent value="daily" className="mt-6">
+                  <div className="rounded-lg border bg-card p-6">
+                    <h3 className="font-semibold mb-4">Today's Activity</h3>
+                    <p className="text-muted-foreground">No products scanned yet today. Click the Scan Product button to get started!</p>
                   </div>
                 </TabsContent>
-
-                <TabsContent value="foods">
-                  <ScrollArea className="h-[200px] pr-4">
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="font-semibold">Recommended Foods</h4>
-                        <ul className="list-disc list-inside text-sm text-muted-foreground">
-                          {diet.food_recommendations?.map((rec, index) => (
-                            <li key={index}>
-                              {rec.food_name} 
-                              {rec.food_category && <span className="text-xs"> ({rec.food_category})</span>}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold">Restricted Foods</h4>
-                        <ul className="list-disc list-inside text-sm text-muted-foreground">
-                          {diet.food_restrictions?.map((res, index) => (
-                            <li key={index}>
-                              {res.food_name}
-                              {res.reason && <span className="text-xs"> - {res.reason}</span>}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </ScrollArea>
+                <TabsContent value="insights">
+                  <div className="rounded-lg border bg-card p-6">
+                    <h3 className="font-semibold mb-4">Your Insights</h3>
+                    <p className="text-muted-foreground">Track your nutrition patterns to see personalized insights.</p>
+                  </div>
                 </TabsContent>
-
-                <TabsContent value="goals">
-                  <ScrollArea className="h-[200px] pr-4">
-                    <div className="space-y-2">
-                      {diet.goals_and_benefits?.map((goal, index) => (
-                        <div key={index} className="border-b pb-2">
-                          <h4 className="font-semibold">{goal.goal}</h4>
-                          <p className="text-sm text-muted-foreground">{goal.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
+                <TabsContent value="meal-plans">
+                  <div className="rounded-lg border bg-card p-6">
+                    <h3 className="font-semibold mb-4">Weekly Meal Plan</h3>
+                    <p className="text-muted-foreground">Start planning your meals for a healthier lifestyle.</p>
+                  </div>
                 </TabsContent>
-
-                <TabsContent value="tags">
-                  <div className="flex flex-wrap gap-2">
-                    {diet.diet_tags?.map((tag, index) => (
-                      <Badge key={index} variant="outline">
-                        {tag.tag}
-                      </Badge>
-                    ))}
+                <TabsContent value="sustainability">
+                  <div className="rounded-lg border bg-card p-6">
+                    <h3 className="font-semibold mb-4">Environmental Impact</h3>
+                    <p className="text-muted-foreground">Track your eco-friendly choices and their impact.</p>
                   </div>
                 </TabsContent>
               </Tabs>
-            </CardContent>
-          </Card>
-        ))}
+            </div>
+          </div>
+        </main>
       </div>
-    </div>
+    </SidebarProvider>
   );
-}
+};
+
+export default Index;
