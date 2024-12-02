@@ -49,14 +49,21 @@ export async function fetchProductDetails(barcode: string): Promise<ProductDetai
 }
 
 export async function searchProducts(query: string, filters: SearchFilters = {}): Promise<SearchResponse> {
-  const searchParams = new URLSearchParams({
+  // Create a params object with all the search parameters
+  const params: Record<string, string> = {
     search_terms: query,
     json: '1',
     page_size: (filters.pageSize || 20).toString(),
-    page: (filters.page || 1).toString(),
-    ...filters
-  });
+    page: (filters.page || 1).toString()
+  };
 
+  // Add optional filters if they exist
+  if (filters.brands) params.brands = filters.brands;
+  if (filters.categories) params.categories = filters.categories;
+  if (filters.ingredients) params.ingredients = filters.ingredients;
+  if (filters.allergens) params.allergens = filters.allergens;
+
+  const searchParams = new URLSearchParams(params);
   const url = `${API_BASE_URL}/cgi/search.pl?${searchParams.toString()}`;
   
   try {
