@@ -64,19 +64,25 @@ export function useConversation() {
     setMessage('');
 
     try {
+      // Get profile data
       const { data: profileData } = await supabase
         .from('profiles')
         .select('dietary_preferences, health_conditions')
         .eq('id', user.id)
         .single();
 
-      const { data: bloodworkData } = await supabase
+      // Get blood work data - handle empty results
+      const { data: bloodworkData, error: bloodworkError } = await supabase
         .from('blood_work_results')
         .select('results')
         .eq('user_id', user.id)
         .order('test_date', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle(); // Use maybeSingle() instead of single()
+
+      if (bloodworkError && bloodworkError.code !== 'PGRST116') {
+        throw bloodworkError;
+      }
 
       const response = await supabase.functions.invoke('ai-assistant', {
         body: {
@@ -84,9 +90,9 @@ export function useConversation() {
           assistantType,
           message: message.trim(),
           context: {
-            bloodwork: bloodworkData?.results,
-            dietaryPreferences: profileData?.dietary_preferences,
-            healthConditions: profileData?.health_conditions,
+            bloodwork: bloodworkData?.results || null,
+            dietaryPreferences: profileData?.dietary_preferences || [],
+            healthConditions: profileData?.health_conditions || [],
           },
         },
       });

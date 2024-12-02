@@ -35,7 +35,7 @@ const getSystemPrompt = (type: string, context?: any) => {
     diet: "You are an AI Diet Planner specialized in creating personalized nutrition plans. "
   };
 
-  let prompt = basePrompts[type as keyof typeof basePrompts];
+  let prompt = basePrompts[type as keyof typeof basePrompts] || basePrompts.health;
   
   if (context) {
     if (context.bloodwork) {
@@ -96,27 +96,14 @@ serve(async (req) => {
     });
 
     const data = await response.json();
-    const aiResponse = data.choices[0].message.content;
+    
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response from OpenAI API');
+    }
 
-    // Update conversation history
-    const newHistory = [
-      ...conversationHistory,
-      { role: 'user', content: message },
-      { role: 'assistant', content: aiResponse }
-    ];
+    const generatedText = data.choices[0].message.content;
 
-    // Update or create assistant config
-    const { error: upsertError } = await supabase
-      .from('ai_assistants_config')
-      .upsert({
-        user_id: userId,
-        assistant_type: assistantType,
-        conversation_history: newHistory,
-      });
-
-    if (upsertError) throw upsertError;
-
-    return new Response(JSON.stringify({ response: aiResponse }), {
+    return new Response(JSON.stringify({ response: generatedText }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
