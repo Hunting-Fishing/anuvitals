@@ -548,12 +548,20 @@ export type Database = {
         Row: {
           allergies: string[] | null
           avatar_url: string | null
+          avoid_harmful_additives: boolean | null
+          bmi: number | null
+          brands_to_avoid: string[] | null
+          brands_to_support: string[] | null
+          current_weight_kg: number | null
           dietary_preferences: string[] | null
+          fitness_goals: string[] | null
           full_name: string | null
           health_conditions: string[] | null
+          height_cm: number | null
           id: string
           notification_preferences: Json | null
           preferred_diet_type: string | null
+          target_weight_kg: number | null
           updated_at: string
           username: string | null
           weight_goals: string | null
@@ -561,12 +569,20 @@ export type Database = {
         Insert: {
           allergies?: string[] | null
           avatar_url?: string | null
+          avoid_harmful_additives?: boolean | null
+          bmi?: number | null
+          brands_to_avoid?: string[] | null
+          brands_to_support?: string[] | null
+          current_weight_kg?: number | null
           dietary_preferences?: string[] | null
+          fitness_goals?: string[] | null
           full_name?: string | null
           health_conditions?: string[] | null
+          height_cm?: number | null
           id: string
           notification_preferences?: Json | null
           preferred_diet_type?: string | null
+          target_weight_kg?: number | null
           updated_at?: string
           username?: string | null
           weight_goals?: string | null
@@ -574,12 +590,20 @@ export type Database = {
         Update: {
           allergies?: string[] | null
           avatar_url?: string | null
+          avoid_harmful_additives?: boolean | null
+          bmi?: number | null
+          brands_to_avoid?: string[] | null
+          brands_to_support?: string[] | null
+          current_weight_kg?: number | null
           dietary_preferences?: string[] | null
+          fitness_goals?: string[] | null
           full_name?: string | null
           health_conditions?: string[] | null
+          height_cm?: number | null
           id?: string
           notification_preferences?: Json | null
           preferred_diet_type?: string | null
+          target_weight_kg?: number | null
           updated_at?: string
           username?: string | null
           weight_goals?: string | null
