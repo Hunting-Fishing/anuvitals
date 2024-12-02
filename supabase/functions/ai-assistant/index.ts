@@ -82,7 +82,7 @@ serve(async (req) => {
       { role: 'user', content: message }
     ];
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${openAIApiKey}`,
@@ -95,13 +95,38 @@ serve(async (req) => {
       }),
     });
 
-    const data = await response.json();
+    if (!openAIResponse.ok) {
+      const errorData = await openAIResponse.json();
+      console.error('OpenAI API Error:', errorData);
+      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
+    }
+
+    const data = await openAIResponse.json();
     
     if (!data.choices?.[0]?.message?.content) {
-      throw new Error('Invalid response from OpenAI API');
+      console.error('Invalid OpenAI response format:', data);
+      throw new Error('Invalid response format from OpenAI API');
     }
 
     const generatedText = data.choices[0].message.content;
+
+    // Update conversation history
+    const newHistory = [
+      ...conversationHistory,
+      { role: 'user', content: message },
+      { role: 'assistant', content: generatedText }
+    ];
+
+    // Update conversation history in database
+    const { error: updateError } = await supabase
+      .from('ai_assistants_config')
+      .update({ conversation_history: newHistory })
+      .eq('user_id', userId)
+      .eq('assistant_type', assistantType);
+
+    if (updateError) {
+      console.error('Error updating conversation history:', updateError);
+    }
 
     return new Response(JSON.stringify({ response: generatedText }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
