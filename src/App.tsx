@@ -5,6 +5,7 @@ import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { AppRoutes } from "./AppRoutes";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 // Initialize the query client
 const queryClient = new QueryClient({
@@ -28,8 +29,12 @@ function App() {
       <SessionContextProvider supabaseClient={supabaseClient}>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <BrowserRouter>
-            <AppRoutes />
-            <Toaster />
+            <SidebarProvider>
+              <div className="min-h-screen flex w-full">
+                <AppRoutes />
+                <Toaster />
+              </div>
+            </SidebarProvider>
           </BrowserRouter>
         </ThemeProvider>
       </SessionContextProvider>

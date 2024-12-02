@@ -1,4 +1,5 @@
 import { Home, Scan, LineChart, CalendarDays, ShoppingCart, Leaf, Activity, Settings } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +23,8 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
+  const location = useLocation();
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -32,7 +35,11 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url} className="flex items-center gap-3 px-3 py-2">
+                    <a 
+                      href={item.url} 
+                      className="flex items-center gap-3 px-3 py-2"
+                      data-active={location.pathname === item.url}
+                    >
                       <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
                     </a>
