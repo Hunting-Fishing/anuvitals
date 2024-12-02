@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Home, ScanLine, Book, Settings, Bell, User, Activity, Info } from "lucide-react";
+import { Home, ScanLine, Book, Settings, Bell, User, Activity, Info, Brain } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useSidebar } from "./ui/sidebar";
 
@@ -45,6 +45,12 @@ export function AppSidebar() {
             <Button variant="ghost" className="w-full justify-start">
               <Activity className="mr-2 h-4 w-4" />
               {!collapsed && "Blood Work"}
+            </Button>
+          </NavLink>
+          <NavLink to="/ai" className={({ isActive }) => cn(isActive && "bg-secondary")}>
+            <Button variant="ghost" className="w-full justify-start">
+              <Brain className="mr-2 h-4 w-4" />
+              {!collapsed && "AI Assistant"}
             </Button>
           </NavLink>
           <NavLink to="/about" className={({ isActive }) => cn(isActive && "bg-secondary")}>
