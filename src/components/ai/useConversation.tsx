@@ -1,58 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
-import { useToast } from '@/hooks/use-toast';
 import { useAI } from './AIContext';
 import { Message } from './types';
+import { useConversationHistory } from './hooks/useConversationHistory';
+import { useAIResponse } from './hooks/useAIResponse';
 
 export function useConversation() {
   const [message, setMessage] = useState('');
-  const { messages, setMessages, assistantType, isLoading, setIsLoading } = useAI();
+  const { assistantType, isLoading, setIsLoading } = useAI();
   const user = useUser();
   const supabase = useSupabaseClient();
-  const { toast } = useToast();
-
-  useEffect(() => {
-    if (user) {
-      loadConversationHistory();
-    }
-  }, [user, assistantType]);
-
-  const loadConversationHistory = async () => {
-    if (!user) return;
-
-    try {
-      const { error: upsertError } = await supabase
-        .from('ai_assistants_config')
-        .upsert({
-          user_id: user.id,
-          assistant_type: assistantType,
-          conversation_history: [],
-        }, {
-          onConflict: 'user_id,assistant_type'
-        });
-
-      if (upsertError) throw upsertError;
-
-      const { data, error } = await supabase
-        .from('ai_assistants_config')
-        .select('conversation_history')
-        .eq('user_id', user.id)
-        .eq('assistant_type', assistantType)
-        .single();
-
-      if (error) throw error;
-
-      if (data?.conversation_history) {
-        setMessages(data.conversation_history as Message[]);
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load conversation history",
-        variant: "destructive",
-      });
-    }
-  };
+  const { messages, setMessages, updateConversationHistory } = useConversationHistory(assistantType);
+  const { getAIResponse } = useAIResponse();
 
   const sendMessage = async () => {
     if (!message.trim() || !user) return;
@@ -71,7 +30,7 @@ export function useConversation() {
         .eq('id', user.id)
         .single();
 
-      // Get blood work data - handle empty results
+      // Get blood work data
       const { data: bloodworkData, error: bloodworkError } = await supabase
         .from('blood_work_results')
         .select('results')
@@ -84,63 +43,26 @@ export function useConversation() {
         throw bloodworkError;
       }
 
-      const response = await supabase.functions.invoke('ai-assistant', {
-        body: {
-          userId: user.id,
-          assistantType,
-          message: message.trim(),
-          context: {
-            bloodwork: bloodworkData?.results || null,
-            dietaryPreferences: profileData?.dietary_preferences || [],
-            healthConditions: profileData?.health_conditions || [],
-          },
-        },
-      });
-
-      if (response.error) {
-        // Check specifically for the OpenAI quota exceeded error
-        if (response.error.message?.includes('exceeded your current quota') || 
-            response.error.message?.includes('check your plan and billing details')) {
-          toast({
-            title: "AI Credits Depleted",
-            description: "AI Credits used up - Please Deposit Credits",
-            variant: "destructive",
-          });
-          return;
+      const aiResponse = await getAIResponse(
+        user.id,
+        assistantType,
+        message,
+        {
+          bloodwork: bloodworkData?.results || null,
+          dietaryPreferences: profileData?.dietary_preferences || [],
+          healthConditions: profileData?.health_conditions || [],
         }
-        throw response.error;
-      }
+      );
 
-      const aiMessage: Message = {
-        role: 'assistant',
-        content: response.data.response,
-      };
+      if (aiResponse) {
+        const aiMessage: Message = {
+          role: 'assistant',
+          content: aiResponse,
+        };
 
-      const newHistory = [...updatedMessages, aiMessage];
-      setMessages(newHistory);
-
-      const { error: updateError } = await supabase
-        .from('ai_assistants_config')
-        .update({ conversation_history: newHistory })
-        .eq('user_id', user.id)
-        .eq('assistant_type', assistantType);
-
-      if (updateError) throw updateError;
-    } catch (error) {
-      // Show specific error message for quota exceeded
-      if (error.message?.includes('exceeded your current quota') || 
-          error.message?.includes('check your plan and billing details')) {
-        toast({
-          title: "AI Credits Depleted",
-          description: "AI Credits used up - Please Deposit Credits",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to get AI response",
-          variant: "destructive",
-        });
+        const newHistory = [...updatedMessages, aiMessage];
+        setMessages(newHistory);
+        await updateConversationHistory(newHistory);
       }
     } finally {
       setIsLoading(false);
