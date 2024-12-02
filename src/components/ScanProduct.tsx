@@ -26,9 +26,9 @@ export function ScanProduct() {
   const [categories, setCategories] = useState<string[]>([]);
   const [allergens, setAllergens] = useState<string[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedAllergen, setSelectedAllergen] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedAllergen, setSelectedAllergen] = useState("all");
+  const [selectedBrand, setSelectedBrand] = useState("all");
   const [page, setPage] = useState(1);
   const session = useSession();
   const { toast } = useToast();
@@ -69,7 +69,6 @@ export function ScanProduct() {
 
     setSearching(true);
     try {
-      // Format search query for Supabase full-text search
       const formattedQuery = searchQuery
         .split(' ')
         .filter(term => term.length > 0)
@@ -79,9 +78,9 @@ export function ScanProduct() {
       const filters: SearchFiltersType = {
         page,
         pageSize: 10,
-        categories: selectedCategory,
-        allergens: selectedAllergen,
-        brands: selectedBrand
+        categories: selectedCategory === "all" ? "" : selectedCategory,
+        allergens: selectedAllergen === "all" ? "" : selectedAllergen,
+        brands: selectedBrand === "all" ? "" : selectedBrand
       };
       
       const [offResults, supabaseResults] = await Promise.all([

@@ -36,7 +36,7 @@ export function SearchFilters({
           <SelectValue placeholder="Category" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Categories</SelectItem>
+          <SelectItem value="all">All Categories</SelectItem>
           {categories.map((category) => (
             <SelectItem key={category} value={category}>
               {category}
@@ -50,7 +50,7 @@ export function SearchFilters({
           <SelectValue placeholder="Allergen" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Allergens</SelectItem>
+          <SelectItem value="all">All Allergens</SelectItem>
           {allergens.map((allergen) => (
             <SelectItem key={allergen} value={allergen}>
               {allergen}
@@ -64,7 +64,7 @@ export function SearchFilters({
           <SelectValue placeholder="Brand" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Brands</SelectItem>
+          <SelectItem value="all">All Brands</SelectItem>
           {brands.map((brand) => (
             <SelectItem key={brand} value={brand}>
               {brand}
