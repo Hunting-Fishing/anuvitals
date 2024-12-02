@@ -15,7 +15,375 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      akeys: {
+        Args: {
+          "": unknown
+        }
+        Returns: string[]
+      }
+      avals: {
+        Args: {
+          "": unknown
+        }
+        Returns: string[]
+      }
+      binary_quantize:
+        | {
+            Args: {
+              "": string
+            }
+            Returns: unknown
+          }
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: unknown
+          }
+      each: {
+        Args: {
+          hs: unknown
+        }
+        Returns: Record<string, unknown>[]
+      }
+      ghstore_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      ghstore_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      ghstore_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      ghstore_options: {
+        Args: {
+          "": unknown
+        }
+        Returns: undefined
+      }
+      ghstore_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: {
+          "": unknown
+        }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      halfvec_avg: {
+        Args: {
+          "": number[]
+        }
+        Returns: unknown
+      }
+      halfvec_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      halfvec_send: {
+        Args: {
+          "": unknown
+        }
+        Returns: string
+      }
+      halfvec_typmod_in: {
+        Args: {
+          "": unknown[]
+        }
+        Returns: number
+      }
+      hnsw_bit_support: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      hnsw_halfvec_support: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      hnsw_sparsevec_support: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      hnswhandler: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      hstore:
+        | {
+            Args: {
+              "": string[]
+            }
+            Returns: unknown
+          }
+        | {
+            Args: {
+              "": Record<string, unknown>
+            }
+            Returns: unknown
+          }
+      hstore_hash: {
+        Args: {
+          "": unknown
+        }
+        Returns: number
+      }
+      hstore_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      hstore_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      hstore_recv: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      hstore_send: {
+        Args: {
+          "": unknown
+        }
+        Returns: string
+      }
+      hstore_subscript_handler: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      hstore_to_array: {
+        Args: {
+          "": unknown
+        }
+        Returns: string[]
+      }
+      hstore_to_json: {
+        Args: {
+          "": unknown
+        }
+        Returns: Json
+      }
+      hstore_to_json_loose: {
+        Args: {
+          "": unknown
+        }
+        Returns: Json
+      }
+      hstore_to_jsonb: {
+        Args: {
+          "": unknown
+        }
+        Returns: Json
+      }
+      hstore_to_jsonb_loose: {
+        Args: {
+          "": unknown
+        }
+        Returns: Json
+      }
+      hstore_to_matrix: {
+        Args: {
+          "": unknown
+        }
+        Returns: string[]
+      }
+      hstore_version_diag: {
+        Args: {
+          "": unknown
+        }
+        Returns: number
+      }
+      ivfflat_bit_support: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      ivfflat_halfvec_support: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      ivfflathandler: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      l2_norm:
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: number
+          }
+      l2_normalize:
+        | {
+            Args: {
+              "": string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: unknown
+          }
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: unknown
+          }
+      set_limit: {
+        Args: {
+          "": number
+        }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: {
+          "": string
+        }
+        Returns: string[]
+      }
+      skeys: {
+        Args: {
+          "": unknown
+        }
+        Returns: string[]
+      }
+      sparsevec_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      sparsevec_send: {
+        Args: {
+          "": unknown
+        }
+        Returns: string
+      }
+      sparsevec_typmod_in: {
+        Args: {
+          "": unknown[]
+        }
+        Returns: number
+      }
+      svals: {
+        Args: {
+          "": unknown
+        }
+        Returns: string[]
+      }
+      vector_avg: {
+        Args: {
+          "": number[]
+        }
+        Returns: string
+      }
+      vector_dims:
+        | {
+            Args: {
+              "": string
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: number
+          }
+      vector_norm: {
+        Args: {
+          "": string
+        }
+        Returns: number
+      }
+      vector_out: {
+        Args: {
+          "": string
+        }
+        Returns: unknown
+      }
+      vector_send: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      vector_typmod_in: {
+        Args: {
+          "": unknown[]
+        }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
