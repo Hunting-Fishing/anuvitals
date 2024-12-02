@@ -15,8 +15,36 @@ export const FALLBACK_CATEGORIES = [
 ];
 
 export const FALLBACK_ALLERGENS = [
-  "Milk", "Eggs", "Fish", "Shellfish", "Tree nuts",
-  "Peanuts", "Wheat", "Soybeans"
+  "Milk",
+  "Eggs",
+  "Fish",
+  "Crustaceans",
+  "Shellfish",
+  "Tree nuts",
+  "Almonds",
+  "Brazil nuts",
+  "Cashews",
+  "Hazelnuts",
+  "Macadamia",
+  "Pecans",
+  "Pine nuts",
+  "Pistachios",
+  "Walnuts",
+  "Peanuts",
+  "Wheat",
+  "Soybeans",
+  "Sesame",
+  "Mustard",
+  "Celery",
+  "Lupin",
+  "Molluscs",
+  "Sulphites",
+  "Gluten",
+  "Lactose",
+  "Corn",
+  "Gelatin",
+  "Coconut",
+  "Sunflower seeds"
 ];
 
 export const FALLBACK_BRANDS = [
