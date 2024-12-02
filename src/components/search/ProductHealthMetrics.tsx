@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { getMetricColor } from "@/lib/utils";
-import { Beaker, Droplet, Flame, Fish, Wheat, Package } from "lucide-react";
+import { Beaker, Droplet, Flame, Fish, Wheat, Package, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AdditiveDetails } from "@/components/additives/AdditiveDetails";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface ProductHealthMetricsProps {
   nutritionalInfo: Record<string, any>;
@@ -12,6 +13,11 @@ interface ProductHealthMetricsProps {
 
 export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsProps) {
   const [selectedAdditive, setSelectedAdditive] = useState<any>(null);
+  const [openRiskLevels, setOpenRiskLevels] = useState<Record<string, boolean>>({
+    high: true,
+    medium: true,
+    low: true
+  });
 
   const { data: additives } = useQuery({
     queryKey: ["additives"],
@@ -19,14 +25,13 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
       const { data, error } = await supabase
         .from("additives")
         .select("*")
-        .order('risk_level', { ascending: false }); // Sort by risk level, highest first
+        .order('risk_level', { ascending: false }); 
       
       if (error) throw error;
       return data;
     }
   });
 
-  // Function to get color class based on risk level
   const getRiskLevelColor = (level: string) => {
     switch (level?.toLowerCase()) {
       case "high":
@@ -40,6 +45,24 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
     }
   };
 
+  const groupedAdditives = additives?.reduce((acc: Record<string, any[]>, current) => {
+    const riskLevel = current.risk_level?.toLowerCase() || 'unknown';
+    if (!acc[riskLevel]) {
+      acc[riskLevel] = [];
+    }
+    acc[riskLevel].push(current);
+    return acc;
+  }, {});
+
+  const totalHazards = additives?.length || 0;
+
+  const toggleRiskLevel = (level: string) => {
+    setOpenRiskLevels(prev => ({
+      ...prev,
+      [level]: !prev[level]
+    }));
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-bold">Product Analysis</h3>
@@ -51,25 +74,45 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
             <div className="flex items-center gap-2">
               <Beaker className="h-5 w-5" />
               <span>Additives</span>
+              <span className="text-sm text-muted-foreground">({totalHazards} hazards found)</span>
             </div>
-            {additives && additives.length > 0 ? (
-              <div className="ml-7 space-y-1">
-                {additives.map((additive) => (
-                  <div key={additive.id} className="flex items-center justify-between">
-                    <Button 
-                      variant="link" 
-                      className={`${getRiskLevelColor(additive.risk_level)} text-left justify-start`}
+            {groupedAdditives && Object.entries(groupedAdditives).map(([riskLevel, riskAdditives]) => (
+              <Collapsible
+                key={riskLevel}
+                open={openRiskLevels[riskLevel]}
+                onOpenChange={() => toggleRiskLevel(riskLevel)}
+                className="ml-7 space-y-1"
+              >
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`${getRiskLevelColor(riskLevel)} w-full justify-between`}
+                  >
+                    <span className="flex items-center gap-2">
+                      {riskLevel.toUpperCase()} RISK ({riskAdditives.length})
+                    </span>
+                    {openRiskLevels[riskLevel] ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-1">
+                  {riskAdditives.map((additive: any) => (
+                    <Button
+                      key={additive.id}
+                      variant="link"
+                      className={`${getRiskLevelColor(riskLevel)} text-left justify-start w-full`}
                       onClick={() => setSelectedAdditive(additive)}
                     >
                       {additive.code} - {additive.name}
-                      <span className="ml-2">({additive.risk_level?.toUpperCase()} RISK)</span>
                     </Button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="ml-7 text-gray-500">No additives information available</div>
-            )}
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+            ))}
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
