@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { AppSidebar } from "./components/AppSidebar";
+import { DietNavigation } from "./components/DietNavigation";
 import Index from "./pages/Index";
 import AuthPage from "./pages/Auth";
 import ScanPage from "./pages/Scan";
@@ -8,9 +9,12 @@ function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <AppSidebar />
-      <main className="flex-1 overflow-auto">
-        {children}
-      </main>
+      <div className="flex flex-1">
+        <DietNavigation />
+        <main className="flex-1 overflow-auto">
+          {children}
+        </main>
+      </div>
     </>
   );
 }

@@ -80,6 +80,33 @@ export type Database = {
           },
         ]
       }
+      diet_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          order_index: number | null
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          order_index?: number | null
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          order_index?: number | null
+          slug?: string
+        }
+        Relationships: []
+      }
       diet_tags: {
         Row: {
           created_at: string
@@ -111,6 +138,7 @@ export type Database = {
       }
       diets: {
         Row: {
+          category_id: string | null
           core_principles: string | null
           created_at: string
           description: string | null
@@ -123,6 +151,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          category_id?: string | null
           core_principles?: string | null
           created_at?: string
           description?: string | null
@@ -135,6 +164,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          category_id?: string | null
           core_principles?: string | null
           created_at?: string
           description?: string | null
@@ -146,7 +176,15 @@ export type Database = {
           target_demographic?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "diets_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "diet_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       food_recommendations: {
         Row: {
