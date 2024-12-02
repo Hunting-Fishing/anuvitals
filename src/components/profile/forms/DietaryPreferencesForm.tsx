@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -36,6 +40,64 @@ const COMMON_ALLERGIES = [
 ];
 
 export function DietaryPreferencesForm({ profile }: DietaryPreferencesFormProps) {
+  const { toast } = useToast();
+  const [newAllergy, setNewAllergy] = useState("");
+  const [newDietType, setNewDietType] = useState("");
+  const [showAllergyInput, setShowAllergyInput] = useState(false);
+  const [showDietTypeInput, setShowDietTypeInput] = useState(false);
+
+  const handleSuggestAllergy = async () => {
+    try {
+      const { error } = await supabase
+        .from('suggested_health_items')
+        .insert({
+          item_type: 'allergy',
+          suggestion: newAllergy,
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Suggestion submitted",
+        description: "Your allergy suggestion has been submitted for review.",
+      });
+      setNewAllergy("");
+      setShowAllergyInput(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit suggestion. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSuggestDietType = async () => {
+    try {
+      const { error } = await supabase
+        .from('suggested_health_items')
+        .insert({
+          item_type: 'diet_type',
+          suggestion: newDietType,
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Suggestion submitted",
+        description: "Your diet type suggestion has been submitted for review.",
+      });
+      setNewDietType("");
+      setShowDietTypeInput(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit suggestion. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -43,7 +105,18 @@ export function DietaryPreferencesForm({ profile }: DietaryPreferencesFormProps)
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="preferred_diet_type">Preferred Diet Type</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="preferred_diet_type">Preferred Diet Type</Label>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowDietTypeInput(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Suggest New
+            </Button>
+          </div>
           <Select name="preferred_diet_type" defaultValue={profile.preferred_diet_type || ""}>
             <SelectTrigger>
               <SelectValue placeholder="Select diet type" />
@@ -58,10 +131,38 @@ export function DietaryPreferencesForm({ profile }: DietaryPreferencesFormProps)
               <SelectItem value="none">No Specific Diet</SelectItem>
             </SelectContent>
           </Select>
+          {showDietTypeInput && (
+            <div className="mt-2 space-y-2">
+              <Input
+                value={newDietType}
+                onChange={(e) => setNewDietType(e.target.value)}
+                placeholder="Enter new diet type"
+              />
+              <div className="flex space-x-2">
+                <Button type="button" onClick={handleSuggestDietType}>
+                  Submit for Review
+                </Button>
+                <Button type="button" variant="ghost" onClick={() => setShowDietTypeInput(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="allergies">Allergies</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="allergies">Allergies</Label>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAllergyInput(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Suggest New
+            </Button>
+          </div>
           <Input
             id="allergies"
             name="allergies"
@@ -91,6 +192,23 @@ export function DietaryPreferencesForm({ profile }: DietaryPreferencesFormProps)
               </button>
             ))}
           </div>
+          {showAllergyInput && (
+            <div className="mt-2 space-y-2">
+              <Input
+                value={newAllergy}
+                onChange={(e) => setNewAllergy(e.target.value)}
+                placeholder="Enter new allergy"
+              />
+              <div className="flex space-x-2">
+                <Button type="button" onClick={handleSuggestAllergy}>
+                  Submit for Review
+                </Button>
+                <Button type="button" variant="ghost" onClick={() => setShowAllergyInput(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
