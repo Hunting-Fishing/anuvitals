@@ -1,8 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { DietDetails } from "@/components/DietDetails";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function DietCategory() {
@@ -42,22 +41,9 @@ export default function DietCategory() {
       </div>
 
       <ScrollArea className="h-[calc(100vh-16rem)]">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-6">
           {diets?.diets?.map((diet) => (
-            <Card key={diet.id}>
-              <CardHeader>
-                <CardTitle>{diet.name}</CardTitle>
-                <CardDescription>{diet.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {diet.is_therapeutic && (
-                  <Badge variant="secondary" className="mb-2">Therapeutic</Badge>
-                )}
-                {diet.core_principles && (
-                  <p className="text-sm text-muted-foreground">{diet.core_principles}</p>
-                )}
-              </CardContent>
-            </Card>
+            <DietDetails key={diet.id} dietId={diet.id} />
           ))}
         </div>
       </ScrollArea>
