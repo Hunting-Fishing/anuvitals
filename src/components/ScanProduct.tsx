@@ -7,7 +7,7 @@ import {
   fetchCategories, 
   fetchAllergens,
   fetchBrands,
-  SearchFilters 
+  type SearchFilters as SearchFiltersType
 } from "@/services/OpenFoodFactsService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,7 +76,7 @@ export function ScanProduct() {
         .map(term => term + ':*')
         .join(' & ');
 
-      const filters: SearchFilters = {
+      const filters: SearchFiltersType = {
         page,
         pageSize: 10,
         categories: selectedCategory,

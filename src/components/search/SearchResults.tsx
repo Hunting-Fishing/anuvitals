@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { ProductDetails } from "@/services/OpenFoodFactsService";
 
 interface SearchResultsProps {
