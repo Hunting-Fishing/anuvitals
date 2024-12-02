@@ -264,30 +264,136 @@ export type Database = {
       }
       diet_categories: {
         Row: {
+          color_scheme: string | null
           created_at: string
           description: string | null
+          icon_name: string | null
           id: string
           name: string
           order_index: number | null
           slug: string
         }
         Insert: {
+          color_scheme?: string | null
           created_at?: string
           description?: string | null
+          icon_name?: string | null
           id?: string
           name: string
           order_index?: number | null
           slug: string
         }
         Update: {
+          color_scheme?: string | null
           created_at?: string
           description?: string | null
+          icon_name?: string | null
           id?: string
           name?: string
           order_index?: number | null
           slug?: string
         }
         Relationships: []
+      }
+      diet_scientific_references: {
+        Row: {
+          authors: string[] | null
+          created_at: string
+          diet_id: string | null
+          doi: string | null
+          id: string
+          journal: string | null
+          key_findings: string | null
+          publication_year: number | null
+          title: string
+          url: string | null
+        }
+        Insert: {
+          authors?: string[] | null
+          created_at?: string
+          diet_id?: string | null
+          doi?: string | null
+          id?: string
+          journal?: string | null
+          key_findings?: string | null
+          publication_year?: number | null
+          title: string
+          url?: string | null
+        }
+        Update: {
+          authors?: string[] | null
+          created_at?: string
+          diet_id?: string | null
+          doi?: string | null
+          id?: string
+          journal?: string | null
+          key_findings?: string | null
+          publication_year?: number | null
+          title?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diet_scientific_references_diet_id_fkey"
+            columns: ["diet_id"]
+            isOneToOne: false
+            referencedRelation: "diets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      diet_success_stories: {
+        Row: {
+          challenges: string | null
+          created_at: string
+          description: string | null
+          diet_id: string | null
+          duration: string | null
+          id: string
+          is_verified: boolean | null
+          results: string | null
+          tips: string | null
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          challenges?: string | null
+          created_at?: string
+          description?: string | null
+          diet_id?: string | null
+          duration?: string | null
+          id?: string
+          is_verified?: boolean | null
+          results?: string | null
+          tips?: string | null
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          challenges?: string | null
+          created_at?: string
+          description?: string | null
+          diet_id?: string | null
+          duration?: string | null
+          id?: string
+          is_verified?: boolean | null
+          results?: string | null
+          tips?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diet_success_stories_diet_id_fkey"
+            columns: ["diet_id"]
+            isOneToOne: false
+            referencedRelation: "diets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       diet_tags: {
         Row: {
@@ -322,40 +428,76 @@ export type Database = {
         Row: {
           category_id: string | null
           core_principles: string | null
+          cost_level: string | null
           created_at: string
           description: string | null
+          difficulty_level: string | null
+          flexibility_rating: number | null
+          foods_to_avoid: string[] | null
           id: string
           is_therapeutic: boolean | null
+          macro_distribution: Json | null
+          meal_timing: string | null
           name: string
           origin: string | null
+          preparation_time: string | null
           primary_goal: Database["public"]["Enums"]["diet_goal_type"] | null
+          recommended_foods: string[] | null
+          risks: string | null
+          scientific_evidence: string | null
+          sustainability_rating: number | null
           target_demographic: string | null
+          typical_duration: string | null
           updated_at: string
         }
         Insert: {
           category_id?: string | null
           core_principles?: string | null
+          cost_level?: string | null
           created_at?: string
           description?: string | null
+          difficulty_level?: string | null
+          flexibility_rating?: number | null
+          foods_to_avoid?: string[] | null
           id?: string
           is_therapeutic?: boolean | null
+          macro_distribution?: Json | null
+          meal_timing?: string | null
           name: string
           origin?: string | null
+          preparation_time?: string | null
           primary_goal?: Database["public"]["Enums"]["diet_goal_type"] | null
+          recommended_foods?: string[] | null
+          risks?: string | null
+          scientific_evidence?: string | null
+          sustainability_rating?: number | null
           target_demographic?: string | null
+          typical_duration?: string | null
           updated_at?: string
         }
         Update: {
           category_id?: string | null
           core_principles?: string | null
+          cost_level?: string | null
           created_at?: string
           description?: string | null
+          difficulty_level?: string | null
+          flexibility_rating?: number | null
+          foods_to_avoid?: string[] | null
           id?: string
           is_therapeutic?: boolean | null
+          macro_distribution?: Json | null
+          meal_timing?: string | null
           name?: string
           origin?: string | null
+          preparation_time?: string | null
           primary_goal?: Database["public"]["Enums"]["diet_goal_type"] | null
+          recommended_foods?: string[] | null
+          risks?: string | null
+          scientific_evidence?: string | null
+          sustainability_rating?: number | null
           target_demographic?: string | null
+          typical_duration?: string | null
           updated_at?: string
         }
         Relationships: [
