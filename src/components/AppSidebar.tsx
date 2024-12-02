@@ -6,7 +6,8 @@ import { NavLink } from "react-router-dom";
 import { useSidebar } from "./ui/sidebar";
 
 export function AppSidebar() {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
 
   return (
     <div
