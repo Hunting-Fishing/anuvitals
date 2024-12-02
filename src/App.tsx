@@ -18,8 +18,8 @@ const queryClient = new QueryClient({
 
 // Initialize Supabase client
 const supabaseClient = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
+  "https://pcjfvrjmuedyytavtrhv.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjamZ2cmptdWVkeXl0YXZ0cmh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMwNzkyNDUsImV4cCI6MjA0ODY1NTI0NX0.1oiHR1ZQPJa1sGEdnMRqhVk-rh45hpJ7jYwS5R7S4ZE"
 );
 
 function App() {
