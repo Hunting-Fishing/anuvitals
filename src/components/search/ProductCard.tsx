@@ -46,18 +46,12 @@ export function ProductCard({
             </div>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
-            <ProductHealthMetrics nutritionalInfo={product.nutritional_info || {}} />
+            <ProductHealthMetrics 
+              nutritionalInfo={product.nutritional_info || {}} 
+              ingredients={product.ingredients}
+            />
           </DialogContent>
         </Dialog>
-
-        <div className="space-y-4">
-          <ProductIngredients
-            ingredients={product.ingredients}
-            nutritionalInfo={product.nutritional_info || {}}
-            isOpen={isOpen}
-            onOpenChange={() => onToggleOpen(productId)}
-          />
-        </div>
       </CardContent>
     </Card>
   );

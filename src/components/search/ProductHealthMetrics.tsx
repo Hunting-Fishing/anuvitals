@@ -8,9 +8,10 @@ import { NutritionalInfo } from "./health-metrics/NutritionalInfo";
 
 interface ProductHealthMetricsProps {
   nutritionalInfo: Record<string, any>;
+  ingredients: string;
 }
 
-export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsProps) {
+export function ProductHealthMetrics({ nutritionalInfo, ingredients }: ProductHealthMetricsProps) {
   const [openRiskLevels, setOpenRiskLevels] = useState<Record<string, boolean>>({
     high: true,
     medium: true,
@@ -70,7 +71,7 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
         </TabsContent>
 
         <TabsContent value="ingredients">
-          <IngredientsList ingredients={nutritionalInfo?.ingredients_text} />
+          <IngredientsList ingredients={ingredients} />
         </TabsContent>
 
         <TabsContent value="nutrition">
