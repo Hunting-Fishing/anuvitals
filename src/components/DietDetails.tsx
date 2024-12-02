@@ -3,74 +3,13 @@ import { useDietData } from "@/hooks/useDietData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  ChevronDown, 
-  ChevronUp,
-  Leaf,
-  Sun,
-  Flame,
-  AlertTriangle
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { LevelDisplay } from "./diet/LevelDisplay";
+import { DietFoodList } from "./diet/DietFoodList";
 
 interface DietDetailsProps {
   dietId: string;
 }
-
-const getLevelColor = (level: string): string => {
-  switch(level) {
-    case 'Beginner':
-    case 'Very Low':
-      return 'text-green-500';
-    case 'Easy':
-    case 'Low':
-      return 'text-green-400';
-    case 'Intermediate':
-    case 'Moderate':
-      return 'text-yellow-500';
-    case 'Advanced':
-    case 'High':
-      return 'text-orange-500';
-    case 'Expert':
-    case 'Very High':
-      return 'text-red-500';
-    default:
-      return 'text-muted-foreground';
-  }
-};
-
-const getLevelIcon = (level: string) => {
-  switch(level) {
-    case 'Beginner':
-    case 'Very Low':
-      return <Leaf className="h-4 w-4" />;
-    case 'Easy':
-    case 'Low':
-      return <Sun className="h-4 w-4" />;
-    case 'Intermediate':
-    case 'Moderate':
-      return <Flame className="h-4 w-4 text-yellow-500" />;
-    case 'Advanced':
-    case 'High':
-      return <AlertTriangle className="h-4 w-4" />;
-    case 'Expert':
-    case 'Very High':
-      return <Flame className="h-4 w-4 text-red-500" />;
-    default:
-      return <Sun className="h-4 w-4" />;
-  }
-};
-
-const LevelDisplay = ({ label, level }: { label: string; level: string }) => (
-  <div className="flex items-center gap-2 bg-secondary/5 px-3 py-2 rounded-lg">
-    <span className="text-sm font-medium">{label}:</span>
-    <div className={cn("flex items-center gap-1 font-semibold", getLevelColor(level))}>
-      {getLevelIcon(level)}
-      <span>{level}</span>
-    </div>
-  </div>
-);
 
 export function DietDetails({ dietId }: DietDetailsProps) {
   const { dietData, isLoading } = useDietData(dietId);
@@ -135,45 +74,16 @@ export function DietDetails({ dietId }: DietDetailsProps) {
             </div>
           )}
 
-          {recommendations.length > 0 && (
-            <div className="rounded-lg bg-secondary/10 p-4">
-              <h4 className="font-semibold mb-2">Recommended Foods</h4>
-              <ScrollArea className="h-32">
-                <ul className="space-y-2">
-                  {recommendations.map((rec) => (
-                    <li key={rec.id} className="text-sm flex items-start gap-2">
-                      <span className="font-medium">{rec.food_name}</span>
-                      {rec.food_category && (
-                        <Badge variant="outline" className="text-xs">
-                          {rec.food_category}
-                        </Badge>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </ScrollArea>
-            </div>
-          )}
+          <DietFoodList 
+            title="Recommended Foods"
+            items={recommendations}
+          />
 
-          {restrictions.length > 0 && (
-            <div className="rounded-lg bg-secondary/10 p-4">
-              <h4 className="font-semibold mb-2">Restricted Foods</h4>
-              <ScrollArea className="h-32">
-                <ul className="space-y-2">
-                  {restrictions.map((res) => (
-                    <li key={res.id} className="text-sm">
-                      <span className="font-medium">{res.food_name}</span>
-                      {res.reason && (
-                        <p className="text-muted-foreground text-xs mt-1">
-                          {res.reason}
-                        </p>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </ScrollArea>
-            </div>
-          )}
+          <DietFoodList 
+            title="Restricted Foods"
+            items={restrictions}
+            showReason
+          />
         </CardContent>
       )}
     </Card>
