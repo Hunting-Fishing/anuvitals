@@ -4,11 +4,64 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { 
+  ChevronDown, 
+  ChevronUp,
+  Leaf,
+  Sun,
+  Flame,
+  SunMedium,
+  Skull
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface DietDetailsProps {
   dietId: string;
 }
+
+const getLevelColor = (level: string): string => {
+  switch(level) {
+    case 'Beginner':
+    case 'Very Low':
+      return 'text-green-500';
+    case 'Easy':
+    case 'Low':
+      return 'text-green-400';
+    case 'Intermediate':
+    case 'Moderate':
+      return 'text-yellow-500';
+    case 'Advanced':
+    case 'High':
+      return 'text-orange-500';
+    case 'Expert':
+    case 'Very High':
+      return 'text-red-500';
+    default:
+      return 'text-muted-foreground';
+  }
+};
+
+const getLevelIcon = (level: string) => {
+  switch(level) {
+    case 'Beginner':
+    case 'Very Low':
+      return <Leaf className="h-4 w-4" />;
+    case 'Easy':
+    case 'Low':
+      return <Leaf className="h-4 w-4" />;
+    case 'Intermediate':
+    case 'Moderate':
+      return <Sun className="h-4 w-4" />;
+    case 'Advanced':
+    case 'High':
+      return <Flame className="h-4 w-4" />;
+    case 'Expert':
+    case 'Very High':
+      return <Skull className="h-4 w-4" />;
+    default:
+      return <SunMedium className="h-4 w-4" />;
+  }
+};
 
 export function DietDetails({ dietId }: DietDetailsProps) {
   const { dietData, isLoading } = useDietData(dietId);
@@ -50,6 +103,28 @@ export function DietDetails({ dietId }: DietDetailsProps) {
             </Badge>
           )}
           
+          <div className="flex gap-4 flex-wrap">
+            {diet.difficulty_level && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">Difficulty:</span>
+                <div className={cn("flex items-center gap-1", getLevelColor(diet.difficulty_level))}>
+                  {getLevelIcon(diet.difficulty_level)}
+                  <span>{diet.difficulty_level}</span>
+                </div>
+              </div>
+            )}
+            
+            {diet.cost_level && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">Cost:</span>
+                <div className={cn("flex items-center gap-1", getLevelColor(diet.cost_level))}>
+                  {getLevelIcon(diet.cost_level)}
+                  <span>{diet.cost_level}</span>
+                </div>
+              </div>
+            )}
+          </div>
+
           {diet.core_principles && (
             <div className="rounded-lg bg-secondary/10 p-4">
               <h4 className="font-semibold mb-2">Core Principles</h4>
