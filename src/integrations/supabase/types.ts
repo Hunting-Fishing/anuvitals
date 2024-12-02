@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      additives: {
+        Row: {
+          body_systems_affected: string[] | null
+          code: string | null
+          created_at: string
+          description: string | null
+          health_impacts: Json | null
+          id: string
+          name: string
+          risk_level: string | null
+          scientific_studies: Json | null
+          updated_at: string
+        }
+        Insert: {
+          body_systems_affected?: string[] | null
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          health_impacts?: Json | null
+          id?: string
+          name: string
+          risk_level?: string | null
+          scientific_studies?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          body_systems_affected?: string[] | null
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          health_impacts?: Json | null
+          id?: string
+          name?: string
+          risk_level?: string | null
+          scientific_studies?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_health_analysis: {
         Row: {
           created_at: string

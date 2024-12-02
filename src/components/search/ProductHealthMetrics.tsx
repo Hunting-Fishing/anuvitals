@@ -1,11 +1,30 @@
+import { useState } from "react";
 import { getMetricColor } from "@/lib/utils";
 import { Beaker, Droplet, Flame, Fish, Wheat, Package } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AdditiveDetails } from "@/components/additives/AdditiveDetails";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ProductHealthMetricsProps {
   nutritionalInfo: Record<string, any>;
 }
 
 export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsProps) {
+  const [selectedAdditive, setSelectedAdditive] = useState<any>(null);
+
+  const { data: additives } = useQuery({
+    queryKey: ["additives"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("additives")
+        .select("*");
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-bold">Product Analysis</h3>
@@ -18,9 +37,17 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
               <Beaker className="h-5 w-5" />
               <span>Additives</span>
             </div>
-            <span className={getMetricColor(70, 'negative')}>
+            <Button 
+              variant="link" 
+              className={getMetricColor(70, 'negative')}
+              onClick={() => {
+                if (additives?.length > 0) {
+                  setSelectedAdditive(additives[0]); // For demo, showing first additive
+                }
+              }}
+            >
               Contains additives to avoid
-            </span>
+            </Button>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -73,6 +100,12 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
           </div>
         </div>
       </div>
+
+      <AdditiveDetails
+        additive={selectedAdditive}
+        isOpen={!!selectedAdditive}
+        onClose={() => setSelectedAdditive(null)}
+      />
     </div>
   );
 }
