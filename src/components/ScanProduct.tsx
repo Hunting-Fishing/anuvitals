@@ -35,7 +35,11 @@ export function ScanProduct() {
 
   return (
     <div className="w-full max-w-md mx-auto p-4 space-y-8">
-      <SearchForm />
+      <SearchForm 
+        categories={categories}
+        allergens={allergens}
+        brands={brands}
+      />
       <ScanForm />
     </div>
   );

@@ -8,7 +8,13 @@ import { Search } from "lucide-react";
 import { SearchFilters } from "./SearchFilters";
 import { SearchResults } from "./SearchResults";
 
-export function SearchForm() {
+interface SearchFormProps {
+  categories: string[];
+  allergens: string[];
+  brands: string[];
+}
+
+export function SearchForm({ categories, allergens, brands }: SearchFormProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
@@ -106,9 +112,9 @@ export function SearchForm() {
         </div>
 
         <SearchFilters
-          categories={[]}
-          allergens={[]}
-          brands={[]}
+          categories={categories}
+          allergens={allergens}
+          brands={brands}
           selectedCategory={selectedCategory}
           selectedAllergen={selectedAllergen}
           selectedBrand={selectedBrand}
