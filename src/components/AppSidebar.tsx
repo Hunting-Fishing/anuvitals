@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Home, Search, ScanLine, Book } from "lucide-react";
+import { Home, ScanLine, Book } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { useSidebarContext } from "./ui/sidebar";
+import { useSidebar } from "./ui/sidebar";
 
 export function AppSidebar() {
-  const { collapsed } = useSidebarContext();
+  const { collapsed } = useSidebar();
 
   return (
     <div
