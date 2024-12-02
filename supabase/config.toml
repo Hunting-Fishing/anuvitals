@@ -4,3 +4,5 @@ project_id = "pcjfvrjmuedyytavtrhv"
 enabled = true
 [api.nutrition-analysis]
 verify_jwt = true
+[api.recipe-search]
+verify_jwt = true
