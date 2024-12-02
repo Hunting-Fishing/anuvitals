@@ -1,7 +1,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, Rocket, Info, Link, Zap, Shield, Search, Brain, Dna, Flask, Microscope, Laptop, BookOpen, Workflow } from "lucide-react";
+import { Star, Rocket, Info, Link, Zap, Shield, Search, Brain, Dna, FlaskConical, Microscope, Laptop, BookOpen, Workflow } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -68,7 +68,7 @@ export default function AboutPage() {
                     description: "Access comprehensive diet guides and nutritional recommendations.",
                   },
                   {
-                    icon: <Flask className="w-8 h-8 text-primary" />,
+                    icon: <FlaskConical className="w-8 h-8 text-primary" />,
                     title: "Health Tracking",
                     description: "Monitor your nutritional progress and health metrics over time.",
                   },
