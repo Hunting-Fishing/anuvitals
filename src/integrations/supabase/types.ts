@@ -48,6 +48,36 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_assistants_config: {
+        Row: {
+          assistant_type: string
+          conversation_history: Json[] | null
+          created_at: string
+          id: string
+          preferences: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assistant_type: string
+          conversation_history?: Json[] | null
+          created_at?: string
+          id?: string
+          preferences?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assistant_type?: string
+          conversation_history?: Json[] | null
+          created_at?: string
+          id?: string
+          preferences?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       blood_marker_recommendations: {
         Row: {
           condition: string

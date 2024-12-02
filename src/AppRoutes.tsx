@@ -7,6 +7,7 @@ import DietCategory from "./pages/DietCategory";
 import DietOverview from "./pages/DietOverview";
 import BloodWorkPage from "./pages/BloodWork";
 import AboutPage from "./pages/About";
+import AIPage from "./pages/AI";
 
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -70,6 +71,14 @@ export function AppRoutes() {
         element={
           <MainLayout>
             <AboutPage />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/ai"
+        element={
+          <MainLayout>
+            <AIPage />
           </MainLayout>
         }
       />
