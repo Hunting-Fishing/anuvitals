@@ -10,7 +10,7 @@ import {
   Leaf,
   Sun,
   Flame,
-  SunMedium,
+  AlertTriangle,
   Skull
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -48,20 +48,30 @@ const getLevelIcon = (level: string) => {
       return <Leaf className="h-4 w-4" />;
     case 'Easy':
     case 'Low':
-      return <Leaf className="h-4 w-4" />;
+      return <Sun className="h-4 w-4" />;
     case 'Intermediate':
     case 'Moderate':
-      return <Sun className="h-4 w-4" />;
+      return <Flame className="h-4 w-4 text-yellow-500" />;
     case 'Advanced':
     case 'High':
-      return <Flame className="h-4 w-4" />;
+      return <AlertTriangle className="h-4 w-4" />;
     case 'Expert':
     case 'Very High':
       return <Skull className="h-4 w-4" />;
     default:
-      return <SunMedium className="h-4 w-4" />;
+      return <Sun className="h-4 w-4" />;
   }
 };
+
+const LevelDisplay = ({ label, level }: { label: string; level: string }) => (
+  <div className="flex items-center gap-2 bg-secondary/5 px-3 py-2 rounded-lg">
+    <span className="text-sm font-medium">{label}:</span>
+    <div className={cn("flex items-center gap-1 font-semibold", getLevelColor(level))}>
+      {getLevelIcon(level)}
+      <span>{level}</span>
+    </div>
+  </div>
+);
 
 export function DietDetails({ dietId }: DietDetailsProps) {
   const { dietData, isLoading } = useDietData(dietId);
@@ -103,25 +113,12 @@ export function DietDetails({ dietId }: DietDetailsProps) {
             </Badge>
           )}
           
-          <div className="flex gap-4 flex-wrap">
+          <div className="flex gap-3 flex-wrap">
             {diet.difficulty_level && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">Difficulty:</span>
-                <div className={cn("flex items-center gap-1", getLevelColor(diet.difficulty_level))}>
-                  {getLevelIcon(diet.difficulty_level)}
-                  <span>{diet.difficulty_level}</span>
-                </div>
-              </div>
+              <LevelDisplay label="Difficulty" level={diet.difficulty_level} />
             )}
-            
             {diet.cost_level && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">Cost:</span>
-                <div className={cn("flex items-center gap-1", getLevelColor(diet.cost_level))}>
-                  {getLevelIcon(diet.cost_level)}
-                  <span>{diet.cost_level}</span>
-                </div>
-              </div>
+              <LevelDisplay label="Cost" level={diet.cost_level} />
             )}
           </div>
 
