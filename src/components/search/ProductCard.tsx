@@ -49,6 +49,7 @@ export function ProductCard({
             <ProductHealthMetrics 
               nutritionalInfo={product.nutritional_info || {}} 
               ingredients={product.ingredients}
+              imageUrl={product.image_url}
             />
           </DialogContent>
         </Dialog>

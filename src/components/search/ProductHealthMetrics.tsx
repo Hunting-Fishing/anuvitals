@@ -9,9 +9,10 @@ import { NutritionalInfo } from "./health-metrics/NutritionalInfo";
 interface ProductHealthMetricsProps {
   nutritionalInfo: Record<string, any>;
   ingredients: string;
+  imageUrl?: string;
 }
 
-export function ProductHealthMetrics({ nutritionalInfo, ingredients }: ProductHealthMetricsProps) {
+export function ProductHealthMetrics({ nutritionalInfo, ingredients, imageUrl }: ProductHealthMetricsProps) {
   const [openRiskLevels, setOpenRiskLevels] = useState<Record<string, boolean>>({
     high: true,
     medium: true,
@@ -51,7 +52,20 @@ export function ProductHealthMetrics({ nutritionalInfo, ingredients }: ProductHe
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-bold">Product Analysis</h3>
+      <div className="flex items-center gap-4">
+        <div>
+          <h3 className="text-lg font-bold">Product Analysis</h3>
+        </div>
+        {imageUrl && (
+          <div className="w-24 h-24 rounded-lg overflow-hidden">
+            <img 
+              src={imageUrl} 
+              alt="Product" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+      </div>
       
       <Tabs defaultValue="risks" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
@@ -71,7 +85,7 @@ export function ProductHealthMetrics({ nutritionalInfo, ingredients }: ProductHe
         </TabsContent>
 
         <TabsContent value="ingredients">
-          <IngredientsList ingredients={ingredients} />
+          <IngredientsList ingredients={ingredients} additives={additives || []} />
         </TabsContent>
 
         <TabsContent value="nutrition">
