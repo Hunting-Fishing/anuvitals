@@ -5,15 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { Upload, Loader2 } from "lucide-react";
-import { createWorker } from "tesseract.js";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from "date-fns";
-
-interface ExtractedResult {
-  marker: string;
-  value: string;
-  unit: string;
-}
+import { ExtractedResult } from "@/types/bloodwork";
+import { processImage } from "@/utils/ocrProcessor";
+import { ExtractedResults } from "./ExtractedResults";
+import { UploadGuidelines } from "./UploadGuidelines";
 
 export function BloodWorkUpload() {
   const [isUploading, setIsUploading] = useState(false);
@@ -22,77 +19,6 @@ export function BloodWorkUpload() {
   const { toast } = useToast();
   const supabase = useSupabaseClient();
   const user = useUser();
-
-  const processImage = async (file: File): Promise<ExtractedResult[]> => {
-    const worker = await createWorker({
-      logger: (m) => {
-        if (m.status === 'recognizing text') {
-          setProgress(`Processing image... ${Math.round(m.progress * 100)}%`);
-        }
-      }
-    });
-
-    try {
-      await worker.loadLanguage('eng');
-      await worker.initialize('eng');
-
-      // Convert file to base64
-      const reader = new FileReader();
-      const base64Image = await new Promise<string>((resolve) => {
-        reader.onload = (e) => resolve(e.target?.result as string);
-        reader.readAsDataURL(file);
-      });
-
-      setProgress("Analyzing image...");
-      const { data: { text } } = await worker.recognize(base64Image);
-      
-      // Process the extracted text to find blood work results
-      const results: ExtractedResult[] = [];
-      const lines = text.split('\n');
-      
-      // Common blood work markers and their variations
-      const markers = [
-        { name: 'Hemoglobin', variations: ['HGB', 'Hgb', 'Hemoglobin'] },
-        { name: 'White Blood Cells', variations: ['WBC', 'White Blood Cells', 'Leukocytes'] },
-        { name: 'Platelets', variations: ['PLT', 'Platelets', 'Thrombocytes'] },
-        { name: 'Red Blood Cells', variations: ['RBC', 'Red Blood Cells', 'Erythrocytes'] },
-        { name: 'Glucose', variations: ['GLU', 'Glucose', 'Blood Sugar'] },
-        { name: 'Cholesterol', variations: ['CHOL', 'Cholesterol', 'Total Cholesterol'] },
-        { name: 'HDL', variations: ['HDL', 'HDL-C', 'High Density Lipoprotein'] },
-        { name: 'LDL', variations: ['LDL', 'LDL-C', 'Low Density Lipoprotein'] },
-        { name: 'Triglycerides', variations: ['TG', 'TRIG', 'Triglycerides'] },
-        { name: 'Vitamin D', variations: ['VIT D', 'Vitamin D', '25-OH Vitamin D'] },
-        { name: 'TSH', variations: ['TSH', 'Thyroid Stimulating Hormone'] },
-        { name: 'Free T4', variations: ['FT4', 'Free T4', 'Thyroxine'] },
-        { name: 'Free T3', variations: ['FT3', 'Free T3', 'Triiodothyronine'] },
-        { name: 'PSA', variations: ['PSA', 'Prostate Specific Antigen'] },
-        { name: 'CA-125', variations: ['CA-125', 'CA 125', 'Cancer Antigen 125'] }
-      ];
-
-      lines.forEach(line => {
-        markers.forEach(marker => {
-          const pattern = new RegExp(
-            `(${marker.variations.join('|')})\\s*[:-]?\\s*(\\d+\\.?\\d*)\\s*(\\w+/?\\w*)?`,
-            'i'
-          );
-          const match = line.match(pattern);
-          if (match) {
-            results.push({
-              marker: marker.name,
-              value: match[2],
-              unit: match[3] || ''
-            });
-          }
-        });
-      });
-
-      await worker.terminate();
-      return results;
-    } catch (error) {
-      await worker.terminate();
-      throw error;
-    }
-  };
 
   const saveResults = async (results: ExtractedResult[]) => {
     if (!user) return;
@@ -131,7 +57,6 @@ export function BloodWorkUpload() {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // Check file type
     const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
     if (!validTypes.includes(file.type)) {
       toast({
@@ -146,8 +71,7 @@ export function BloodWorkUpload() {
     setProgress("Processing image...");
 
     try {
-      // Process the image and extract results
-      const extractedResults = await processImage(file);
+      const extractedResults = await processImage(file, setProgress);
       setResults(extractedResults);
 
       if (extractedResults.length === 0) {
@@ -159,19 +83,7 @@ export function BloodWorkUpload() {
         return;
       }
 
-      // Format the results for display
-      const formattedResults = extractedResults.map(result => 
-        `${result.marker}: ${result.value} ${result.unit}`
-      ).join('\n');
-
-      toast({
-        title: "Results Extracted",
-        description: "The following results were found:\n" + formattedResults,
-      });
-
-      // Save the results
       await saveResults(extractedResults);
-
     } catch (error) {
       toast({
         title: "Processing Failed",
@@ -217,33 +129,8 @@ export function BloodWorkUpload() {
           </Alert>
         )}
 
-        {results.length > 0 && (
-          <Alert>
-            <AlertDescription>
-              <div className="space-y-2">
-                <h4 className="font-semibold">Extracted Results:</h4>
-                {results.map((result, index) => (
-                  <div key={index}>
-                    {result.marker}: {result.value} {result.unit}
-                  </div>
-                ))}
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        <Alert>
-          <AlertDescription>
-            Upload a clear image of your blood work results. The system will attempt to automatically extract the values.
-            For best results:
-            <ul className="list-disc pl-4 mt-2">
-              <li>Ensure the image is clear and well-lit</li>
-              <li>Text should be clearly visible and not blurry</li>
-              <li>Values and units should be readable</li>
-              <li>Supported formats: JPG, PNG, PDF</li>
-            </ul>
-          </AlertDescription>
-        </Alert>
+        <ExtractedResults results={results} />
+        <UploadGuidelines />
       </div>
     </Card>
   );
