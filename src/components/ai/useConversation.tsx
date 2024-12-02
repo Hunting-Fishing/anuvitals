@@ -78,7 +78,7 @@ export function useConversation() {
         .eq('user_id', user.id)
         .order('test_date', { ascending: false })
         .limit(1)
-        .maybeSingle(); // Use maybeSingle() instead of single()
+        .maybeSingle();
 
       if (bloodworkError && bloodworkError.code !== 'PGRST116') {
         throw bloodworkError;
@@ -97,7 +97,19 @@ export function useConversation() {
         },
       });
 
-      if (response.error) throw response.error;
+      if (response.error) {
+        // Check specifically for the OpenAI quota exceeded error
+        if (response.error.message?.includes('exceeded your current quota') || 
+            response.error.message?.includes('check your plan and billing details')) {
+          toast({
+            title: "AI Credits Depleted",
+            description: "AI Credits used up - Please Deposit Credits",
+            variant: "destructive",
+          });
+          return;
+        }
+        throw response.error;
+      }
 
       const aiMessage: Message = {
         role: 'assistant',
