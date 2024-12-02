@@ -77,31 +77,38 @@ export function ScanProduct() {
         allergens: selectedAllergen
       };
       
-      const offResults = await searchProducts(searchQuery, filters);
-      
-      // Then search local database
-      const { data: localResults, error } = await supabase
-        .from("products")
-        .select("*")
-        .textSearch('search_text', searchQuery)
-        .limit(10);
+      const [offResults, supabaseResults] = await Promise.all([
+        searchProducts(searchQuery, filters),
+        supabase
+          .from("products")
+          .select("*")
+          .textSearch('search_text', searchQuery)
+          .limit(10)
+      ]);
 
-      if (error) throw error;
+      if (supabaseResults.error) throw supabaseResults.error;
 
       // Combine and deduplicate results
-      const combinedResults = [...offResults.products, ...(localResults || [])];
-      const uniqueResults = Array.from(new Set(combinedResults.map(p => p.name)))
-        .map(name => combinedResults.find(p => p.name === name));
+      const combinedResults = [...offResults.products, ...(supabaseResults.data || [])];
+      const uniqueResults = Array.from(new Set(combinedResults.map(p => p.barcode)))
+        .map(barcode => combinedResults.find(p => p.barcode === barcode))
+        .filter(p => p); // Remove any undefined results
       
       setSearchResults(uniqueResults);
       
       if (uniqueResults.length === 0) {
         toast({
           title: "No Results",
-          description: "No products found matching your search.",
+          description: `No products found matching "${searchQuery}". Try a different search term or check your filters.`,
+        });
+      } else {
+        toast({
+          title: "Search Complete",
+          description: `Found ${uniqueResults.length} products matching "${searchQuery}"`,
         });
       }
     } catch (error) {
+      console.error("Search error:", error);
       toast({
         title: "Error",
         description: error.message,

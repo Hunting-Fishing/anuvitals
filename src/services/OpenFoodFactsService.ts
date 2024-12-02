@@ -44,26 +44,24 @@ export async function fetchProductDetails(barcode: string): Promise<ProductDetai
       image_url: product.image_url || "N/A"
     };
   } catch (error) {
+    console.error("Error fetching product:", error);
     throw new Error(`Failed to fetch product: ${error.message}`);
   }
 }
 
 export async function searchProducts(query: string, filters: SearchFilters = {}): Promise<SearchResponse> {
-  // Create a params object with all the search parameters
-  const params: Record<string, string> = {
+  // Create search parameters
+  const searchParams = new URLSearchParams({
     search_terms: query,
     json: '1',
     page_size: (filters.pageSize || 20).toString(),
-    page: (filters.page || 1).toString()
-  };
+    page: (filters.page || 1).toString(),
+    search_simple: '1', // Add simple search for better matches
+    brands_tags: filters.brands || '',
+    categories_tags: filters.categories || '',
+    allergens_tags: filters.allergens || ''
+  });
 
-  // Add optional filters if they exist
-  if (filters.brands) params.brands = filters.brands;
-  if (filters.categories) params.categories = filters.categories;
-  if (filters.ingredients) params.ingredients = filters.ingredients;
-  if (filters.allergens) params.allergens = filters.allergens;
-
-  const searchParams = new URLSearchParams(params);
   const url = `${API_BASE_URL}/cgi/search.pl?${searchParams.toString()}`;
   
   try {
@@ -73,6 +71,8 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
     }
     
     const data = await response.json();
+    console.log("API Search Results:", data); // Debug log
+
     return {
       count: data.count,
       page: data.page,
@@ -80,10 +80,12 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
         name: product.product_name || "N/A",
         ingredients: product.ingredients_text || "N/A",
         nutritional_info: product.nutriments || {},
-        image_url: product.image_url || "N/A"
+        image_url: product.image_url || "N/A",
+        barcode: product.code || "N/A"
       }))
     };
   } catch (error) {
+    console.error("Error searching products:", error);
     throw new Error(`Failed to search products: ${error.message}`);
   }
 }
