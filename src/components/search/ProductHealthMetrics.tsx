@@ -6,6 +6,7 @@ import { AdditiveDetails } from "@/components/additives/AdditiveDetails";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ProductHealthMetricsProps {
   nutritionalInfo: Record<string, any>;
@@ -67,104 +68,119 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
     <div className="space-y-4">
       <h3 className="text-lg font-bold">Product Analysis</h3>
       
-      <div className="space-y-2">
-        <h4 className="font-semibold">Negatives</h4>
-        <div className="space-y-2">
+      <Tabs defaultValue="risks" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="risks">Health Risks</TabsTrigger>
+          <TabsTrigger value="ingredients">Ingredients</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="risks" className="space-y-4">
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <Beaker className="h-5 w-5" />
-              <span>Additives</span>
+              <span className="font-semibold">Chemical Additives</span>
               <span className="text-sm text-muted-foreground">({totalHazards} hazards found)</span>
             </div>
-            {groupedAdditives && Object.entries(groupedAdditives).map(([riskLevel, riskAdditives]) => (
-              <Collapsible
-                key={riskLevel}
-                open={openRiskLevels[riskLevel]}
-                onOpenChange={() => toggleRiskLevel(riskLevel)}
-                className="ml-7 space-y-1"
-              >
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`${getRiskLevelColor(riskLevel)} w-full justify-between`}
-                  >
-                    <span className="flex items-center gap-2">
-                      {riskLevel.toUpperCase()} RISK ({riskAdditives.length})
-                    </span>
-                    {openRiskLevels[riskLevel] ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-1">
-                  {riskAdditives.map((additive: any) => (
-                    <Button
-                      key={additive.id}
-                      variant="link"
-                      className={`${getRiskLevelColor(riskLevel)} text-left justify-start w-full`}
-                      onClick={() => setSelectedAdditive(additive)}
-                    >
-                      {additive.code} - {additive.name}
-                    </Button>
-                  ))}
-                </CollapsibleContent>
-              </Collapsible>
-            ))}
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Droplet className="h-5 w-5" />
-              <span>Sodium</span>
-            </div>
-            <span className={getMetricColor(80, 'negative')}>
-              {nutritionalInfo?.salt_100g || 0}g
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Flame className="h-5 w-5" />
-              <span>Calories</span>
-            </div>
-            <span className={getMetricColor(60, 'negative')}>
-              {nutritionalInfo?.energy_100g || 0} kcal
-            </span>
-          </div>
-        </div>
 
-        <h4 className="font-semibold mt-4">Positives</h4>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Fish className="h-5 w-5" />
-              <span>Protein</span>
+            {groupedAdditives && ['high', 'medium', 'low'].map((riskLevel) => {
+              const riskAdditives = groupedAdditives[riskLevel] || [];
+              if (riskAdditives.length === 0) return null;
+              
+              return (
+                <Collapsible
+                  key={riskLevel}
+                  open={openRiskLevels[riskLevel]}
+                  onOpenChange={() => toggleRiskLevel(riskLevel)}
+                  className="space-y-1"
+                >
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`${getRiskLevelColor(riskLevel)} w-full justify-between`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="w-8">{riskAdditives.length}</span>
+                        {riskLevel.toUpperCase()} RISK
+                      </span>
+                      {openRiskLevels[riskLevel] ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="space-y-1 pl-8">
+                    {riskAdditives.map((additive: any) => (
+                      <Button
+                        key={additive.id}
+                        variant="link"
+                        className={`${getRiskLevelColor(riskLevel)} text-left justify-start w-full`}
+                        onClick={() => setSelectedAdditive(additive)}
+                      >
+                        {additive.code} - {additive.name}
+                      </Button>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              );
+            })}
+
+            <div className="mt-6 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Droplet className="h-5 w-5" />
+                  <span>Sodium</span>
+                </div>
+                <span className={getMetricColor(80, 'negative')}>
+                  {nutritionalInfo?.salt_100g || 0}g
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Flame className="h-5 w-5" />
+                  <span>Calories</span>
+                </div>
+                <span className={getMetricColor(60, 'negative')}>
+                  {nutritionalInfo?.energy_100g || 0} kcal
+                </span>
+              </div>
             </div>
-            <span className={getMetricColor(80, 'positive')}>
-              {nutritionalInfo?.proteins_100g || 0}g
-            </span>
           </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Wheat className="h-5 w-5" />
-              <span>Fiber</span>
+        </TabsContent>
+
+        <TabsContent value="ingredients" className="space-y-4">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Fish className="h-5 w-5" />
+                <span>Protein</span>
+              </div>
+              <span className={getMetricColor(80, 'positive')}>
+                {nutritionalInfo?.proteins_100g || 0}g
+              </span>
             </div>
-            <span className={getMetricColor(60, 'positive')}>
-              {nutritionalInfo?.fiber_100g || 0}g
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              <span>Sugar</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Wheat className="h-5 w-5" />
+                <span>Fiber</span>
+              </div>
+              <span className={getMetricColor(60, 'positive')}>
+                {nutritionalInfo?.fiber_100g || 0}g
+              </span>
             </div>
-            <span className={getMetricColor(90, 'positive')}>
-              {nutritionalInfo?.sugars_100g || 0}g
-            </span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Package className="h-5 w-5" />
+                <span>Sugar</span>
+              </div>
+              <span className={getMetricColor(90, 'positive')}>
+                {nutritionalInfo?.sugars_100g || 0}g
+              </span>
+            </div>
           </div>
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
 
       <AdditiveDetails
         additive={selectedAdditive}
