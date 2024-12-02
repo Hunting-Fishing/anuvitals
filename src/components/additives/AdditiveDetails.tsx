@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Brain, Heart, Stomach } from "lucide-react";
+import { AlertTriangle, Brain, Heart, Pill } from "lucide-react";
 
 interface AdditiveDetailsProps {
   additive: {
@@ -20,7 +20,7 @@ interface AdditiveDetailsProps {
 
 const bodySystemIcons: Record<string, React.ReactNode> = {
   "nervous system": <Brain className="h-4 w-4" />,
-  "digestive system": <Stomach className="h-4 w-4" />,
+  "digestive system": <Pill className="h-4 w-4" />,
   "cardiovascular system": <Heart className="h-4 w-4" />,
 };
 
