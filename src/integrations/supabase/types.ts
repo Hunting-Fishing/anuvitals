@@ -18,6 +18,7 @@ export type Database = {
           ingredients: string | null
           name: string | null
           nutritional_info: Json | null
+          search_text: unknown | null
           user_id: string
         }
         Insert: {
@@ -28,6 +29,7 @@ export type Database = {
           ingredients?: string | null
           name?: string | null
           nutritional_info?: Json | null
+          search_text?: unknown | null
           user_id: string
         }
         Update: {
@@ -38,6 +40,7 @@ export type Database = {
           ingredients?: string | null
           name?: string | null
           nutritional_info?: Json | null
+          search_text?: unknown | null
           user_id?: string
         }
         Relationships: []
