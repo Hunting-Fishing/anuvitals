@@ -126,26 +126,41 @@ export type Database = {
         Row: {
           allergies: string[] | null
           avatar_url: string | null
+          dietary_preferences: string[] | null
           full_name: string | null
+          health_conditions: string[] | null
           id: string
+          notification_preferences: Json | null
+          preferred_diet_type: string | null
           updated_at: string
           username: string | null
+          weight_goals: string | null
         }
         Insert: {
           allergies?: string[] | null
           avatar_url?: string | null
+          dietary_preferences?: string[] | null
           full_name?: string | null
+          health_conditions?: string[] | null
           id: string
+          notification_preferences?: Json | null
+          preferred_diet_type?: string | null
           updated_at?: string
           username?: string | null
+          weight_goals?: string | null
         }
         Update: {
           allergies?: string[] | null
           avatar_url?: string | null
+          dietary_preferences?: string[] | null
           full_name?: string | null
+          health_conditions?: string[] | null
           id?: string
+          notification_preferences?: Json | null
+          preferred_diet_type?: string | null
           updated_at?: string
           username?: string | null
+          weight_goals?: string | null
         }
         Relationships: []
       }
