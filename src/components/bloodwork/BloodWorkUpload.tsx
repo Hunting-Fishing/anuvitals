@@ -7,6 +7,7 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { Upload, Loader2 } from "lucide-react";
 import { createWorker } from "tesseract.js";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { format } from "date-fns";
 
 interface ExtractedResult {
   marker: string;
@@ -17,14 +18,24 @@ interface ExtractedResult {
 export function BloodWorkUpload() {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState<string>("");
+  const [results, setResults] = useState<ExtractedResult[]>([]);
   const { toast } = useToast();
   const supabase = useSupabaseClient();
   const user = useUser();
 
   const processImage = async (file: File): Promise<ExtractedResult[]> => {
-    const worker = await createWorker('eng');
-    
+    const worker = await createWorker({
+      logger: (m) => {
+        if (m.status === 'recognizing text') {
+          setProgress(`Processing image... ${Math.round(m.progress * 100)}%`);
+        }
+      }
+    });
+
     try {
+      await worker.loadLanguage('eng');
+      await worker.initialize('eng');
+
       // Convert file to base64
       const reader = new FileReader();
       const base64Image = await new Promise<string>((resolve) => {
@@ -44,7 +55,18 @@ export function BloodWorkUpload() {
         { name: 'Hemoglobin', variations: ['HGB', 'Hgb', 'Hemoglobin'] },
         { name: 'White Blood Cells', variations: ['WBC', 'White Blood Cells', 'Leukocytes'] },
         { name: 'Platelets', variations: ['PLT', 'Platelets', 'Thrombocytes'] },
-        // Add more markers as needed
+        { name: 'Red Blood Cells', variations: ['RBC', 'Red Blood Cells', 'Erythrocytes'] },
+        { name: 'Glucose', variations: ['GLU', 'Glucose', 'Blood Sugar'] },
+        { name: 'Cholesterol', variations: ['CHOL', 'Cholesterol', 'Total Cholesterol'] },
+        { name: 'HDL', variations: ['HDL', 'HDL-C', 'High Density Lipoprotein'] },
+        { name: 'LDL', variations: ['LDL', 'LDL-C', 'Low Density Lipoprotein'] },
+        { name: 'Triglycerides', variations: ['TG', 'TRIG', 'Triglycerides'] },
+        { name: 'Vitamin D', variations: ['VIT D', 'Vitamin D', '25-OH Vitamin D'] },
+        { name: 'TSH', variations: ['TSH', 'Thyroid Stimulating Hormone'] },
+        { name: 'Free T4', variations: ['FT4', 'Free T4', 'Thyroxine'] },
+        { name: 'Free T3', variations: ['FT3', 'Free T3', 'Triiodothyronine'] },
+        { name: 'PSA', variations: ['PSA', 'Prostate Specific Antigen'] },
+        { name: 'CA-125', variations: ['CA-125', 'CA 125', 'Cancer Antigen 125'] }
       ];
 
       lines.forEach(line => {
@@ -72,18 +94,63 @@ export function BloodWorkUpload() {
     }
   };
 
+  const saveResults = async (results: ExtractedResult[]) => {
+    if (!user) return;
+
+    const formattedResults: Record<string, { value: number; unit: string }> = {};
+    results.forEach((result) => {
+      formattedResults[result.marker] = {
+        value: parseFloat(result.value),
+        unit: result.unit
+      };
+    });
+
+    try {
+      const { error } = await supabase.from("blood_work_results").insert({
+        user_id: user.id,
+        test_date: format(new Date(), 'yyyy-MM-dd'),
+        results: formattedResults
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Blood work results have been saved successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save blood work results.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
+
+    // Check file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+    if (!validTypes.includes(file.type)) {
+      toast({
+        title: "Invalid File Type",
+        description: "Please upload a JPG, PNG, or PDF file.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsUploading(true);
     setProgress("Processing image...");
 
     try {
       // Process the image and extract results
-      const results = await processImage(file);
+      const extractedResults = await processImage(file);
+      setResults(extractedResults);
 
-      if (results.length === 0) {
+      if (extractedResults.length === 0) {
         toast({
           title: "No Results Found",
           description: "Could not detect any blood work results in the image. Please try a clearer image or enter values manually.",
@@ -93,7 +160,7 @@ export function BloodWorkUpload() {
       }
 
       // Format the results for display
-      const formattedResults = results.map(result => 
+      const formattedResults = extractedResults.map(result => 
         `${result.marker}: ${result.value} ${result.unit}`
       ).join('\n');
 
@@ -102,8 +169,8 @@ export function BloodWorkUpload() {
         description: "The following results were found:\n" + formattedResults,
       });
 
-      // TODO: Add a confirmation step before saving to database
-      // For now, we'll just show what was found
+      // Save the results
+      await saveResults(extractedResults);
 
     } catch (error) {
       toast({
@@ -150,6 +217,21 @@ export function BloodWorkUpload() {
           </Alert>
         )}
 
+        {results.length > 0 && (
+          <Alert>
+            <AlertDescription>
+              <div className="space-y-2">
+                <h4 className="font-semibold">Extracted Results:</h4>
+                {results.map((result, index) => (
+                  <div key={index}>
+                    {result.marker}: {result.value} {result.unit}
+                  </div>
+                ))}
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <Alert>
           <AlertDescription>
             Upload a clear image of your blood work results. The system will attempt to automatically extract the values.
@@ -158,6 +240,7 @@ export function BloodWorkUpload() {
               <li>Ensure the image is clear and well-lit</li>
               <li>Text should be clearly visible and not blurry</li>
               <li>Values and units should be readable</li>
+              <li>Supported formats: JPG, PNG, PDF</li>
             </ul>
           </AlertDescription>
         </Alert>
