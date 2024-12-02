@@ -21,21 +21,35 @@ export default function DietCategory() {
       const { data: diets } = await supabase
         .from("diets")
         .select("*")
-        .eq("category_id", category.id);
+        .eq("category_id", category.id)
+        .order('name');
 
       return { category, diets };
     }
   });
 
   if (isLoading) {
-    return <div className="p-8">Loading diets...</div>;
+    return (
+      <div className="p-8 flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading diets...</div>
+      </div>
+    );
+  }
+
+  if (!diets?.category) {
+    return (
+      <div className="p-8 text-center">
+        <h1 className="text-2xl font-bold text-destructive">Category not found</h1>
+        <p className="text-muted-foreground mt-2">The requested category does not exist.</p>
+      </div>
+    );
   }
 
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">{diets?.category.name}</h1>
-        {diets?.category.description && (
+        <h1 className="text-3xl font-bold">{diets.category.name}</h1>
+        {diets.category.description && (
           <p className="text-muted-foreground mt-2">{diets.category.description}</p>
         )}
       </div>

@@ -25,13 +25,14 @@ export function DietDetails({ dietId }: DietDetailsProps) {
   const { diet, recommendations, restrictions } = dietData;
 
   return (
-    <Card className="w-full">
+    <Card className="w-full animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{diet.name}</CardTitle>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setShowDetails(!showDetails)}
+          className="transition-transform duration-200"
         >
           {showDetails ? (
             <ChevronUp className="h-4 w-4" />
@@ -44,33 +45,37 @@ export function DietDetails({ dietId }: DietDetailsProps) {
       {showDetails && (
         <CardContent className="space-y-4">
           {diet.primary_goal && (
-            <Badge variant="secondary">{diet.primary_goal}</Badge>
+            <Badge variant="secondary" className="mb-2">
+              {diet.primary_goal}
+            </Badge>
           )}
           
           {diet.core_principles && (
-            <div>
+            <div className="rounded-lg bg-secondary/10 p-4">
               <h4 className="font-semibold mb-2">Core Principles</h4>
               <p className="text-sm text-muted-foreground">{diet.core_principles}</p>
             </div>
           )}
 
           {diet.target_demographic && (
-            <div>
+            <div className="rounded-lg bg-secondary/10 p-4">
               <h4 className="font-semibold mb-2">Target Demographic</h4>
               <p className="text-sm text-muted-foreground">{diet.target_demographic}</p>
             </div>
           )}
 
           {recommendations.length > 0 && (
-            <div>
+            <div className="rounded-lg bg-secondary/10 p-4">
               <h4 className="font-semibold mb-2">Recommended Foods</h4>
               <ScrollArea className="h-32">
                 <ul className="space-y-2">
                   {recommendations.map((rec) => (
-                    <li key={rec.id} className="text-sm">
+                    <li key={rec.id} className="text-sm flex items-start gap-2">
                       <span className="font-medium">{rec.food_name}</span>
                       {rec.food_category && (
-                        <span className="text-muted-foreground"> ({rec.food_category})</span>
+                        <Badge variant="outline" className="text-xs">
+                          {rec.food_category}
+                        </Badge>
                       )}
                     </li>
                   ))}
@@ -80,7 +85,7 @@ export function DietDetails({ dietId }: DietDetailsProps) {
           )}
 
           {restrictions.length > 0 && (
-            <div>
+            <div className="rounded-lg bg-secondary/10 p-4">
               <h4 className="font-semibold mb-2">Restricted Foods</h4>
               <ScrollArea className="h-32">
                 <ul className="space-y-2">
@@ -88,7 +93,9 @@ export function DietDetails({ dietId }: DietDetailsProps) {
                     <li key={res.id} className="text-sm">
                       <span className="font-medium">{res.food_name}</span>
                       {res.reason && (
-                        <span className="text-muted-foreground"> - {res.reason}</span>
+                        <p className="text-muted-foreground text-xs mt-1">
+                          {res.reason}
+                        </p>
                       )}
                     </li>
                   ))}
