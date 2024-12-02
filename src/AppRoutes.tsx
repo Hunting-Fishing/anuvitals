@@ -11,7 +11,6 @@ function MainLayout({ children }: { children: React.ReactNode }) {
     <>
       <AppSidebar />
       <div className="flex flex-1">
-        <DietNavigation />
         <main className="flex-1 overflow-auto">
           {children}
         </main>
