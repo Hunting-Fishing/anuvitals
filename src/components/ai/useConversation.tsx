@@ -43,7 +43,7 @@ export function useConversation() {
       if (error) throw error;
 
       if (data?.conversation_history) {
-        setMessages(data.conversation_history);
+        setMessages(data.conversation_history as Message[]);
       }
     } catch (error) {
       toast({
@@ -58,8 +58,8 @@ export function useConversation() {
     if (!message.trim() || !user) return;
 
     setIsLoading(true);
-    const userMessage = { role: 'user' as const, content: message };
-    setMessages(prev => [...prev, userMessage]);
+    const userMessage: Message = { role: 'user', content: message };
+    setMessages((prev: Message[]) => [...prev, userMessage]);
     setMessage('');
 
     try {
@@ -92,8 +92,8 @@ export function useConversation() {
 
       if (response.error) throw response.error;
 
-      const aiMessage = {
-        role: 'assistant' as const,
+      const aiMessage: Message = {
+        role: 'assistant',
         content: response.data.response,
       };
 
