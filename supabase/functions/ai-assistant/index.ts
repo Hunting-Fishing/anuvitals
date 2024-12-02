@@ -61,7 +61,6 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
     const { userId, assistantType, message, context } = await req.json() as AssistantRequest;
 
-    // Fetch conversation history
     const { data: configData, error: configError } = await supabase
       .from('ai_assistants_config')
       .select('conversation_history')
@@ -78,64 +77,89 @@ serve(async (req) => {
 
     const messages: AssistantMessage[] = [
       { role: 'system', content: systemPrompt },
-      ...conversationHistory.slice(-5), // Keep last 5 messages for context
+      ...conversationHistory.slice(-5),
       { role: 'user', content: message }
     ];
 
-    const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages,
-        temperature: 0.7,
-      }),
-    });
+    try {
+      const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${openAIApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages,
+          temperature: 0.7,
+        }),
+      });
 
-    if (!openAIResponse.ok) {
-      const errorData = await openAIResponse.json();
-      console.error('OpenAI API Error:', errorData);
-      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
+      if (!openAIResponse.ok) {
+        const errorData = await openAIResponse.json();
+        console.error('OpenAI API Error:', errorData);
+        
+        // Handle quota exceeded error specifically
+        if (errorData.error?.message?.includes('exceeded your current quota')) {
+          return new Response(
+            JSON.stringify({ 
+              error: 'AI service is temporarily unavailable. Please try again later or contact support.',
+              details: 'Quota exceeded'
+            }),
+            {
+              status: 503,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+        
+        throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
+      }
+
+      const data = await openAIResponse.json();
+      
+      if (!data.choices?.[0]?.message?.content) {
+        console.error('Invalid OpenAI response format:', data);
+        throw new Error('Invalid response format from OpenAI API');
+      }
+
+      const generatedText = data.choices[0].message.content;
+
+      // Update conversation history
+      const newHistory = [
+        ...conversationHistory,
+        { role: 'user', content: message },
+        { role: 'assistant', content: generatedText }
+      ];
+
+      // Update conversation history in database
+      const { error: updateError } = await supabase
+        .from('ai_assistants_config')
+        .update({ conversation_history: newHistory })
+        .eq('user_id', userId)
+        .eq('assistant_type', assistantType);
+
+      if (updateError) {
+        console.error('Error updating conversation history:', updateError);
+      }
+
+      return new Response(JSON.stringify({ response: generatedText }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    } catch (openAIError) {
+      console.error('OpenAI API call failed:', openAIError);
+      throw openAIError;
     }
-
-    const data = await openAIResponse.json();
-    
-    if (!data.choices?.[0]?.message?.content) {
-      console.error('Invalid OpenAI response format:', data);
-      throw new Error('Invalid response format from OpenAI API');
-    }
-
-    const generatedText = data.choices[0].message.content;
-
-    // Update conversation history
-    const newHistory = [
-      ...conversationHistory,
-      { role: 'user', content: message },
-      { role: 'assistant', content: generatedText }
-    ];
-
-    // Update conversation history in database
-    const { error: updateError } = await supabase
-      .from('ai_assistants_config')
-      .update({ conversation_history: newHistory })
-      .eq('user_id', userId)
-      .eq('assistant_type', assistantType);
-
-    if (updateError) {
-      console.error('Error updating conversation history:', updateError);
-    }
-
-    return new Response(JSON.stringify({ response: generatedText }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
   } catch (error) {
     console.error('Error in ai-assistant function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ 
+        error: error.message,
+        details: error.cause || error.stack
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 });
