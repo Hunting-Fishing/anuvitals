@@ -94,6 +94,18 @@ export type Database = {
         }
         Returns: Database["public"]["CompositeTypes"]["tablefunc_crosstab_4"][]
       }
+      dmetaphone: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      dmetaphone_alt: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
       each: {
         Args: {
           hs: unknown
@@ -877,6 +889,12 @@ export type Database = {
         }
         Returns: number[]
       }
+      soundex: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
       sparsevec_out: {
         Args: {
           "": unknown
@@ -900,6 +918,12 @@ export type Database = {
           "": unknown
         }
         Returns: string[]
+      }
+      text_soundex: {
+        Args: {
+          "": string
+        }
+        Returns: string
       }
       text_to_bytea: {
         Args: {
