@@ -127,11 +127,21 @@ export function useConversation() {
 
       if (updateError) throw updateError;
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to get AI response",
-        variant: "destructive",
-      });
+      // Show specific error message for quota exceeded
+      if (error.message?.includes('exceeded your current quota') || 
+          error.message?.includes('check your plan and billing details')) {
+        toast({
+          title: "AI Credits Depleted",
+          description: "AI Credits used up - Please Deposit Credits",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to get AI response",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
