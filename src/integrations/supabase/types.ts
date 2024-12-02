@@ -15,6 +15,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _intbig_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      _intbig_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
       akeys: {
         Args: {
           "": unknown
@@ -40,11 +52,425 @@ export type Database = {
             }
             Returns: unknown
           }
+      bqarr_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      bqarr_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      bytea_to_text: {
+        Args: {
+          data: string
+        }
+        Returns: string
+      }
+      crosstab: {
+        Args: {
+          "": string
+        }
+        Returns: Record<string, unknown>[]
+      }
+      crosstab2: {
+        Args: {
+          "": string
+        }
+        Returns: Database["public"]["CompositeTypes"]["tablefunc_crosstab_2"][]
+      }
+      crosstab3: {
+        Args: {
+          "": string
+        }
+        Returns: Database["public"]["CompositeTypes"]["tablefunc_crosstab_3"][]
+      }
+      crosstab4: {
+        Args: {
+          "": string
+        }
+        Returns: Database["public"]["CompositeTypes"]["tablefunc_crosstab_4"][]
+      }
       each: {
         Args: {
           hs: unknown
         }
         Returns: Record<string, unknown>[]
+      }
+      g_int_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      g_int_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      g_int_options: {
+        Args: {
+          "": unknown
+        }
+        Returns: undefined
+      }
+      g_intbig_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      g_intbig_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      g_intbig_options: {
+        Args: {
+          "": unknown
+        }
+        Returns: undefined
+      }
+      gbt_bit_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_bool_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_bool_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_bpchar_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_bytea_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_cash_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_cash_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_date_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_date_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_enum_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_enum_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_float4_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_float4_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_float8_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_float8_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_inet_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_int2_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_int2_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_int4_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_int4_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_int8_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_int8_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_intv_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_intv_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_intv_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_macad_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_macad_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_macad8_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_macad8_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_numeric_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_oid_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_oid_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_text_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_time_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_time_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_timetz_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_ts_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_ts_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_tstz_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_uuid_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_uuid_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_var_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbt_var_fetch: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey_var_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey_var_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey16_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey16_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey2_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey2_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey32_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey32_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey4_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey4_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey8_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gbtreekey8_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
       }
       ghstore_compress: {
         Args: {
@@ -245,6 +671,116 @@ export type Database = {
         }
         Returns: number
       }
+      http: {
+        Args: {
+          request: Database["public"]["CompositeTypes"]["http_request"]
+        }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_delete:
+        | {
+            Args: {
+              uri: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+        | {
+            Args: {
+              uri: string
+              content: string
+              content_type: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+      http_get:
+        | {
+            Args: {
+              uri: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+        | {
+            Args: {
+              uri: string
+              data: Json
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+      http_head: {
+        Args: {
+          uri: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_header: {
+        Args: {
+          field: string
+          value: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["http_header"]
+      }
+      http_list_curlopt: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          curlopt: string
+          value: string
+        }[]
+      }
+      http_patch: {
+        Args: {
+          uri: string
+          content: string
+          content_type: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_post:
+        | {
+            Args: {
+              uri: string
+              content: string
+              content_type: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+        | {
+            Args: {
+              uri: string
+              data: Json
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+      http_put: {
+        Args: {
+          uri: string
+          content: string
+          content_type: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_reset_curlopt: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      http_set_curlopt: {
+        Args: {
+          curlopt: string
+          value: string
+        }
+        Returns: boolean
+      }
+      icount: {
+        Args: {
+          "": number[]
+        }
+        Returns: number
+      }
+      intset: {
+        Args: {
+          "": number
+        }
+        Returns: number[]
+      }
       ivfflat_bit_support: {
         Args: {
           "": unknown
@@ -295,6 +831,12 @@ export type Database = {
             }
             Returns: unknown
           }
+      querytree: {
+        Args: {
+          "": unknown
+        }
+        Returns: string
+      }
       set_limit: {
         Args: {
           "": number
@@ -316,6 +858,24 @@ export type Database = {
           "": unknown
         }
         Returns: string[]
+      }
+      sort: {
+        Args: {
+          "": number[]
+        }
+        Returns: number[]
+      }
+      sort_asc: {
+        Args: {
+          "": number[]
+        }
+        Returns: number[]
+      }
+      sort_desc: {
+        Args: {
+          "": number[]
+        }
+        Returns: number[]
       }
       sparsevec_out: {
         Args: {
@@ -341,6 +901,49 @@ export type Database = {
         }
         Returns: string[]
       }
+      text_to_bytea: {
+        Args: {
+          data: string
+        }
+        Returns: string
+      }
+      unaccent: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      unaccent_init: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      uniq: {
+        Args: {
+          "": number[]
+        }
+        Returns: number[]
+      }
+      urlencode:
+        | {
+            Args: {
+              data: Json
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              string: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              string: string
+            }
+            Returns: string
+          }
       vector_avg: {
         Args: {
           "": number[]
@@ -389,7 +992,41 @@ export type Database = {
       [_ in never]: never
     }
     CompositeTypes: {
-      [_ in never]: never
+      http_header: {
+        field: string | null
+        value: string | null
+      }
+      http_request: {
+        method: unknown | null
+        uri: string | null
+        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
+        content_type: string | null
+        content: string | null
+      }
+      http_response: {
+        status: number | null
+        content_type: string | null
+        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
+        content: string | null
+      }
+      tablefunc_crosstab_2: {
+        row_name: string | null
+        category_1: string | null
+        category_2: string | null
+      }
+      tablefunc_crosstab_3: {
+        row_name: string | null
+        category_1: string | null
+        category_2: string | null
+        category_3: string | null
+      }
+      tablefunc_crosstab_4: {
+        row_name: string | null
+        category_1: string | null
+        category_2: string | null
+        category_3: string | null
+        category_4: string | null
+      }
     }
   }
 }
