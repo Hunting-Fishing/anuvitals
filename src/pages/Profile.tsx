@@ -12,11 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const user = useUser();
   const supabase = useSupabaseClient();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({
     full_name: "",
@@ -30,21 +32,28 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    if (user) {
-      getProfile();
+    if (!user) {
+      navigate("/auth");
+      return;
     }
+    getProfile();
   }, [user]);
 
   const getProfile = async () => {
     try {
       setLoading(true);
+      if (!user) return;
+
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user?.id)
+        .eq("id", user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching profile:", error);
+        throw error;
+      }
 
       if (data) {
         setProfile({
@@ -72,10 +81,18 @@ const Profile = () => {
   const updateProfile = async () => {
     try {
       setLoading(true);
+      if (!user) return;
+
+      const updates = {
+        id: user.id,
+        ...profile,
+        updated_at: new Date().toISOString(),
+      };
+
       const { error } = await supabase
         .from("profiles")
-        .update(profile)
-        .eq("id", user?.id);
+        .upsert(updates)
+        .eq("id", user.id);
 
       if (error) throw error;
 
@@ -84,6 +101,7 @@ const Profile = () => {
         description: "Profile updated successfully",
       });
     } catch (error) {
+      console.error("Error updating profile:", error);
       toast({
         title: "Error",
         description: "Error updating profile",
