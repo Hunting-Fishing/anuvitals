@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import { AppSidebar } from "./components/AppSidebar";
-import { DietNavigation } from "./components/DietNavigation";
 import Index from "./pages/Index";
 import AuthPage from "./pages/Auth";
 import ScanPage from "./pages/Scan";
 import DietCategory from "./pages/DietCategory";
+import DietOverview from "./pages/DietOverview";
 
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -44,6 +44,14 @@ export function AppRoutes() {
         element={
           <MainLayout>
             <DietCategory />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/diets/category/all"
+        element={
+          <MainLayout>
+            <DietOverview />
           </MainLayout>
         }
       />
