@@ -1,33 +1,9 @@
-const API_BASE_URL = "https://world.openfoodfacts.org";
-
-export interface ProductDetails {
-  name: string;
-  ingredients: string;
-  nutritional_info: Record<string, any>;
-  image_url: string;
-  barcode: string;
-}
-
-export interface SearchFilters {
-  brands?: string;
-  categories?: string;
-  ingredients?: string;
-  allergens?: string;
-  page?: number;
-  pageSize?: number;
-}
-
-export interface SearchResponse {
-  count: number;
-  page: number;
-  products: ProductDetails[];
-}
+import { API_ENDPOINTS, FALLBACK_ALLERGENS, FALLBACK_BRANDS, FALLBACK_CATEGORIES } from './constants/OpenFoodFactsConstants';
+import type { ProductDetails, SearchFilters, SearchResponse } from './types/OpenFoodFactsTypes';
 
 export async function fetchProductDetails(barcode: string): Promise<ProductDetails> {
-  const url = `${API_BASE_URL}/api/v0/product/${barcode}.json`;
-  
   try {
-    const response = await fetch(url);
+    const response = await fetch(API_ENDPOINTS.PRODUCT(barcode));
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);
     }
@@ -70,10 +46,8 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
     searchParams.append('allergens_tags', filters.allergens);
   }
 
-  const url = `${API_BASE_URL}/cgi/search.pl?${searchParams.toString()}`;
-  
   try {
-    const response = await fetch(url);
+    const response = await fetch(`${API_ENDPOINTS.SEARCH}?${searchParams.toString()}`);
     if (!response.ok) {
       throw new Error(`Search API Error: ${response.status}`);
     }
@@ -102,49 +76,9 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
   }
 }
 
-// Common categories that we'll use as fallback
-const FALLBACK_CATEGORIES = [
-  "Snacks",
-  "Beverages",
-  "Dairy",
-  "Bread",
-  "Cereals",
-  "Fruits",
-  "Vegetables",
-  "Meat",
-  "Fish",
-  "Sweets"
-];
-
-// Common allergens that we'll use as fallback
-const FALLBACK_ALLERGENS = [
-  "Milk",
-  "Eggs",
-  "Fish",
-  "Shellfish",
-  "Tree nuts",
-  "Peanuts",
-  "Wheat",
-  "Soybeans"
-];
-
-// Common brands that we'll use as fallback
-const FALLBACK_BRANDS = [
-  "Nestle",
-  "Kellogg's",
-  "Kraft",
-  "General Mills",
-  "Pepsi",
-  "Coca-Cola",
-  "Unilever",
-  "Mars",
-  "Danone",
-  "Campbell's"
-];
-
 export async function fetchCategories(): Promise<string[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/categories.json`);
+    const response = await fetch(API_ENDPOINTS.CATEGORIES);
     if (!response.ok) {
       throw new Error(`Categories API Error: ${response.status}`);
     }
@@ -159,7 +93,7 @@ export async function fetchCategories(): Promise<string[]> {
 
 export async function fetchAllergens(): Promise<string[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/allergens.json`);
+    const response = await fetch(API_ENDPOINTS.ALLERGENS);
     if (!response.ok) {
       throw new Error(`Allergens API Error: ${response.status}`);
     }
@@ -174,7 +108,7 @@ export async function fetchAllergens(): Promise<string[]> {
 
 export async function fetchBrands(): Promise<string[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/brands.json`);
+    const response = await fetch(API_ENDPOINTS.BRANDS);
     if (!response.ok) {
       throw new Error(`Brands API Error: ${response.status}`);
     }
@@ -188,15 +122,13 @@ export async function fetchBrands(): Promise<string[]> {
 }
 
 export async function contributeProduct(productData: Partial<ProductDetails>, barcode: string): Promise<void> {
-  const url = `${API_BASE_URL}/cgi/product_jqm2.pl`;
-  
   try {
     const formData = new FormData();
     formData.append('code', barcode);
     formData.append('product_name', productData.name || '');
     formData.append('ingredients_text', productData.ingredients || '');
     
-    const response = await fetch(url, {
+    const response = await fetch(API_ENDPOINTS.CONTRIBUTE, {
       method: 'POST',
       body: formData
     });
