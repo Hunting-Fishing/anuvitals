@@ -18,12 +18,27 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
     queryFn: async () => {
       const { data, error } = await supabase
         .from("additives")
-        .select("*");
+        .select("*")
+        .order('risk_level', { ascending: false }); // Sort by risk level, highest first
       
       if (error) throw error;
       return data;
     }
   });
+
+  // Function to get color class based on risk level
+  const getRiskLevelColor = (level: string) => {
+    switch (level?.toLowerCase()) {
+      case "high":
+        return "text-red-500";
+      case "medium":
+        return "text-yellow-500";
+      case "low":
+        return "text-green-500";
+      default:
+        return "text-gray-500";
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -32,22 +47,29 @@ export function ProductHealthMetrics({ nutritionalInfo }: ProductHealthMetricsPr
       <div className="space-y-2">
         <h4 className="font-semibold">Negatives</h4>
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Beaker className="h-5 w-5" />
               <span>Additives</span>
             </div>
-            <Button 
-              variant="link" 
-              className={getMetricColor(70, 'negative')}
-              onClick={() => {
-                if (additives?.length > 0) {
-                  setSelectedAdditive(additives[0]); // For demo, showing first additive
-                }
-              }}
-            >
-              Contains additives to avoid
-            </Button>
+            {additives && additives.length > 0 ? (
+              <div className="ml-7 space-y-1">
+                {additives.map((additive) => (
+                  <div key={additive.id} className="flex items-center justify-between">
+                    <Button 
+                      variant="link" 
+                      className={`${getRiskLevelColor(additive.risk_level)} text-left justify-start`}
+                      onClick={() => setSelectedAdditive(additive)}
+                    >
+                      {additive.code} - {additive.name}
+                      <span className="ml-2">({additive.risk_level?.toUpperCase()} RISK)</span>
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="ml-7 text-gray-500">No additives information available</div>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
