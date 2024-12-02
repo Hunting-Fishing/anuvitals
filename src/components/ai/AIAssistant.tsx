@@ -25,24 +25,39 @@ export function AIAssistant({ initialType = 'health' }: AIAssistantProps) {
   const loadConversationHistory = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from('ai_assistants_config')
-      .select('conversation_history')
-      .eq('user_id', user.id)
-      .eq('assistant_type', assistantType)
-      .single();
+    try {
+      // First, ensure the config exists
+      const { error: upsertError } = await supabase
+        .from('ai_assistants_config')
+        .upsert({
+          user_id: user.id,
+          assistant_type: assistantType,
+          conversation_history: [],
+        }, {
+          onConflict: 'user_id,assistant_type'
+        });
 
-    if (error && error.code !== 'PGRST116') {
+      if (upsertError) throw upsertError;
+
+      // Then fetch the conversation history
+      const { data, error } = await supabase
+        .from('ai_assistants_config')
+        .select('conversation_history')
+        .eq('user_id', user.id)
+        .eq('assistant_type', assistantType)
+        .single();
+
+      if (error) throw error;
+
+      if (data?.conversation_history) {
+        setConversation(data.conversation_history);
+      }
+    } catch (error) {
       toast({
         title: "Error",
         description: "Failed to load conversation history",
         variant: "destructive",
       });
-      return;
-    }
-
-    if (data?.conversation_history) {
-      setConversation(data.conversation_history);
     }
   };
 
@@ -88,7 +103,18 @@ export function AIAssistant({ initialType = 'health' }: AIAssistantProps) {
         role: 'assistant' as const,
         content: response.data.response,
       };
-      setConversation(prev => [...prev, aiMessage]);
+
+      const newHistory = [...conversation, userMessage, aiMessage];
+      setConversation(newHistory);
+
+      // Update conversation history in the database
+      const { error: updateError } = await supabase
+        .from('ai_assistants_config')
+        .update({ conversation_history: newHistory })
+        .eq('user_id', user.id)
+        .eq('assistant_type', assistantType);
+
+      if (updateError) throw updateError;
     } catch (error) {
       toast({
         title: "Error",
