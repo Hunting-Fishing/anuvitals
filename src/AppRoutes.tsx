@@ -4,6 +4,7 @@ import { DietNavigation } from "./components/DietNavigation";
 import Index from "./pages/Index";
 import AuthPage from "./pages/Auth";
 import ScanPage from "./pages/Scan";
+import DietCategory from "./pages/DietCategory";
 
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -36,6 +37,14 @@ export function AppRoutes() {
         element={
           <MainLayout>
             <ScanPage />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/diets/category/:slug"
+        element={
+          <MainLayout>
+            <DietCategory />
           </MainLayout>
         }
       />
