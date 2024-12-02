@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Home, ScanLine, Book } from "lucide-react";
+import { Home, ScanLine, Book, Settings, Bell, User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useSidebar } from "./ui/sidebar";
 
@@ -39,6 +39,24 @@ export function AppSidebar() {
             <Button variant="ghost" className="w-full justify-start">
               <Book className="mr-2 h-4 w-4" />
               {!collapsed && "Diet Guide"}
+            </Button>
+          </NavLink>
+          <NavLink to="/profile" className={({ isActive }) => cn(isActive && "bg-secondary")}>
+            <Button variant="ghost" className="w-full justify-start">
+              <User className="mr-2 h-4 w-4" />
+              {!collapsed && "Profile"}
+            </Button>
+          </NavLink>
+          <NavLink to="/settings" className={({ isActive }) => cn(isActive && "bg-secondary")}>
+            <Button variant="ghost" className="w-full justify-start">
+              <Settings className="mr-2 h-4 w-4" />
+              {!collapsed && "Settings"}
+            </Button>
+          </NavLink>
+          <NavLink to="/notifications" className={({ isActive }) => cn(isActive && "bg-secondary")}>
+            <Button variant="ghost" className="w-full justify-start">
+              <Bell className="mr-2 h-4 w-4" />
+              {!collapsed && "Notifications"}
             </Button>
           </NavLink>
         </div>

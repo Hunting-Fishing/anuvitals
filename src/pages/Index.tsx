@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { Header } from "@/components/Header";
 import { MetricsCards } from "@/components/MetricsCards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -45,11 +44,10 @@ const Index = () => {
       <div className="min-h-screen flex w-full bg-gray-50">
         <AppSidebar />
         <main className="flex-1">
-          <Header />
           <div className="p-8">
             <div className="mb-8 flex items-center justify-between">
               <h1 className="text-3xl font-bold">Dashboard</h1>
-              <Button className="gap-2">
+              <Button onClick={() => navigate("/scan")} className="gap-2">
                 <Scan className="h-5 w-5" />
                 Scan Product
               </Button>
