@@ -5,6 +5,7 @@ export interface ProductDetails {
   ingredients: string;
   nutritional_info: Record<string, any>;
   image_url: string;
+  barcode: string; // Added barcode to interface
 }
 
 export interface SearchFilters {
@@ -41,7 +42,8 @@ export async function fetchProductDetails(barcode: string): Promise<ProductDetai
       name: product.product_name || "N/A",
       ingredients: product.ingredients_text || "N/A",
       nutritional_info: product.nutriments || {},
-      image_url: product.image_url || "N/A"
+      image_url: product.image_url || "N/A",
+      barcode: product.code || barcode // Ensure barcode is returned
     };
   } catch (error) {
     console.error("Error fetching product:", error);
