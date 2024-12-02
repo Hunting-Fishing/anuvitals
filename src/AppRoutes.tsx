@@ -5,6 +5,7 @@ import AuthPage from "./pages/Auth";
 import ScanPage from "./pages/Scan";
 import DietCategory from "./pages/DietCategory";
 import DietOverview from "./pages/DietOverview";
+import BloodWorkPage from "./pages/BloodWork";
 
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -52,6 +53,14 @@ export function AppRoutes() {
         element={
           <MainLayout>
             <DietOverview />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/bloodwork"
+        element={
+          <MainLayout>
+            <BloodWorkPage />
           </MainLayout>
         }
       />

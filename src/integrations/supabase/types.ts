@@ -48,6 +48,107 @@ export type Database = {
         }
         Relationships: []
       }
+      blood_marker_recommendations: {
+        Row: {
+          condition: string
+          created_at: string
+          food_recommendations: string[] | null
+          id: string
+          lifestyle_recommendations: string[] | null
+          marker_id: string
+          supplement_recommendations: string[] | null
+        }
+        Insert: {
+          condition: string
+          created_at?: string
+          food_recommendations?: string[] | null
+          id?: string
+          lifestyle_recommendations?: string[] | null
+          marker_id: string
+          supplement_recommendations?: string[] | null
+        }
+        Update: {
+          condition?: string
+          created_at?: string
+          food_recommendations?: string[] | null
+          id?: string
+          lifestyle_recommendations?: string[] | null
+          marker_id?: string
+          supplement_recommendations?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blood_marker_recommendations_marker_id_fkey"
+            columns: ["marker_id"]
+            isOneToOne: false
+            referencedRelation: "blood_work_markers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blood_work_markers: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          max_range: number | null
+          min_range: number | null
+          name: string
+          nutritional_implications: string[] | null
+          unit: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          max_range?: number | null
+          min_range?: number | null
+          name: string
+          nutritional_implications?: string[] | null
+          unit: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          max_range?: number | null
+          min_range?: number | null
+          name?: string
+          nutritional_implications?: string[] | null
+          unit?: string
+        }
+        Relationships: []
+      }
+      blood_work_results: {
+        Row: {
+          analysis: Json | null
+          created_at: string
+          id: string
+          results: Json
+          test_date: string
+          user_id: string
+        }
+        Insert: {
+          analysis?: Json | null
+          created_at?: string
+          id?: string
+          results: Json
+          test_date: string
+          user_id: string
+        }
+        Update: {
+          analysis?: Json | null
+          created_at?: string
+          id?: string
+          results?: Json
+          test_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       compatibility: {
         Row: {
           compatible_condition: string
