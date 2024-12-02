@@ -124,6 +124,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          allergies: string[] | null
           avatar_url: string | null
           full_name: string | null
           id: string
@@ -131,6 +132,7 @@ export type Database = {
           username: string | null
         }
         Insert: {
+          allergies?: string[] | null
           avatar_url?: string | null
           full_name?: string | null
           id: string
@@ -138,6 +140,7 @@ export type Database = {
           username?: string | null
         }
         Update: {
+          allergies?: string[] | null
           avatar_url?: string | null
           full_name?: string | null
           id?: string
