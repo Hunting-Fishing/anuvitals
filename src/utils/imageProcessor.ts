@@ -29,7 +29,9 @@ export const detectRotation = async (file: File): Promise<number> => {
       logger: () => {},
     });
     
-    return result.data.orientation?.angle || 0;
+    // Access the rotation angle from the result
+    const angle = result.data.rotate || 0; // Changed from orientation to rotate
+    return angle;
   } catch (error) {
     console.error('Error detecting rotation:', error);
     return 0;

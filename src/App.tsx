@@ -26,19 +26,21 @@ const supabaseClient = createClient(
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <SessionContextProvider supabaseClient={supabaseClient}>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <BrowserRouter>
-            <SidebarProvider>
-              <div className="min-h-screen flex w-full">
-                <AppRoutes />
-                <Toaster />
-              </div>
-            </SidebarProvider>
-          </BrowserRouter>
-        </ThemeProvider>
-      </SessionContextProvider>
-    </QueryClientProvider>
+    <React.StrictMode>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <QueryClientProvider client={queryClient}>
+          <SessionContextProvider supabaseClient={supabaseClient}>
+            <BrowserRouter>
+              <SidebarProvider>
+                <div className="min-h-screen flex w-full">
+                  <AppRoutes />
+                  <Toaster />
+                </div>
+              </SidebarProvider>
+            </BrowserRouter>
+          </SessionContextProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </React.StrictMode>
   );
 }
