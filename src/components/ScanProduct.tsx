@@ -69,7 +69,13 @@ export function ScanProduct() {
 
     setSearching(true);
     try {
-      // First try Open Food Facts API
+      // Format search query for Supabase full-text search
+      const formattedQuery = searchQuery
+        .split(' ')
+        .filter(term => term.length > 0)
+        .map(term => term + ':*')
+        .join(' & ');
+
       const filters: SearchFilters = {
         page,
         pageSize: 10,
@@ -82,7 +88,7 @@ export function ScanProduct() {
         supabase
           .from("products")
           .select("*")
-          .textSearch('search_text', searchQuery)
+          .textSearch('search_text', formattedQuery)
           .limit(10)
       ]);
 
