@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -41,6 +41,8 @@ const COMMON_ALLERGIES = [
 
 export function DietaryPreferencesForm({ profile }: DietaryPreferencesFormProps) {
   const { toast } = useToast();
+  const supabase = useSupabaseClient();
+  const user = useUser();
   const [newAllergy, setNewAllergy] = useState("");
   const [newDietType, setNewDietType] = useState("");
   const [showAllergyInput, setShowAllergyInput] = useState(false);
@@ -48,11 +50,14 @@ export function DietaryPreferencesForm({ profile }: DietaryPreferencesFormProps)
 
   const handleSuggestAllergy = async () => {
     try {
+      if (!user) throw new Error("No authenticated user");
+
       const { error } = await supabase
         .from('suggested_health_items')
         .insert({
           item_type: 'allergy',
           suggestion: newAllergy,
+          user_id: user.id
         });
 
       if (error) throw error;
@@ -74,11 +79,14 @@ export function DietaryPreferencesForm({ profile }: DietaryPreferencesFormProps)
 
   const handleSuggestDietType = async () => {
     try {
+      if (!user) throw new Error("No authenticated user");
+
       const { error } = await supabase
         .from('suggested_health_items')
         .insert({
           item_type: 'diet_type',
           suggestion: newDietType,
+          user_id: user.id
         });
 
       if (error) throw error;
