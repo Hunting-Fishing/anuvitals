@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -12,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Brain, Chef, Dumbbell, Apple } from "lucide-react";
+import { Brain, ChefHat, Dumbbell, Apple } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Message {
@@ -20,12 +19,14 @@ interface Message {
   content: string;
 }
 
+type AssistantType = 'chef' | 'fitness' | 'health' | 'diet';
+
 interface AIAssistantProps {
-  initialType?: 'chef' | 'fitness' | 'health' | 'diet';
+  initialType?: AssistantType;
 }
 
 export function AIAssistant({ initialType = 'health' }: AIAssistantProps) {
-  const [assistantType, setAssistantType] = useState(initialType);
+  const [assistantType, setAssistantType] = useState<AssistantType>(initialType);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [conversation, setConversation] = useState<Message[]>([]);
@@ -117,10 +118,10 @@ export function AIAssistant({ initialType = 'health' }: AIAssistantProps) {
     }
   };
 
-  const getAssistantIcon = (type: string) => {
+  const getAssistantIcon = (type: AssistantType) => {
     switch (type) {
       case 'chef':
-        return <Chef className="w-5 h-5" />;
+        return <ChefHat className="w-5 h-5" />;
       case 'fitness':
         return <Dumbbell className="w-5 h-5" />;
       case 'health':
@@ -149,7 +150,10 @@ export function AIAssistant({ initialType = 'health' }: AIAssistantProps) {
           {getAssistantIcon(assistantType)}
           AI Assistant
         </h2>
-        <Select value={assistantType} onValueChange={setAssistantType}>
+        <Select 
+          value={assistantType} 
+          onValueChange={(value: AssistantType) => setAssistantType(value)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select type" />
           </SelectTrigger>
