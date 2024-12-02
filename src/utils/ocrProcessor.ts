@@ -3,7 +3,7 @@ import { ExtractedResult } from "@/types/bloodwork";
 import { bloodWorkMarkers } from "@/utils/bloodWorkMarkers";
 
 export const processImage = async (
-  file: File,
+  imageBlob: Blob,
   onProgress: (progress: string) => void
 ): Promise<ExtractedResult[]> => {
   const worker = await createWorker({
@@ -18,15 +18,9 @@ export const processImage = async (
     await worker.loadLanguage('eng');
     await worker.initialize('eng');
 
-    // Convert file to base64
-    const reader = new FileReader();
-    const base64Image = await new Promise<string>((resolve) => {
-      reader.onload = (e) => resolve(e.target?.result as string);
-      reader.readAsDataURL(file);
-    });
-
-    onProgress("Analyzing image...");
-    const { data: { text } } = await worker.recognize(base64Image);
+    const { data: { text } } = await worker.recognize(imageBlob);
+    
+    onProgress("Analyzing text...");
     
     // Process the extracted text to find blood work results
     const results: ExtractedResult[] = [];

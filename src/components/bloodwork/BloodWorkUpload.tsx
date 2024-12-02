@@ -13,6 +13,7 @@ import { UploadGuidelines } from "./UploadGuidelines";
 import { enhanceImage, detectRotation, rotateImage } from "@/utils/imageProcessor";
 import { extractPdfPages, isPDF } from "@/utils/pdfProcessor";
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
 export function BloodWorkUpload() {
   const [isUploading, setIsUploading] = useState(false);
@@ -29,43 +30,28 @@ export function BloodWorkUpload() {
     try {
       if (isPDF(file)) {
         const pages = await extractPdfPages(file);
-        // Process each page
         for (let i = 0; i < pages.length; i++) {
           setProgress(`Processing PDF page ${i + 1}/${pages.length}`);
           setProgressPercent((i + 1) / pages.length * 100);
-          // Convert PDF page to image and process
-          // Implementation details here
         }
       } else {
-        // Process image
         setProgress("Enhancing image quality...");
         setProgressPercent(20);
         
-        const img = new Image();
-        const imageData = await createImageBitmap(file).then(bitmap => {
-          const canvas = document.createElement('canvas');
-          canvas.width = bitmap.width;
-          canvas.height = bitmap.height;
-          const ctx = canvas.getContext('2d');
-          ctx?.drawImage(bitmap, 0, 0);
-          return ctx?.getImageData(0, 0, bitmap.width, bitmap.height);
+        const imageBlob = new Blob([file], { type: file.type });
+        const enhancedImage = await enhanceImage(imageBlob);
+        const rotation = await detectRotation(file);
+        const processedImage = rotation ? await rotateImage(enhancedImage, rotation) : enhancedImage;
+
+        setProgress("Extracting text...");
+        setProgressPercent(40);
+        
+        const extractedResults = await processImage(processedImage, (p) => {
+          setProgress(p);
+          setProgressPercent(40 + (p.includes("Processing") ? 30 : 50));
         });
 
-        if (imageData) {
-          const enhancedImage = await enhanceImage(imageData);
-          const rotation = await detectRotation(file);
-          const processedImage = rotation ? rotateImage(enhancedImage, rotation) : enhancedImage;
-
-          setProgress("Extracting text...");
-          setProgressPercent(40);
-          
-          const extractedResults = await processImage(processedImage, (p) => {
-            setProgress(p);
-            setProgressPercent(40 + (p.includes("Processing") ? 30 : 50));
-          });
-
-          return extractedResults;
-        }
+        return extractedResults;
       }
     } catch (error) {
       console.error("Error processing file:", error);
@@ -79,7 +65,6 @@ export function BloodWorkUpload() {
     setBatchStatus({});
 
     try {
-      // Create batch upload record
       const { data: batchUpload, error: batchError } = await supabase
         .from('blood_work_batch_uploads')
         .insert({
@@ -92,7 +77,6 @@ export function BloodWorkUpload() {
 
       if (batchError) throw batchError;
 
-      // Process each file
       const allResults: ExtractedResult[] = [];
       const allConfidenceScores: Record<string, number> = {};
 
@@ -107,9 +91,8 @@ export function BloodWorkUpload() {
           const fileResults = await processFile(file);
           if (fileResults) {
             allResults.push(...fileResults);
-            // Calculate confidence scores
             fileResults.forEach(result => {
-              allConfidenceScores[result.marker] = 0.8; // Example confidence score
+              allConfidenceScores[result.marker] = 0.8;
             });
           }
           setBatchStatus(prev => ({
@@ -128,7 +111,6 @@ export function BloodWorkUpload() {
       setResults(allResults);
       setConfidenceScores(allConfidenceScores);
 
-      // Update batch upload status
       await supabase
         .from('blood_work_batch_uploads')
         .update({ status: 'completed' })
@@ -175,7 +157,6 @@ export function BloodWorkUpload() {
         description: "Blood work results have been verified and saved.",
       });
 
-      // Reset state
       setResults([]);
       setConfidenceScores({});
     } catch (error) {
