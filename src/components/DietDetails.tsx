@@ -10,7 +10,8 @@ import {
   Leaf,
   Sun,
   Flame,
-  AlertTriangle
+  AlertTriangle,
+  Dumbbell
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +57,7 @@ const getLevelIcon = (level: string) => {
       return <AlertTriangle className="h-4 w-4" />;
     case 'Expert':
     case 'Very High':
-      return <Flame className="h-4 w-4 text-red-500" />;
+      return <Dumbbell className="h-4 w-4 text-red-500" />;
     default:
       return <Sun className="h-4 w-4" />;
   }
