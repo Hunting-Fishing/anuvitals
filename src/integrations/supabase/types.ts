@@ -78,6 +78,33 @@ export type Database = {
         }
         Relationships: []
       }
+      api_configurations: {
+        Row: {
+          configuration: Json
+          created_at: string
+          id: string
+          is_active: boolean | null
+          service_name: string
+          updated_at: string
+        }
+        Insert: {
+          configuration?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          service_name: string
+          updated_at?: string
+        }
+        Update: {
+          configuration?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          service_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blood_marker_recommendations: {
         Row: {
           condition: string
@@ -1267,6 +1294,12 @@ export type Database = {
           "": unknown
         }
         Returns: unknown
+      }
+      get_api_configuration: {
+        Args: {
+          service: string
+        }
+        Returns: Json
       }
       ghstore_compress: {
         Args: {

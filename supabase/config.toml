@@ -1,1 +1,6 @@
 project_id = "pcjfvrjmuedyytavtrhv"
+
+[api]
+enabled = true
+[api.nutrition-analysis]
+verify_jwt = true
