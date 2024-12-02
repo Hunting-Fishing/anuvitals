@@ -2,8 +2,9 @@ import { DietNavigation } from "@/components/DietNavigation";
 import { Card } from "@/components/ui/card";
 import { Check, Circle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useImplementedDiets } from "@/hooks/useImplementedDiets";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// List of all planned diets with their implementation status
 const plannedDiets = [
   // General and Balanced Diets
   { name: "Balanced Diet", category: "General and Balanced", implemented: false },
@@ -108,6 +109,13 @@ const groupedDiets = plannedDiets.reduce((acc, diet) => {
 }, {} as Record<string, typeof plannedDiets>);
 
 export default function DietOverview() {
+  const { data: implementedDiets, isLoading: isLoadingImplemented } = useImplementedDiets();
+
+  const getDietImplementationStatus = (dietName: string) => {
+    if (!implementedDiets) return false;
+    return implementedDiets.includes(dietName);
+  };
+
   return (
     <div className="flex h-full">
       <DietNavigation />
@@ -122,32 +130,43 @@ export default function DietOverview() {
         <Card className="w-96 p-4">
           <h2 className="text-lg font-semibold mb-4">Implementation Progress</h2>
           <ScrollArea className="h-[calc(100vh-12rem)]">
-            <div className="space-y-6">
-              {Object.entries(groupedDiets).map(([category, diets]) => (
-                <div key={category} className="space-y-2">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                    {category}
-                  </h3>
-                  {diets.map((diet) => (
-                    <div 
-                      key={diet.name} 
-                      className={`flex items-center gap-2 p-2 rounded-lg ${
-                        diet.implemented ? 'bg-green-100 dark:bg-green-900/20' : ''
-                      }`}
-                    >
-                      {diet.implemented ? (
-                        <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
-                      ) : (
-                        <Circle className="w-4 h-4 text-gray-400" />
-                      )}
-                      <span className={diet.implemented ? 'font-medium' : ''}>
-                        {diet.name}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
+            {isLoadingImplemented ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-20 w-full" />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {Object.entries(groupedDiets).map(([category, diets]) => (
+                  <div key={category} className="space-y-2">
+                    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                      {category}
+                    </h3>
+                    {diets.map((diet) => {
+                      const isImplemented = getDietImplementationStatus(diet.name);
+                      return (
+                        <div 
+                          key={diet.name} 
+                          className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
+                            isImplemented ? 'bg-green-100 dark:bg-green-900/20' : ''
+                          }`}
+                        >
+                          {isImplemented ? (
+                            <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                          ) : (
+                            <Circle className="w-4 h-4 text-gray-400" />
+                          )}
+                          <span className={isImplemented ? 'font-medium' : ''}>
+                            {diet.name}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            )}
           </ScrollArea>
         </Card>
       </div>
