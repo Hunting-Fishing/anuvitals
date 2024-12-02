@@ -12,7 +12,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronUp, Flask, Droplet, Flame, Fish, Wheat, Cube } from "lucide-react";
+import { ChevronDown, ChevronUp, Beaker, Droplet, Flame, Fish, Wheat, Package } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
@@ -103,7 +103,7 @@ export function SearchResults({ results, onPageChange, currentPage }: SearchResu
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Flask className="h-5 w-5" />
+                            <Beaker className="h-5 w-5" />
                             <span>Additives</span>
                           </div>
                           <span className={getMetricColor(70, 'negative')}>
@@ -152,7 +152,7 @@ export function SearchResults({ results, onPageChange, currentPage }: SearchResu
                         </div>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Cube className="h-5 w-5" />
+                            <Package className="h-5 w-5" />
                             <span>Sugar</span>
                           </div>
                           <span className={getMetricColor(90, 'positive')}>
