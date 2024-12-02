@@ -24,7 +24,8 @@ export function useAIResponse() {
 
       if (response.error) {
         if (response.error.message?.includes('exceeded your current quota') || 
-            response.error.message?.includes('check your plan and billing details')) {
+            response.error.message?.includes('check your plan and billing details') ||
+            response.error.body?.includes('Quota exceeded')) {
           toast({
             title: "AI Credits Depleted",
             description: "AI Credits used up - Please Deposit Credits",
@@ -38,7 +39,8 @@ export function useAIResponse() {
       return response.data.response;
     } catch (error: any) {
       if (error.message?.includes('exceeded your current quota') || 
-          error.message?.includes('check your plan and billing details')) {
+          error.message?.includes('check your plan and billing details') ||
+          error.body?.includes('Quota exceeded')) {
         toast({
           title: "AI Credits Depleted",
           description: "AI Credits used up - Please Deposit Credits",
