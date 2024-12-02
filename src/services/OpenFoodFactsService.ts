@@ -145,3 +145,5 @@ export async function contributeProduct(productData: Partial<ProductDetails>, ba
     throw new Error(`Failed to contribute product: ${error.message}`);
   }
 }
+
+export type { ProductDetails, SearchFilters, SearchResponse };
