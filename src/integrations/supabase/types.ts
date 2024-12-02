@@ -86,6 +86,36 @@ export type Database = {
           },
         ]
       }
+      blood_work_batch_uploads: {
+        Row: {
+          created_at: string
+          file_paths: Json
+          id: string
+          processing_metadata: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_paths?: Json
+          id?: string
+          processing_metadata?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_paths?: Json
+          id?: string
+          processing_metadata?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       blood_work_markers: {
         Row: {
           code: string
@@ -125,27 +155,48 @@ export type Database = {
       blood_work_results: {
         Row: {
           analysis: Json | null
+          confidence_scores: Json | null
           created_at: string
           id: string
+          original_file_path: string | null
+          processed_file_path: string | null
+          processing_metadata: Json | null
           results: Json
           test_date: string
           user_id: string
+          verification_date: string | null
+          verification_notes: string | null
+          verified: boolean | null
         }
         Insert: {
           analysis?: Json | null
+          confidence_scores?: Json | null
           created_at?: string
           id?: string
+          original_file_path?: string | null
+          processed_file_path?: string | null
+          processing_metadata?: Json | null
           results: Json
           test_date: string
           user_id: string
+          verification_date?: string | null
+          verification_notes?: string | null
+          verified?: boolean | null
         }
         Update: {
           analysis?: Json | null
+          confidence_scores?: Json | null
           created_at?: string
           id?: string
+          original_file_path?: string | null
+          processed_file_path?: string | null
+          processing_metadata?: Json | null
           results?: Json
           test_date?: string
           user_id?: string
+          verification_date?: string | null
+          verification_notes?: string | null
+          verified?: boolean | null
         }
         Relationships: []
       }
