@@ -30,7 +30,7 @@ export function AIAssistant() {
 
   if (assistantType === 'health-analysis') {
     return (
-      <div className="flex flex-col h-[calc(100vh-4rem)] max-w-4xl mx-auto p-4 animate-fade-in">
+      <div className="flex flex-col h-[calc(100vh-4rem)] max-w-6xl mx-auto p-4 animate-fade-in">
         <Card className="flex-1 p-6 space-y-4 overflow-hidden shadow-lg border-2 bg-gradient-to-b from-gray-900/50 to-black/50">
           <AssistantHeader />
           <AIVisualization />
