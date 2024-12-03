@@ -55,6 +55,16 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
   };
 
   const startCamera = async (videoElement: HTMLVideoElement | null) => {
+    if (!videoElement) {
+      console.error("Video element is null");
+      toast({
+        title: "Camera Error",
+        description: "Video element not initialized",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setScanning(true);
 
@@ -63,13 +73,18 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
         video: { facingMode: 'environment' } 
       });
 
-      if (!videoElement) {
-        throw new Error("Video element not found");
-      }
-
       // Attach stream to video element
       videoElement.srcObject = stream;
+      
+      // Wait for video to be ready
+      await new Promise((resolve) => {
+        videoElement.onloadedmetadata = () => {
+          resolve(true);
+        };
+      });
+
       await videoElement.play();
+      console.log("Video element is playing:", videoElement.playing);
 
       const setup = await setupScanner(videoElement);
       if (!setup) {
