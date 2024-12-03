@@ -73,6 +73,7 @@ export function useConversation() {
     message,
     setMessage,
     sendMessage,
-    isLoading
+    isLoading,
+    messages // Added this to fix the error
   };
 }
