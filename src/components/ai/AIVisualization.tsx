@@ -1,20 +1,107 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAI } from './AIContext';
 
 export function AIVisualization() {
   const { isLoading } = useAI();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Array<{ x: number; y: number; vx: number; vy: number; size: number }>>([]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resizeCanvas = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Initialize particles
+    particlesRef.current = Array.from({ length: 50 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      size: Math.random() * 3 + 1
+    }));
+
+    let animationFrame: number;
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Update and draw particles
+      particlesRef.current.forEach(particle => {
+        particle.x += particle.vx * (isLoading ? 2 : 1);
+        particle.y += particle.vy * (isLoading ? 2 : 1);
+
+        // Bounce off walls
+        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = isLoading ? '#7c3aed' : '#6b7280';
+        ctx.fill();
+      });
+
+      // Draw connections
+      ctx.strokeStyle = isLoading ? 'rgba(124, 58, 237, 0.1)' : 'rgba(107, 114, 128, 0.1)';
+      particlesRef.current.forEach((p1, i) => {
+        particlesRef.current.slice(i + 1).forEach(p2 => {
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 100) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        });
+      });
+
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationFrame);
+    };
+  }, [isLoading]);
 
   return (
     <div className="relative w-full h-32 mb-6 overflow-hidden rounded-lg bg-gradient-to-r from-purple-900/50 to-indigo-900/50 flex items-center justify-center group">
-      <div className="absolute inset-0 bg-[url('/lovable-uploads/d5a23962-d666-486b-a2dd-9719f7589d7d.png')] bg-center bg-cover opacity-10 transition-opacity group-hover:opacity-20" />
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+        aria-hidden="true"
+      />
       
-      <div className="relative flex flex-col items-center gap-3">
-        {/* Enhanced AI Icon */}
-        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/20 transition-transform duration-300 group-hover:scale-110">
+      <div className="relative flex flex-col items-center gap-3 z-10">
+        <div 
+          className={`
+            w-12 h-12 rounded-full 
+            bg-gradient-to-r from-purple-500 to-indigo-500 
+            flex items-center justify-center shadow-lg 
+            shadow-purple-500/20 transition-all duration-300 
+            group-hover:scale-110
+            ${isLoading ? 'animate-pulse' : ''}
+          `}
+          role="presentation"
+        >
           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-700 to-indigo-700 flex items-center justify-center">
               <div className={`w-2 ${isLoading ? 'animate-pulse' : ''}`}>
-                {/* Enhanced Animated Waveform */}
                 <svg className="w-full" viewBox="0 0 20 20">
                   <path
                     className={`
@@ -29,7 +116,6 @@ export function AIVisualization() {
           </div>
         </div>
 
-        {/* Enhanced Animated Waveform Bars */}
         <div className="flex items-center gap-0.5 h-4">
           {[...Array(12)].map((_, i) => (
             <div
@@ -47,27 +133,6 @@ export function AIVisualization() {
             />
           ))}
         </div>
-      </div>
-
-      {/* Enhanced Background Animation */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 animate-pulse" />
-      
-      {/* Interactive Particles */}
-      <div className="absolute inset-0 overflow-hidden opacity-30">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className={`
-              absolute w-1 h-1 rounded-full bg-purple-300
-              animate-[float_${3 + Math.random() * 2}s_ease-in-out_infinite]
-            `}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`
-            }}
-          />
-        ))}
       </div>
     </div>
   );
