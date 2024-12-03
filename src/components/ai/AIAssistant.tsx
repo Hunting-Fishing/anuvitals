@@ -8,19 +8,12 @@ import { HealthDataView } from "./health-analysis/HealthDataView";
 import { useConversation } from "./useConversation";
 import { useToast } from "@/hooks/use-toast";
 import { useAI } from "./AIContext";
-import { Loader2, Search, Filter, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useVirtualizer } from '@tanstack/react-virtual';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-
-type FilterType = "all" | "user" | "ai";
+import { SearchPanel } from "./search/SearchPanel";
+import { LoadingOverlay } from "./loading/LoadingOverlay";
+import { WelcomeScreen } from "./welcome/WelcomeScreen";
+import { FilterType } from "./filters/MessageFilters";
 
 export function AIAssistant() {
   const { message, setMessage, sendMessage, messages, isLoading, retryMessage } = useConversation();
@@ -48,20 +41,6 @@ export function AIAssistant() {
       if (e.ctrlKey && e.key === 'f') {
         e.preventDefault();
         setShowFilters(true);
-      }
-      // Add arrow key navigation for messages
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-        const messageElements = document.querySelectorAll('[role="listitem"]');
-        const currentFocus = document.activeElement;
-        const currentIndex = Array.from(messageElements).indexOf(currentFocus as Element);
-        
-        if (currentIndex !== -1) {
-          e.preventDefault();
-          const nextIndex = e.key === 'ArrowUp' ? 
-            Math.max(0, currentIndex - 1) : 
-            Math.min(messageElements.length - 1, currentIndex + 1);
-          (messageElements[nextIndex] as HTMLElement).focus();
-        }
       }
     };
 
@@ -119,51 +98,13 @@ export function AIAssistant() {
         
         <div className="flex flex-col h-full space-y-4">
           {showFilters && (
-            <div className="flex items-center gap-2 p-2 bg-background/95 rounded-lg animate-fade-in">
-              <Search className="w-4 h-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search messages..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="flex-1"
-                aria-label="Search messages"
-              />
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      "h-8 w-8",
-                      filterType !== "all" && "text-primary"
-                    )}
-                    aria-label="Filter messages"
-                  >
-                    <SlidersHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setFilterType("all")}>
-                    All Messages
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterType("user")}>
-                    User Messages
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterType("ai")}>
-                    AI Responses
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowFilters(false)}
-                aria-label="Close search"
-              >
-                <Filter className="w-4 h-4" />
-              </Button>
-            </div>
+            <SearchPanel
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              filterType={filterType}
+              onFilterChange={setFilterType}
+              onClose={() => setShowFilters(false)}
+            />
           )}
 
           <div 
@@ -173,10 +114,14 @@ export function AIAssistant() {
             aria-label="Message history"
             aria-live="polite"
           >
-            <MessageList 
-              messages={filteredMessages}
-              virtualizer={rowVirtualizer}
-            />
+            {messages.length === 0 ? (
+              <WelcomeScreen />
+            ) : (
+              <MessageList 
+                messages={filteredMessages}
+                virtualizer={rowVirtualizer}
+              />
+            )}
           </div>
           
           <div className="pt-4 border-t border-gray-800">
@@ -189,18 +134,7 @@ export function AIAssistant() {
           </div>
         </div>
 
-        {isLoading && (
-          <div 
-            className="absolute inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300"
-            role="progressbar"
-            aria-label="Processing request"
-          >
-            <div className="bg-background/95 p-4 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Processing your request...</span>
-            </div>
-          </div>
-        )}
+        {isLoading && <LoadingOverlay />}
       </Card>
     </div>
   );
