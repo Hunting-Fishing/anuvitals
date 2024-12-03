@@ -8,6 +8,8 @@ interface Feature {
   icon: React.ReactNode;
   title: string;
   description: string;
+  /** Optional link to more detailed documentation */
+  learnMoreLink?: string;
 }
 
 const features: Feature[] = [
@@ -15,21 +17,25 @@ const features: Feature[] = [
     icon: <Search className="w-8 h-8 text-primary" aria-hidden="true" />,
     title: "Product Scanning",
     description: "Scan food products to get detailed nutritional information and health analysis.",
+    learnMoreLink: "/scan"
   },
   {
     icon: <Brain className="w-8 h-8 text-primary" aria-hidden="true" />,
     title: "Blood Work Analysis",
     description: "Upload and track your blood work results with automated analysis and recommendations.",
+    learnMoreLink: "/bloodwork"
   },
   {
     icon: <Dna className="w-8 h-8 text-primary" aria-hidden="true" />,
     title: "Diet Guides",
     description: "Access comprehensive diet guides and nutritional recommendations.",
+    learnMoreLink: "/diets/category/all"
   },
   {
     icon: <FlaskConical className="w-8 h-8 text-primary" aria-hidden="true" />,
     title: "Health Tracking",
     description: "Monitor your nutritional progress and health metrics over time.",
+    learnMoreLink: "/profile"
   },
 ];
 
@@ -54,8 +60,9 @@ export function FeaturesTab() {
         {features.map((feature, index) => (
           <div
             key={index}
-            className="group p-6 rounded-xl bg-background/50 backdrop-blur-sm hover:bg-primary/5 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+            className="group p-6 rounded-xl bg-background/50 backdrop-blur-sm hover:bg-primary/5 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg animate-fade-in"
             role="listitem"
+            tabIndex={0}
           >
             <div className="mb-4 transform transition-transform group-hover:scale-110">
               {feature.icon}
@@ -66,6 +73,15 @@ export function FeaturesTab() {
             <p className="text-muted-foreground group-hover:text-foreground transition-colors">
               {feature.description}
             </p>
+            {feature.learnMoreLink && (
+              <a 
+                href={feature.learnMoreLink}
+                className="mt-4 inline-block text-sm text-primary hover:text-accent transition-colors story-link"
+                aria-label={`Learn more about ${feature.title}`}
+              >
+                Learn more →
+              </a>
+            )}
           </div>
         ))}
       </div>
