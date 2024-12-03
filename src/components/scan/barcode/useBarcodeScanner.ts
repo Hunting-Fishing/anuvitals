@@ -23,9 +23,19 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
     const codeReader = new BrowserMultiFormatReader(hints);
     
     try {
+      // First check if we have camera permissions
+      const permissionResult = await navigator.permissions.query({ name: 'camera' as PermissionName });
+      if (permissionResult.state === 'denied') {
+        throw new Error("Camera permission is denied. Please enable it in your browser settings.");
+      }
+
       // Get list of available video devices
       const devices = await BrowserMultiFormatReader.listVideoInputDevices();
       console.log('Available devices:', devices);
+
+      if (devices.length === 0) {
+        throw new Error("No camera devices found");
+      }
 
       // Try to find a back camera
       const backCamera = devices.find(device => 
@@ -35,16 +45,12 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
 
       // Use back camera if found, otherwise use first available camera
       const selectedDevice = backCamera || devices[0];
-
-      if (!selectedDevice) {
-        throw new Error("No camera found");
-      }
-
       console.log('Selected device:', selectedDevice);
+
       return { codeReader, deviceId: selectedDevice.deviceId };
     } catch (error) {
       console.error("Failed to setup scanner:", error);
-      return null;
+      throw error;
     }
   };
 
@@ -52,17 +58,25 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
     try {
       setScanning(true);
 
+      // Request camera permissions explicitly first
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+
+      if (!videoElement) {
+        throw new Error("Video element not found");
+      }
+
+      // Attach stream to video element
+      videoElement.srcObject = stream;
+      await videoElement.play();
+
       const setup = await setupScanner(videoElement);
-      if (!setup || !videoElement) {
+      if (!setup) {
         throw new Error("Failed to setup scanner");
       }
 
       const { codeReader, deviceId } = setup;
-
-      // Request camera permissions explicitly
-      await navigator.mediaDevices.getUserMedia({ 
-        video: { deviceId: { exact: deviceId } } 
-      });
 
       setShowCamera(true);
 
@@ -90,11 +104,11 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
         title: "Scanner Active",
         description: "Point the camera at a barcode to scan",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Camera error:", error);
       toast({
-        title: "Error",
-        description: "Unable to access camera. Please check permissions.",
+        title: "Camera Error",
+        description: error.message || "Unable to access camera. Please check permissions.",
         variant: "destructive",
       });
       setScanning(false);
