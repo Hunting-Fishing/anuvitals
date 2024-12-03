@@ -28,10 +28,8 @@ const API_OPTIONS = {
   headers: {
     'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)',
     'Accept': 'application/json',
-    'Content-Type': 'application/json'
   },
   mode: 'cors' as RequestMode,
-  cache: 'no-cache' as RequestCache
 };
 
 const handleApiResponse = async (response: Response) => {
@@ -111,6 +109,7 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
 
 export async function fetchCategories(): Promise<string[]> {
   try {
+    console.log("Fetching categories...");
     const response = await fetch(API_ENDPOINTS.CATEGORIES, API_OPTIONS);
     const data = await handleApiResponse(response);
     return data.tags.map((tag: any) => tag.name);
@@ -122,6 +121,7 @@ export async function fetchCategories(): Promise<string[]> {
 
 export async function fetchAllergens(): Promise<string[]> {
   try {
+    console.log("Fetching allergens...");
     const response = await fetch(API_ENDPOINTS.ALLERGENS, API_OPTIONS);
     const data = await handleApiResponse(response);
     return data.tags.map((tag: any) => tag.name);
@@ -133,7 +133,15 @@ export async function fetchAllergens(): Promise<string[]> {
 
 export async function fetchBrands(): Promise<string[]> {
   try {
-    const response = await fetch(API_ENDPOINTS.BRANDS, API_OPTIONS);
+    console.log("Fetching brands...");
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(API_ENDPOINTS.BRANDS)}`;
+    const response = await fetch(proxyUrl, {
+      ...API_OPTIONS,
+      headers: {
+        ...API_OPTIONS.headers,
+        'Origin': window.location.origin
+      }
+    });
     const data = await handleApiResponse(response);
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
