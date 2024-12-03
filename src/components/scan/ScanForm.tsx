@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { Camera } from "lucide-react";
+import { BrowserMultiFormatReader } from '@zxing/browser';
 
 export function ScanForm() {
   const [barcode, setBarcode] = useState("");
@@ -15,16 +16,30 @@ export function ScanForm() {
   const session = useSession();
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const codeReader = useRef<BrowserMultiFormatReader>(new BrowserMultiFormatReader());
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
       setShowCamera(true);
+      const videoInputDevices = await codeReader.current.listVideoInputDevices();
+      const selectedDeviceId = videoInputDevices.find(device => 
+        device.label.toLowerCase().includes('back') || 
+        device.label.toLowerCase().includes('rear')
+      )?.deviceId || videoInputDevices[0].deviceId;
+
+      await codeReader.current.decodeFromVideoDevice(
+        selectedDeviceId,
+        videoRef.current!,
+        async (result, error) => {
+          if (result) {
+            setBarcode(result.getText());
+            stopCamera();
+            // Automatically submit the form when barcode is detected
+            handleScan(new Event('submit') as any);
+          }
+        }
+      );
+
       toast({
         title: "Camera activated",
         description: "Point the camera at a barcode to scan",
@@ -39,11 +54,7 @@ export function ScanForm() {
   };
 
   const stopCamera = () => {
-    if (videoRef.current?.srcObject) {
-      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-      tracks.forEach(track => track.stop());
-      videoRef.current.srcObject = null;
-    }
+    codeReader.current.reset();
     setShowCamera(false);
   };
 
@@ -76,7 +87,7 @@ export function ScanForm() {
       });
       
       setBarcode("");
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
@@ -93,11 +104,9 @@ export function ScanForm() {
       
       <div className="space-y-4">
         {showCamera && (
-          <div className="relative aspect-video w-full max-w-md mx-auto rounded-lg overflow-hidden">
+          <div className="relative aspect-video w-full max-w-md mx-auto rounded-lg overflow-hidden bg-black">
             <video
               ref={videoRef}
-              autoPlay
-              playsInline
               className="w-full h-full object-cover"
             />
             <Button 
@@ -105,7 +114,7 @@ export function ScanForm() {
               variant="secondary"
               className="absolute top-2 right-2"
             >
-              Stop Camera
+              Stop Scanner
             </Button>
           </div>
         )}
@@ -117,7 +126,7 @@ export function ScanForm() {
             className="w-full"
           >
             <Camera className="mr-2 h-4 w-4" />
-            Start Camera
+            Start Barcode Scanner
           </Button>
         )}
 
