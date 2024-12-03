@@ -56,7 +56,6 @@ export function ScanForm() {
   };
 
   const stopCamera = () => {
-    codeReader.current.stopAsyncDecode();
     if (videoRef.current && videoRef.current.srcObject) {
       const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
       tracks.forEach(track => track.stop());
