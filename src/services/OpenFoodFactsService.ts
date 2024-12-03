@@ -1,14 +1,45 @@
 import { API_ENDPOINTS, FALLBACK_ALLERGENS, FALLBACK_BRANDS, FALLBACK_CATEGORIES } from './constants/OpenFoodFactsConstants';
-import type { ProductDetails, SearchFilters, SearchResponse } from './types/OpenFoodFactsTypes';
+
+export interface ProductDetails {
+  name: string;
+  ingredients: string;
+  nutritional_info: Record<string, any>;
+  image_url: string;
+  barcode: string;
+}
+
+export interface SearchFilters {
+  brands?: string;
+  categories?: string;
+  ingredients?: string;
+  allergens?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface SearchResponse {
+  count: number;
+  page: number;
+  products: ProductDetails[];
+}
+
+const handleApiResponse = async (response: Response) => {
+  if (!response.ok) {
+    throw new Error(`API Error: ${response.status}`);
+  }
+  return response.json();
+};
 
 export async function fetchProductDetails(barcode: string): Promise<ProductDetails> {
   try {
-    const response = await fetch(API_ENDPOINTS.PRODUCT(barcode));
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
-    }
+    const response = await fetch(API_ENDPOINTS.PRODUCT(barcode), {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
+      }
+    });
     
-    const data = await response.json();
+    const data = await handleApiResponse(response);
     if (data.status !== 1) {
       throw new Error("Product not found!");
     }
@@ -21,7 +52,7 @@ export async function fetchProductDetails(barcode: string): Promise<ProductDetai
       image_url: product.image_url || "N/A",
       barcode: product.code || barcode
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching product:", error);
     throw new Error(`Failed to fetch product: ${error.message}`);
   }
@@ -47,12 +78,14 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
   }
 
   try {
-    const response = await fetch(`${API_ENDPOINTS.SEARCH}?${searchParams.toString()}`);
-    if (!response.ok) {
-      throw new Error(`Search API Error: ${response.status}`);
-    }
+    const response = await fetch(`${API_ENDPOINTS.SEARCH}?${searchParams.toString()}`, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
+      }
+    });
     
-    const data = await response.json();
+    const data = await handleApiResponse(response);
     console.log("API Search Results:", data);
 
     return {
@@ -78,12 +111,14 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
 
 export async function fetchCategories(): Promise<string[]> {
   try {
-    const response = await fetch(API_ENDPOINTS.CATEGORIES);
-    if (!response.ok) {
-      throw new Error(`Categories API Error: ${response.status}`);
-    }
-
-    const data = await response.json();
+    const response = await fetch(API_ENDPOINTS.CATEGORIES, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
+      }
+    });
+    
+    const data = await handleApiResponse(response);
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
     console.warn("Failed to fetch categories, using fallback data:", error);
@@ -93,12 +128,14 @@ export async function fetchCategories(): Promise<string[]> {
 
 export async function fetchAllergens(): Promise<string[]> {
   try {
-    const response = await fetch(API_ENDPOINTS.ALLERGENS);
-    if (!response.ok) {
-      throw new Error(`Allergens API Error: ${response.status}`);
-    }
-
-    const data = await response.json();
+    const response = await fetch(API_ENDPOINTS.ALLERGENS, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
+      }
+    });
+    
+    const data = await handleApiResponse(response);
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
     console.warn("Failed to fetch allergens, using fallback data:", error);
@@ -108,12 +145,14 @@ export async function fetchAllergens(): Promise<string[]> {
 
 export async function fetchBrands(): Promise<string[]> {
   try {
-    const response = await fetch(API_ENDPOINTS.BRANDS);
-    if (!response.ok) {
-      throw new Error(`Brands API Error: ${response.status}`);
-    }
-
-    const data = await response.json();
+    const response = await fetch(API_ENDPOINTS.BRANDS, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
+      }
+    });
+    
+    const data = await handleApiResponse(response);
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
     console.warn("Failed to fetch brands, using fallback data:", error);
@@ -130,6 +169,9 @@ export async function contributeProduct(productData: Partial<ProductDetails>, ba
     
     const response = await fetch(API_ENDPOINTS.CONTRIBUTE, {
       method: 'POST',
+      headers: {
+        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
+      },
       body: formData
     });
 
@@ -145,5 +187,3 @@ export async function contributeProduct(productData: Partial<ProductDetails>, ba
     throw new Error(`Failed to contribute product: ${error.message}`);
   }
 }
-
-export type { ProductDetails, SearchFilters, SearchResponse };
