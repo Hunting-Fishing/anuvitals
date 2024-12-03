@@ -3,7 +3,7 @@ export interface Message {
   content: string;
 }
 
-export type AssistantType = 'chef' | 'fitness' | 'health' | 'diet';
+export type AssistantType = 'chef' | 'fitness' | 'health' | 'diet' | 'health-analysis';
 
 export interface AIAssistantProps {
   initialType?: AssistantType;
