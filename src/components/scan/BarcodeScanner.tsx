@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { VideoPreview } from "./barcode/VideoPreview";
 import { BarcodeOverlay } from "./barcode/BarcodeOverlay";
 import { ScannerControls } from "./barcode/ScannerControls";
@@ -12,6 +12,29 @@ export function BarcodeScanner({ onBarcodeDetected }: BarcodeScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { showCamera, scanning, startCamera, stopCamera } = useBarcodeScanner(onBarcodeDetected);
 
+  useEffect(() => {
+    // Ensure video element is ready
+    if (videoRef.current) {
+      console.log("Video element initialized:", videoRef.current);
+    }
+  }, []);
+
+  const handleStartScanning = async () => {
+    if (!videoRef.current) {
+      console.error("Video element not initialized");
+      return;
+    }
+    await startCamera(videoRef.current);
+  };
+
+  const handleStopScanning = () => {
+    if (!videoRef.current) {
+      console.error("Video element not initialized");
+      return;
+    }
+    stopCamera(videoRef.current);
+  };
+
   return (
     <div className="space-y-4">
       {showCamera && (
@@ -21,8 +44,8 @@ export function BarcodeScanner({ onBarcodeDetected }: BarcodeScannerProps) {
           <ScannerControls
             showCamera={showCamera}
             scanning={scanning}
-            onStartScanning={() => startCamera(videoRef.current)}
-            onStopScanning={() => stopCamera(videoRef.current)}
+            onStartScanning={handleStartScanning}
+            onStopScanning={handleStopScanning}
           />
         </div>
       )}
@@ -31,8 +54,8 @@ export function BarcodeScanner({ onBarcodeDetected }: BarcodeScannerProps) {
         <ScannerControls
           showCamera={showCamera}
           scanning={scanning}
-          onStartScanning={() => startCamera(videoRef.current)}
-          onStopScanning={() => stopCamera(videoRef.current)}
+          onStartScanning={handleStartScanning}
+          onStopScanning={handleStopScanning}
         />
       )}
     </div>
