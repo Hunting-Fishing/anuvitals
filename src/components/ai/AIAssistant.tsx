@@ -20,13 +20,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
+type FilterType = "all" | "user" | "ai";
+
 export function AIAssistant() {
   const { message, setMessage, sendMessage, messages, isLoading, retryMessage } = useConversation();
   const { assistantType } = useAI();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = React.useState("");
   const [showFilters, setShowFilters] = React.useState(false);
-  const [filterType, setFilterType] = React.useState<"all" | "user" | "ai">("all");
+  const [filterType, setFilterType] = React.useState<FilterType>("all");
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   // Virtualized list for performance
@@ -148,7 +150,7 @@ export function AIAssistant() {
                   <DropdownMenuItem onClick={() => setFilterType("user")}>
                     User Messages
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterType("assistant")}>
+                  <DropdownMenuItem onClick={() => setFilterType("ai")}>
                     AI Responses
                   </DropdownMenuItem>
                 </DropdownMenuContent>
