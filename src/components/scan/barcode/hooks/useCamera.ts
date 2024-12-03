@@ -4,19 +4,10 @@ import { useToast } from "@/hooks/use-toast";
 export function useCamera() {
   const { toast } = useToast();
 
-  const initializeCamera = async (videoElement: HTMLVideoElement | null): Promise<MediaStream | null> => {
-    if (!videoElement) {
-      console.error("Video element reference is missing");
-      return null;
-    }
-
+  const initializeCamera = async (videoElement: HTMLVideoElement): Promise<MediaStream | null> => {
     try {
-      // Check camera permissions
-      const permissionResult = await navigator.permissions.query({ name: 'camera' as PermissionName });
-      if (permissionResult.state === 'denied') {
-        throw new Error("Camera permission is denied");
-      }
-
+      console.log("Requesting camera permissions...");
+      
       // Request camera access with specific constraints
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -26,16 +17,21 @@ export function useCamera() {
         }
       });
 
+      console.log("Camera permission granted, setting up video element");
+      
       // Set up video element
       videoElement.srcObject = stream;
       
       // Wait for video to be ready
       await new Promise<void>((resolve) => {
-        videoElement.onloadedmetadata = () => resolve();
+        videoElement.onloadedmetadata = () => {
+          console.log("Video metadata loaded");
+          resolve();
+        };
       });
 
       await videoElement.play();
-      console.log("Camera initialized successfully");
+      console.log("Video playback started");
       
       return stream;
     } catch (error: any) {
@@ -49,10 +45,14 @@ export function useCamera() {
     }
   };
 
-  const stopCamera = (videoElement: HTMLVideoElement | null) => {
+  const stopCamera = (videoElement: HTMLVideoElement) => {
+    console.log("Stopping camera...");
     if (videoElement?.srcObject) {
       const stream = videoElement.srcObject as MediaStream;
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach(track => {
+        track.stop();
+        console.log("Camera track stopped");
+      });
       videoElement.srcObject = null;
     }
   };

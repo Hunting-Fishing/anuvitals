@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface VideoPreviewProps {
   videoRef: React.RefObject<HTMLVideoElement>;
@@ -6,13 +6,16 @@ interface VideoPreviewProps {
 
 export function VideoPreview({ videoRef }: VideoPreviewProps) {
   useEffect(() => {
-    // Log when video element is mounted
-    console.log("Video element mounted:", videoRef.current);
+    console.log("VideoPreview mounted, video element:", videoRef.current);
+    
     return () => {
-      // Cleanup on unmount
+      console.log("VideoPreview unmounting, cleaning up...");
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach(track => {
+          track.stop();
+          console.log("Track stopped during cleanup");
+        });
       }
     };
   }, []);

@@ -12,11 +12,17 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
 
   const startCamera = async (videoElement: HTMLVideoElement | null) => {
     if (!videoElement) {
-      console.error("Video element is not initialized");
+      console.error("Video element reference is missing");
+      toast({
+        title: "Error",
+        description: "Camera initialization failed - video element not found",
+        variant: "destructive",
+      });
       return;
     }
 
     try {
+      console.log("Starting camera initialization...");
       setScanning(true);
 
       // Initialize camera
@@ -24,12 +30,14 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
       if (!stream) {
         throw new Error("Failed to initialize camera");
       }
+      console.log("Camera initialized successfully");
 
       // Setup barcode scanner
       const setup = await setupScanner();
       if (!setup) {
         throw new Error("Failed to setup scanner");
       }
+      console.log("Scanner setup completed");
 
       const { codeReader, deviceId } = setup;
       setShowCamera(true);
@@ -76,9 +84,11 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
     scanning,
     startCamera,
     stopCamera: (videoElement: HTMLVideoElement | null) => {
-      stopCamera(videoElement);
-      setShowCamera(false);
-      setScanning(false);
+      if (videoElement) {
+        stopCamera(videoElement);
+        setShowCamera(false);
+        setScanning(false);
+      }
     }
   };
 }
