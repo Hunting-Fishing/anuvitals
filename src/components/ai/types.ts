@@ -1,12 +1,11 @@
+import { MessageCategory, MessageMetadata } from './types/MessageCategories';
+
+export type AssistantType = 'health' | 'health-analysis';
+
 export interface Message {
   role: 'user' | 'assistant';
   content: string;
-  timestamp?: Date;
+  timestamp?: string;
   error?: boolean;
-}
-
-export type AssistantType = 'chef' | 'fitness' | 'health' | 'diet' | 'health-analysis';
-
-export interface AIAssistantProps {
-  initialType?: AssistantType;
+  metadata?: MessageMetadata;
 }
