@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import { BrowserMultiFormatReader, DecodeHintType } from '@zxing/browser';
-import { BarcodeFormat } from '@zxing/library';
+import { BrowserMultiFormatReader } from '@zxing/browser';
+import { BarcodeFormat, DecodeHintType } from '@zxing/library';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Camera } from "lucide-react";
@@ -33,7 +33,7 @@ export function BarcodeScanner({ onBarcodeDetected }: BarcodeScannerProps) {
       const codeReader = new BrowserMultiFormatReader(hints);
       
       // Try to use the back camera if available
-      const videoInputDevices = await codeReader.listVideoInputDevices();
+      const videoInputDevices = await BrowserMultiFormatReader.listVideoInputDevices();
       const selectedDeviceId = videoInputDevices.find(device => 
         device.label.toLowerCase().includes('back') || 
         device.label.toLowerCase().includes('rear')
