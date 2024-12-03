@@ -1,86 +1,50 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FeaturesTab } from "@/components/about/FeaturesTab";
-import { IntegrationsTab } from "@/components/about/IntegrationsTab";
 import { HowToTab } from "@/components/about/HowToTab";
+import { IntegrationsTab } from "@/components/about/IntegrationsTab";
+import { QRCodeSVG } from "qrcode.react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-/**
- * About page component that provides information about the application's
- * features, integrations, and usage instructions.
- */
 export default function AboutPage() {
+  const appUrl = "https://nourish-navigator-ui.vercel.app"; // Replace with your actual deployed URL
+
   return (
-    <div 
-      className="container mx-auto py-8 px-4 min-h-screen bg-gradient-to-br from-background to-secondary/20"
-      role="main"
-      aria-labelledby="about-title"
-    >
-      <div className="max-w-4xl mx-auto space-y-8">
-        <div className="text-center space-y-4 mb-12">
-          <h1 
-            id="about-title"
-            className="text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-fade-in"
-          >
-            Nourish Navigator
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Your intelligent companion for nutrition analysis and health optimization
-          </p>
-        </div>
-        
-        <Tabs defaultValue="features" className="space-y-8">
-          <TabsList 
-            className="grid w-full grid-cols-3 gap-4 p-1 bg-secondary/20 backdrop-blur-sm rounded-2xl"
-            aria-label="About sections"
-          >
-            <TabsTrigger 
-              value="features" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative overflow-hidden group transition-all duration-300 hover:bg-primary/80"
-            >
-              Features
-            </TabsTrigger>
-            <TabsTrigger 
-              value="integrations"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative overflow-hidden group transition-all duration-300 hover:bg-primary/80"
-            >
-              Integrations
-            </TabsTrigger>
-            <TabsTrigger 
-              value="howto"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative overflow-hidden group transition-all duration-300 hover:bg-primary/80"
-            >
-              How to Use
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent 
-            value="features" 
-            className="space-y-8 animate-fade-in"
-            role="tabpanel"
-            aria-label="Features section"
-          >
-            <FeaturesTab />
-          </TabsContent>
-
-          <TabsContent 
-            value="integrations" 
-            className="space-y-8 animate-fade-in"
-            role="tabpanel"
-            aria-label="Integrations section"
-          >
-            <IntegrationsTab />
-          </TabsContent>
-
-          <TabsContent 
-            value="howto" 
-            className="space-y-8 animate-fade-in"
-            role="tabpanel"
-            aria-label="How to use section"
-          >
-            <HowToTab />
-          </TabsContent>
-        </Tabs>
+    <div className="container mx-auto p-6 space-y-8">
+      <div className="flex justify-between items-start">
+        <h1 className="text-3xl font-bold">About Nourish Navigator</h1>
+        <Card className="w-64">
+          <CardHeader>
+            <CardTitle className="text-center">Scan to Open App</CardTitle>
+          </CardHeader>
+          <CardContent className="flex justify-center p-4">
+            <QRCodeSVG
+              value={appUrl}
+              size={200}
+              level="H"
+              includeMargin={true}
+              className="bg-white p-2 rounded"
+            />
+          </CardContent>
+        </Card>
       </div>
+
+      <Tabs defaultValue="features" className="w-full">
+        <TabsList>
+          <TabsTrigger value="features">Features</TabsTrigger>
+          <TabsTrigger value="howto">How To Use</TabsTrigger>
+          <TabsTrigger value="integrations">Integrations</TabsTrigger>
+        </TabsList>
+        <TabsContent value="features">
+          <FeaturesTab />
+        </TabsContent>
+        <TabsContent value="howto">
+          <HowToTab />
+        </TabsContent>
+        <TabsContent value="integrations">
+          <IntegrationsTab />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
