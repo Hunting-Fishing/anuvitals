@@ -10,6 +10,8 @@ import AboutPage from "./pages/About";
 import AIPage from "./pages/AI";
 import Profile from "./pages/Profile";
 import NutritionPage from "./pages/Nutrition";
+import SettingsPage from "./pages/Settings";
+import NotificationsPage from "./pages/Notifications";
 
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -97,6 +99,22 @@ export function AppRoutes() {
         element={
           <MainLayout>
             <Profile />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <MainLayout>
+            <SettingsPage />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <MainLayout>
+            <NotificationsPage />
           </MainLayout>
         }
       />
