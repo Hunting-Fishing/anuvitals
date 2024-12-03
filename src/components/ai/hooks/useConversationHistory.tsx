@@ -19,34 +19,46 @@ export function useConversationHistory(assistantType: AssistantType) {
     if (!user) return;
 
     try {
+      // First ensure the config exists for this user and assistant type
       const { error: upsertError } = await supabase
         .from('ai_assistants_config')
-        .upsert({
-          user_id: user.id,
-          assistant_type: assistantType,
-          conversation_history: [],
-        }, {
-          onConflict: 'user_id,assistant_type'
-        });
+        .upsert(
+          {
+            user_id: user.id,
+            assistant_type: assistantType,
+            conversation_history: [],
+          },
+          {
+            onConflict: 'user_id,assistant_type',
+          }
+        );
 
-      if (upsertError) throw upsertError;
+      if (upsertError) {
+        console.error('Error upserting config:', upsertError);
+        throw upsertError;
+      }
 
+      // Then fetch the conversation history
       const { data, error } = await supabase
         .from('ai_assistants_config')
         .select('conversation_history')
         .eq('user_id', user.id)
         .eq('assistant_type', assistantType)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching history:', error);
+        throw error;
+      }
 
       if (data?.conversation_history) {
         setMessages(data.conversation_history as Message[]);
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Full error:', error);
       toast({
         title: "Error",
-        description: "Failed to load conversation history",
+        description: "Failed to load conversation history. Please try refreshing the page.",
         variant: "destructive",
       });
     }
@@ -58,12 +70,19 @@ export function useConversationHistory(assistantType: AssistantType) {
     try {
       const { error: updateError } = await supabase
         .from('ai_assistants_config')
-        .update({ conversation_history: newHistory })
+        .update({ 
+          conversation_history: newHistory,
+          updated_at: new Date().toISOString()
+        })
         .eq('user_id', user.id)
         .eq('assistant_type', assistantType);
 
-      if (updateError) throw updateError;
-    } catch (error) {
+      if (updateError) {
+        console.error('Error updating history:', updateError);
+        throw updateError;
+      }
+    } catch (error: any) {
+      console.error('Full error:', error);
       toast({
         title: "Error",
         description: "Failed to update conversation history",
