@@ -7,7 +7,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AboutPage() {
-  const appUrl = "https://nourish-navigator-ui.vercel.app";
+  const appUrl = "https://clean-eats.lovable.app";
 
   return (
     <div className="container mx-auto p-6 space-y-8">
