@@ -18,35 +18,33 @@ serve(async (req) => {
     );
 
     const { data: config } = await supabase
-      .rpc('get_api_configuration', { service: 'edamam_recipe' });
+      .rpc('get_api_configuration', { service: 'spoonacular' });
 
     if (!config) {
       throw new Error('API configuration not found');
     }
 
-    const { query, diet, health, cuisineType, mealType, calories } = await req.json();
+    const { query, cuisine, diet, type, maxReadyTime } = await req.json();
     
     const params = new URLSearchParams({
-      type: 'public',
-      app_id: Deno.env.get('EDAMAM_APP_ID')!,
-      app_key: Deno.env.get('EDAMAM_APP_KEY')!,
-      q: query,
+      apiKey: Deno.env.get('SPOONACULAR_API_KEY')!,
+      query: query,
+      number: '10',
     });
 
+    if (cuisine) params.append('cuisine', cuisine);
     if (diet) params.append('diet', diet);
-    if (health) health.forEach((h: string) => params.append('health', h));
-    if (cuisineType) cuisineType.forEach((c: string) => params.append('cuisineType', c));
-    if (mealType) mealType.forEach((m: string) => params.append('mealType', m));
-    if (calories) params.append('calories', calories);
+    if (type) params.append('type', type);
+    if (maxReadyTime) params.append('maxReadyTime', maxReadyTime);
 
-    console.log('Fetching recipes from Edamam API...');
+    console.log('Fetching recipes from Spoonacular API...');
     const response = await fetch(
-      `https://api.edamam.com/api/recipes/v2?${params.toString()}`,
+      `https://api.spoonacular.com/recipes/complexSearch?${params.toString()}`,
       { method: 'GET' }
     );
 
     if (!response.ok) {
-      throw new Error(`Edamam API error: ${response.statusText}`);
+      throw new Error(`Spoonacular API error: ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -56,7 +54,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error in recipe-search function:', error);
+    console.error('Error in spoonacular-search function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 

@@ -1,7 +1,7 @@
-import { Laptop, Microscope, Shield, Zap, FlaskConical, Brain, Database } from "lucide-react";
+import { Laptop, Microscope, Shield, Zap, FlaskConical, Brain, Database, Search, Cookie } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
-const healthIntegrations = [
+const currentIntegrations = [
   {
     icon: <Microscope className="w-8 h-8 text-primary" />,
     title: "OpenAI Integration",
@@ -13,23 +13,39 @@ const healthIntegrations = [
     ]
   },
   {
-    icon: <FlaskConical className="w-8 h-8 text-primary" />,
-    title: "Open Food Facts API",
-    description: "Comprehensive food database integration.",
+    icon: <Search className="w-8 h-8 text-primary" />,
+    title: "Edamam Recipe API",
+    description: "Comprehensive recipe search and nutrition analysis.",
     features: [
-      "Access to global food database",
+      "Advanced recipe search",
+      "Dietary preferences filtering",
       "Detailed nutritional information",
-      "Product barcode scanning"
+      "Health labels and allergens"
     ]
   },
   {
-    icon: <Brain className="w-8 h-8 text-primary" />,
-    title: "OCR Technology",
-    description: "Advanced optical character recognition for blood work analysis.",
+    icon: <Cookie className="w-8 h-8 text-primary" />,
+    title: "Spoonacular API",
+    description: "Rich food and recipe data integration.",
     features: [
-      "Automated data extraction from medical reports",
-      "High accuracy text recognition",
-      "Support for multiple file formats"
+      "Complex recipe search",
+      "Cuisine-based filtering",
+      "Meal type categorization",
+      "Preparation time estimates"
+    ]
+  }
+];
+
+const upcomingIntegrations = [
+  {
+    icon: <FlaskConical className="w-8 h-8 text-primary" />,
+    title: "Nutritionix API (Coming Soon)",
+    description: "Professional nutrition database integration.",
+    features: [
+      "Branded food database",
+      "Restaurant menu items",
+      "Exercise calorie tracking",
+      "Natural language processing"
     ]
   }
 ];
@@ -74,11 +90,11 @@ export function IntegrationsTab() {
         Integrations
       </h2>
 
-      {/* Health Integrations Section */}
+      {/* Current Integrations Section */}
       <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-4 text-primary/80">Health & Analysis Integrations</h3>
+        <h3 className="text-xl font-semibold mb-4 text-primary/80">Current Integrations</h3>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {healthIntegrations.map((integration, index) => (
+          {currentIntegrations.map((integration, index) => (
             <div
               key={index}
               className="group p-6 rounded-xl bg-background/50 backdrop-blur-sm hover:bg-primary/5 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
@@ -104,7 +120,37 @@ export function IntegrationsTab() {
         </div>
       </div>
 
-      {/* Infrastructure Integrations Section */}
+      {/* Upcoming Integrations Section */}
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold mb-4 text-primary/80">Upcoming Integrations</h3>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {upcomingIntegrations.map((integration, index) => (
+            <div
+              key={index}
+              className="group p-6 rounded-xl bg-background/50 backdrop-blur-sm hover:bg-primary/5 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="mb-4 transform transition-transform group-hover:scale-110">
+                {integration.icon}
+              </div>
+              <h3 className="text-xl font-medium mb-2 text-primary group-hover:text-accent transition-colors">
+                {integration.title}
+              </h3>
+              <p className="text-muted-foreground mb-4 group-hover:text-foreground transition-colors">
+                {integration.description}
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                {integration.features.map((feature, featureIndex) => (
+                  <li key={featureIndex} className="group-hover:text-foreground transition-colors">
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Infrastructure Section */}
       <div>
         <h3 className="text-xl font-semibold mb-4 text-primary/80">Infrastructure & Security</h3>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

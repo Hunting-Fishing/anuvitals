@@ -6,3 +6,5 @@ enabled = true
 verify_jwt = true
 [api.recipe-search]
 verify_jwt = true
+[api.spoonacular-search]
+verify_jwt = true
