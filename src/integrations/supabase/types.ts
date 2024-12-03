@@ -824,6 +824,48 @@ export type Database = {
         }
         Relationships: []
       }
+      usda_food_data: {
+        Row: {
+          created_at: string
+          data_type: string | null
+          description: string
+          fdc_id: number
+          food_category: string | null
+          id: string
+          nutrients: Json | null
+          portions: Json | null
+          publication_date: string | null
+          search_text: unknown | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_type?: string | null
+          description: string
+          fdc_id: number
+          food_category?: string | null
+          id?: string
+          nutrients?: Json | null
+          portions?: Json | null
+          publication_date?: string | null
+          search_text?: unknown | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_type?: string | null
+          description?: string
+          fdc_id?: number
+          food_category?: string | null
+          id?: string
+          nutrients?: Json | null
+          portions?: Json | null
+          publication_date?: string | null
+          search_text?: unknown | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

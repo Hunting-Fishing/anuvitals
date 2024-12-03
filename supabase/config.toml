@@ -2,9 +2,20 @@ project_id = "pcjfvrjmuedyytavtrhv"
 
 [api]
 enabled = true
-[api.nutrition-analysis]
-verify_jwt = true
-[api.recipe-search]
-verify_jwt = true
-[api.spoonacular-search]
-verify_jwt = true
+port = 54321
+schemas = ["public", "storage"]
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+
+[[functions]]
+name = "usda-search"
+verify_jwt = false
+
+[[functions]]
+name = "usda-food-details"
+verify_jwt = false
