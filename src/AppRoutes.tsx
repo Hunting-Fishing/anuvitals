@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { AppSidebar } from "./components/AppSidebar";
-import Index from "./pages/Index";
+import { Index } from "./pages/Index";
 import AuthPage from "./pages/Auth";
 import ScanPage from "./pages/Scan";
 import DietCategory from "./pages/DietCategory";
