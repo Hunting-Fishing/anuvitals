@@ -4,6 +4,8 @@ import { useAI } from './AIContext';
 import { Message } from './types';
 import { useConversationHistory } from './hooks/useConversationHistory';
 import { useAIResponse } from './hooks/useAIResponse';
+import { useMessageCategorization } from './hooks/useMessageCategorization';
+import { MessageCategory } from './types/MessageCategories';
 
 export function useConversation() {
   const [message, setMessage] = useState('');
@@ -12,6 +14,7 @@ export function useConversation() {
   const supabase = useSupabaseClient();
   const { messages, setMessages, updateConversationHistory } = useConversationHistory(assistantType);
   const { getAIResponse } = useAIResponse();
+  const { categorizeMessage } = useMessageCategorization();
   const [lastAttempt, setLastAttempt] = useState<{
     message: string;
     updatedMessages: Message[];
@@ -21,7 +24,28 @@ export function useConversation() {
     if (!message.trim() || !user) return;
 
     setIsLoading(true);
-    const userMessage: Message = { role: 'user', content: message };
+    
+    // Get message category
+    const category = await categorizeMessage(message, {
+      previousMessages: messages.slice(-5).map(m => ({
+        role: m.role,
+        content: m.content
+      })),
+      userPreferences: {
+        dietaryPreferences: [], // Will be populated from profile
+        healthConditions: []    // Will be populated from profile
+      }
+    });
+
+    const userMessage: Message = { 
+      role: 'user', 
+      content: message,
+      metadata: {
+        category,
+        timestamp: new Date().toISOString()
+      }
+    };
+
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
     setLastAttempt({ message: message, updatedMessages });
@@ -60,9 +84,16 @@ export function useConversation() {
       );
 
       if (aiResponse) {
+        // Get category for AI response
+        const aiCategory = await categorizeMessage(aiResponse);
+        
         const aiMessage: Message = {
           role: 'assistant',
           content: aiResponse,
+          metadata: {
+            category: aiCategory,
+            timestamp: new Date().toISOString()
+          }
         };
 
         const newHistory = [...updatedMessages, aiMessage];
