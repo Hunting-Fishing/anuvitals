@@ -23,6 +23,17 @@ export interface SearchResponse {
   products: ProductDetails[];
 }
 
+const API_OPTIONS = {
+  method: 'GET',
+  headers: {
+    'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)',
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+  mode: 'cors' as RequestMode,
+  cache: 'no-cache' as RequestCache
+};
+
 const handleApiResponse = async (response: Response) => {
   if (!response.ok) {
     throw new Error(`API Error: ${response.status}`);
@@ -32,14 +43,9 @@ const handleApiResponse = async (response: Response) => {
 
 export async function fetchProductDetails(barcode: string): Promise<ProductDetails> {
   try {
-    const response = await fetch(API_ENDPOINTS.PRODUCT(barcode), {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
-      }
-    });
-    
+    const response = await fetch(API_ENDPOINTS.PRODUCT(barcode), API_OPTIONS);
     const data = await handleApiResponse(response);
+    
     if (data.status !== 1) {
       throw new Error("Product not found!");
     }
@@ -78,13 +84,7 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
   }
 
   try {
-    const response = await fetch(`${API_ENDPOINTS.SEARCH}?${searchParams.toString()}`, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
-      }
-    });
-    
+    const response = await fetch(`${API_ENDPOINTS.SEARCH}?${searchParams.toString()}`, API_OPTIONS);
     const data = await handleApiResponse(response);
     console.log("API Search Results:", data);
 
@@ -111,13 +111,7 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
 
 export async function fetchCategories(): Promise<string[]> {
   try {
-    const response = await fetch(API_ENDPOINTS.CATEGORIES, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
-      }
-    });
-    
+    const response = await fetch(API_ENDPOINTS.CATEGORIES, API_OPTIONS);
     const data = await handleApiResponse(response);
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
@@ -128,13 +122,7 @@ export async function fetchCategories(): Promise<string[]> {
 
 export async function fetchAllergens(): Promise<string[]> {
   try {
-    const response = await fetch(API_ENDPOINTS.ALLERGENS, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
-      }
-    });
-    
+    const response = await fetch(API_ENDPOINTS.ALLERGENS, API_OPTIONS);
     const data = await handleApiResponse(response);
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
@@ -145,13 +133,7 @@ export async function fetchAllergens(): Promise<string[]> {
 
 export async function fetchBrands(): Promise<string[]> {
   try {
-    const response = await fetch(API_ENDPOINTS.BRANDS, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
-      }
-    });
-    
+    const response = await fetch(API_ENDPOINTS.BRANDS, API_OPTIONS);
     const data = await handleApiResponse(response);
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
