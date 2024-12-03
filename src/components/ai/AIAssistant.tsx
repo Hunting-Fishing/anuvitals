@@ -4,7 +4,7 @@ import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { AssistantHeader } from "./AssistantHeader";
 import { AIVisualization } from "./AIVisualization";
-import { HealthAnalysisView } from "./HealthAnalysisView";
+import { HealthDataView } from "./health-analysis/HealthDataView";
 import { useConversation } from "./useConversation";
 import { useToast } from "@/hooks/use-toast";
 import { useAI } from "./AIContext";
@@ -34,7 +34,7 @@ export function AIAssistant() {
         <Card className="flex-1 p-6 space-y-4 overflow-hidden shadow-lg border-2 bg-gradient-to-b from-gray-900/50 to-black/50">
           <AssistantHeader />
           <AIVisualization />
-          <HealthAnalysisView />
+          <HealthDataView />
         </Card>
       </div>
     );
