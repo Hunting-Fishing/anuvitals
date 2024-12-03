@@ -1,25 +1,37 @@
-import React from 'react';
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import { MetricsCards } from "@/components/MetricsCards";
-import { useUser } from "@supabase/auth-helpers-react";
+import { Card } from "@/components/ui/card";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 export function HealthOverview() {
-  const user = useUser();
+  // Sample data - in a real app, this would come from your backend
+  const data = [
+    { date: "Mon", value: 65 },
+    { date: "Tue", value: 68 },
+    { date: "Wed", value: 70 },
+    { date: "Thu", value: 72 },
+    { date: "Fri", value: 75 },
+    { date: "Sat", value: 74 },
+    { date: "Sun", value: 76 },
+  ];
 
   return (
-    <section className="mt-12" aria-label="Your health metrics">
-      <h2 className="text-2xl font-semibold mb-6">Your Health Overview</h2>
-      <ScrollArea className="h-[300px] rounded-md border p-4">
-        {user ? (
-          <MetricsCards />
-        ) : (
-          <div className="space-y-4">
-            <Skeleton className="h-[125px] w-full rounded-lg" />
-            <Skeleton className="h-[125px] w-full rounded-lg" />
-          </div>
-        )}
-      </ScrollArea>
-    </section>
+    <Card className="p-6 border-2 shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Weekly Health Score</h2>
+      <div className="h-[200px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data}>
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Line 
+              type="monotone" 
+              dataKey="value" 
+              stroke="#8884d8" 
+              strokeWidth={2}
+              dot={{ fill: "#8884d8" }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </Card>
   );
 }

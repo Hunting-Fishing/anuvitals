@@ -1,69 +1,48 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { CheckCircle2, Circle } from "lucide-react";
 
 export function GettingStartedGuide() {
-  const navigate = useNavigate();
-  
-  return (
-    <section className="mt-12" aria-label="Getting started guide">
-      <h2 className="text-2xl font-semibold mb-6">Getting Started</h2>
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>New to Health Companion?</CardTitle>
-            <CardDescription>
-              Follow these steps to get the most out of your experience
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ol className="list-decimal list-inside space-y-2">
-              <li>Complete your health profile</li>
-              <li>Set your dietary preferences</li>
-              <li>Try scanning your first product</li>
-              <li>Chat with our AI assistant for personalized advice</li>
-            </ol>
-          </CardContent>
-        </Card>
+  const steps = [
+    {
+      title: "Complete Your Profile",
+      description: "Add your health goals and preferences",
+      completed: true,
+    },
+    {
+      title: "Connect Health Data",
+      description: "Sync your fitness devices and apps",
+      completed: false,
+    },
+    {
+      title: "Set Your Goals",
+      description: "Define your health and fitness targets",
+      completed: false,
+    },
+    {
+      title: "Start Tracking",
+      description: "Begin logging your daily activities",
+      completed: false,
+    },
+  ];
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Need Help?</CardTitle>
-            <CardDescription>
-              Resources to help you navigate the application
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Button 
-                onClick={() => navigate("/about")}
-                variant="link"
-                className="w-full justify-start p-0 h-auto font-normal"
-                aria-label="Learn how to use the application"
-              >
-                → How to use Health Companion
-              </Button>
-              <Button 
-                onClick={() => navigate("/about?tab=features")}
-                variant="link"
-                className="w-full justify-start p-0 h-auto font-normal"
-                aria-label="View application features"
-              >
-                → Feature overview
-              </Button>
-              <Button 
-                onClick={() => navigate("/about?tab=integrations")}
-                variant="link"
-                className="w-full justify-start p-0 h-auto font-normal"
-                aria-label="Learn about our integrations"
-              >
-                → Available integrations
-              </Button>
+  return (
+    <Card className="p-6 border-2 shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Getting Started</h2>
+      <div className="space-y-4">
+        {steps.map((step, index) => (
+          <div key={index} className="flex items-start space-x-3 group">
+            {step.completed ? (
+              <CheckCircle2 className="w-6 h-6 text-green-500 mt-0.5" />
+            ) : (
+              <Circle className="w-6 h-6 text-gray-300 mt-0.5 group-hover:text-primary transition-colors" />
+            )}
+            <div>
+              <h3 className="font-medium">{step.title}</h3>
+              <p className="text-sm text-muted-foreground">{step.description}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
       </div>
-    </section>
+    </Card>
   );
 }
