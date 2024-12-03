@@ -16,29 +16,31 @@ export function ScanForm() {
   const session = useSession();
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const codeReader = useRef<BrowserMultiFormatReader>(new BrowserMultiFormatReader());
+  const codeReader = useRef(new BrowserMultiFormatReader());
 
   const startCamera = async () => {
     try {
       setShowCamera(true);
-      const videoInputDevices = await codeReader.current.listVideoInputDevices();
+      const videoInputDevices = await BrowserMultiFormatReader.listVideoInputDevices();
       const selectedDeviceId = videoInputDevices.find(device => 
         device.label.toLowerCase().includes('back') || 
         device.label.toLowerCase().includes('rear')
       )?.deviceId || videoInputDevices[0].deviceId;
 
-      await codeReader.current.decodeFromVideoDevice(
-        selectedDeviceId,
-        videoRef.current!,
-        async (result, error) => {
-          if (result) {
-            setBarcode(result.getText());
-            stopCamera();
-            // Automatically submit the form when barcode is detected
-            handleScan(new Event('submit') as any);
+      if (videoRef.current) {
+        await codeReader.current.decodeFromVideoDevice(
+          selectedDeviceId,
+          videoRef.current,
+          async (result, error) => {
+            if (result) {
+              setBarcode(result.getText());
+              stopCamera();
+              // Automatically submit the form when barcode is detected
+              handleScan(new Event('submit') as any);
+            }
           }
-        }
-      );
+        );
+      }
 
       toast({
         title: "Camera activated",
@@ -54,7 +56,7 @@ export function ScanForm() {
   };
 
   const stopCamera = () => {
-    codeReader.current.reset();
+    codeReader.current.stopStreams();
     setShowCamera(false);
   };
 
