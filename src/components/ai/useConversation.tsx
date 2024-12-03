@@ -12,6 +12,10 @@ export function useConversation() {
   const supabase = useSupabaseClient();
   const { messages, setMessages, updateConversationHistory } = useConversationHistory(assistantType);
   const { getAIResponse } = useAIResponse();
+  const [lastAttempt, setLastAttempt] = useState<{
+    message: string;
+    updatedMessages: Message[];
+  } | null>(null);
 
   const sendMessage = async () => {
     if (!message.trim() || !user) return;
@@ -20,6 +24,7 @@ export function useConversation() {
     const userMessage: Message = { role: 'user', content: message };
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
+    setLastAttempt({ message: message, updatedMessages });
     setMessage('');
 
     try {
@@ -64,9 +69,21 @@ export function useConversation() {
         setMessages(newHistory);
         await updateConversationHistory(newHistory);
       }
+      setLastAttempt(null);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const retryMessage = async () => {
+    if (!lastAttempt) return;
+    
+    setMessage(lastAttempt.message);
+    setMessages(lastAttempt.updatedMessages);
+    await sendMessage();
   };
 
   return {
@@ -74,6 +91,7 @@ export function useConversation() {
     setMessage,
     sendMessage,
     isLoading,
-    messages // Added this to fix the error
+    messages,
+    retryMessage
   };
 }
