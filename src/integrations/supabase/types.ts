@@ -610,6 +610,38 @@ export type Database = {
           },
         ]
       }
+      frequently_searched_foods: {
+        Row: {
+          created_at: string
+          fdc_id: number | null
+          id: string
+          last_searched_at: string | null
+          search_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          fdc_id?: number | null
+          id?: string
+          last_searched_at?: string | null
+          search_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          fdc_id?: number | null
+          id?: string
+          last_searched_at?: string | null
+          search_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "frequently_searched_foods_fdc_id_fkey"
+            columns: ["fdc_id"]
+            isOneToOne: false
+            referencedRelation: "usda_food_data"
+            referencedColumns: ["fdc_id"]
+          },
+        ]
+      }
       goals_and_benefits: {
         Row: {
           created_at: string
@@ -1810,6 +1842,12 @@ export type Database = {
           "": number[]
         }
         Returns: number[]
+      }
+      update_food_search_count: {
+        Args: {
+          food_fdc_id: number
+        }
+        Returns: undefined
       }
       urlencode:
         | {

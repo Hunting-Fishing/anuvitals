@@ -9,6 +9,7 @@ import BloodWorkPage from "./pages/BloodWork";
 import AboutPage from "./pages/About";
 import AIPage from "./pages/AI";
 import Profile from "./pages/Profile";
+import NutritionPage from "./pages/Nutrition";
 
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -40,6 +41,14 @@ export function AppRoutes() {
         element={
           <MainLayout>
             <ScanPage />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/nutrition"
+        element={
+          <MainLayout>
+            <NutritionPage />
           </MainLayout>
         }
       />
