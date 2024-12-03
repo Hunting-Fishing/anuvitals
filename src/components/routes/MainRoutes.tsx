@@ -8,56 +8,60 @@ import AIPage from "@/pages/AI";
 import AboutPage from "@/pages/About";
 
 export function MainRoutes() {
-  return (
-    <>
-      <Route
-        path="/"
-        element={
-          <MainLayout>
-            <Index />
-          </MainLayout>
-        }
-      />
-      <Route
-        path="/scan"
-        element={
-          <MainLayout>
-            <ScanPage />
-          </MainLayout>
-        }
-      />
-      <Route
-        path="/nutrition"
-        element={
-          <MainLayout>
-            <NutritionPage />
-          </MainLayout>
-        }
-      />
-      <Route
-        path="/bloodwork"
-        element={
-          <MainLayout>
-            <BloodWorkPage />
-          </MainLayout>
-        }
-      />
-      <Route
-        path="/ai"
-        element={
-          <MainLayout>
-            <AIPage />
-          </MainLayout>
-        }
-      />
-      <Route
-        path="/about"
-        element={
-          <MainLayout>
-            <AboutPage />
-          </MainLayout>
-        }
-      />
-    </>
-  );
+  return [
+    <Route
+      key="home"
+      path="/"
+      element={
+        <MainLayout>
+          <Index />
+        </MainLayout>
+      }
+    />,
+    <Route
+      key="scan"
+      path="/scan"
+      element={
+        <MainLayout>
+          <ScanPage />
+        </MainLayout>
+      }
+    />,
+    <Route
+      key="nutrition"
+      path="/nutrition"
+      element={
+        <MainLayout>
+          <NutritionPage />
+        </MainLayout>
+      }
+    />,
+    <Route
+      key="bloodwork"
+      path="/bloodwork"
+      element={
+        <MainLayout>
+          <BloodWorkPage />
+        </MainLayout>
+      }
+    />,
+    <Route
+      key="ai"
+      path="/ai"
+      element={
+        <MainLayout>
+          <AIPage />
+        </MainLayout>
+      }
+    />,
+    <Route
+      key="about"
+      path="/about"
+      element={
+        <MainLayout>
+          <AboutPage />
+        </MainLayout>
+      }
+    />
+  ];
 }

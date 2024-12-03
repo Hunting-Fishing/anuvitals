@@ -9,9 +9,9 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/auth" element={<AuthPage />} />
-      <MainRoutes />
-      <DietRoutes />
-      <UserRoutes />
+      {MainRoutes()}
+      {DietRoutes()}
+      {UserRoutes()}
     </Routes>
   );
 }
