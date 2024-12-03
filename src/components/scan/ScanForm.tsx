@@ -56,7 +56,7 @@ export function ScanForm() {
   };
 
   const stopCamera = () => {
-    codeReader.current.stopStreams();
+    codeReader.current.reset();
     setShowCamera(false);
   };
 
