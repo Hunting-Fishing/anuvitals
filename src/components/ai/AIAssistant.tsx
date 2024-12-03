@@ -8,10 +8,17 @@ import { HealthDataView } from "./health-analysis/HealthDataView";
 import { useConversation } from "./useConversation";
 import { useToast } from "@/hooks/use-toast";
 import { useAI } from "./AIContext";
-import { Loader2, Search, Filter } from "lucide-react";
+import { Loader2, Search, Filter, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useVirtualizer } from '@tanstack/react-virtual';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 export function AIAssistant() {
   const { message, setMessage, sendMessage, messages, isLoading, retryMessage } = useConversation();
@@ -19,6 +26,7 @@ export function AIAssistant() {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = React.useState("");
   const [showFilters, setShowFilters] = React.useState(false);
+  const [filterType, setFilterType] = React.useState<"all" | "user" | "ai">("all");
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   // Virtualized list for performance
@@ -38,6 +46,20 @@ export function AIAssistant() {
       if (e.ctrlKey && e.key === 'f') {
         e.preventDefault();
         setShowFilters(true);
+      }
+      // Add arrow key navigation for messages
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        const messageElements = document.querySelectorAll('[role="listitem"]');
+        const currentFocus = document.activeElement;
+        const currentIndex = Array.from(messageElements).indexOf(currentFocus as Element);
+        
+        if (currentIndex !== -1) {
+          e.preventDefault();
+          const nextIndex = e.key === 'ArrowUp' ? 
+            Math.max(0, currentIndex - 1) : 
+            Math.min(messageElements.length - 1, currentIndex + 1);
+          (messageElements[nextIndex] as HTMLElement).focus();
+        }
       }
     };
 
@@ -69,9 +91,11 @@ export function AIAssistant() {
     }
   };
 
-  const filteredMessages = messages.filter(msg => 
-    msg.content.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredMessages = messages.filter(msg => {
+    const matchesSearch = msg.content.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = filterType === "all" ? true : msg.role === filterType;
+    return matchesSearch && matchesType;
+  });
 
   if (assistantType === 'health-analysis') {
     return (
@@ -103,6 +127,32 @@ export function AIAssistant() {
                 className="flex-1"
                 aria-label="Search messages"
               />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      "h-8 w-8",
+                      filterType !== "all" && "text-primary"
+                    )}
+                    aria-label="Filter messages"
+                  >
+                    <SlidersHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setFilterType("all")}>
+                    All Messages
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterType("user")}>
+                    User Messages
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterType("assistant")}>
+                    AI Responses
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Button
                 variant="ghost"
                 size="icon"
@@ -119,6 +169,7 @@ export function AIAssistant() {
             className="flex-1 overflow-auto"
             role="log"
             aria-label="Message history"
+            aria-live="polite"
           >
             <MessageList 
               messages={filteredMessages}
