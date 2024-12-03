@@ -84,7 +84,7 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
       });
 
       await videoElement.play();
-      console.log("Video element is playing:", videoElement.playing);
+      console.log("Video element is playing:", !videoElement.paused);
 
       const setup = await setupScanner(videoElement);
       if (!setup) {
