@@ -8,9 +8,15 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/auth" element={<AuthPage />} />
-      <MainRoutes />
-      <DietRoutes />
-      <UserRoutes />
+      <React.Fragment>
+        <MainRoutes />
+      </React.Fragment>
+      <React.Fragment>
+        <DietRoutes />
+      </React.Fragment>
+      <React.Fragment>
+        <UserRoutes />
+      </React.Fragment>
     </Routes>
   );
 }
