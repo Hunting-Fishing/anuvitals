@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Card } from "@/components/ui/card";
-import { MessageList } from "./MessageList";
+import { MessageList } from "./message/MessageList";
 import { MessageInput } from "./MessageInput";
 import { AssistantHeader } from "./AssistantHeader";
 import { AIVisualization } from "./AIVisualization";
@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { SearchPanel } from "./search/SearchPanel";
 import { LoadingOverlay } from "./loading/LoadingOverlay";
-import { WelcomeScreen } from "./welcome/WelcomeScreen";
 import { FilterType } from "./filters/MessageFilters";
 
 export function AIAssistant() {
@@ -24,7 +23,6 @@ export function AIAssistant() {
   const [filterType, setFilterType] = React.useState<FilterType>("all");
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  // Virtualized list for performance
   const rowVirtualizer = useVirtualizer({
     count: messages.length,
     getScrollElement: () => containerRef.current,
@@ -32,8 +30,7 @@ export function AIAssistant() {
     overscan: 5
   });
 
-  // Keyboard navigation
-  useEffect(() => {
+  React.useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setShowFilters(false);
@@ -74,7 +71,9 @@ export function AIAssistant() {
 
   const filteredMessages = messages.filter(msg => {
     const matchesSearch = msg.content.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === "all" ? true : msg.role === filterType;
+    const matchesType = filterType === "all" ? true : 
+                       filterType === "ai" ? msg.role === "assistant" : 
+                       msg.role === "user";
     return matchesSearch && matchesType;
   });
 
@@ -110,18 +109,11 @@ export function AIAssistant() {
           <div 
             ref={containerRef}
             className="flex-1 overflow-auto"
-            role="log"
-            aria-label="Message history"
-            aria-live="polite"
           >
-            {messages.length === 0 ? (
-              <WelcomeScreen />
-            ) : (
-              <MessageList 
-                messages={filteredMessages}
-                virtualizer={rowVirtualizer}
-              />
-            )}
+            <MessageList 
+              messages={filteredMessages}
+              virtualizer={rowVirtualizer}
+            />
           </div>
           
           <div className="pt-4 border-t border-gray-800">

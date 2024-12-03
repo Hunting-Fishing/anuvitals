@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Send, Mic, StopCircle } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { Loader2, Send } from "lucide-react";
+import { useRef, useEffect } from "react";
+import { VoiceInput } from "./input/VoiceInput";
 
 interface MessageInputProps {
   message: string;
@@ -12,81 +12,14 @@ interface MessageInputProps {
 }
 
 export function MessageInput({ message, onChange, onSend, isLoading }: MessageInputProps) {
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingTime, setRecordingTime] = useState(0);
-  const { toast } = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isRecording) {
-      interval = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isRecording]);
-
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'inherit';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [message]);
-  
-  const handleVoiceInput = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      toast({
-        title: "Not Supported",
-        description: "Voice input is not supported in your browser.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (isRecording) {
-      setIsRecording(false);
-      setRecordingTime(0);
-      return;
-    }
-
-    setIsRecording(true);
-    const recognition = new (window as any).webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-
-    recognition.onresult = (event: any) => {
-      const transcript = Array.from(event.results)
-        .map((result: any) => result[0])
-        .map((result: any) => result.transcript)
-        .join('');
-      
-      onChange(transcript);
-    };
-
-    recognition.onerror = () => {
-      setIsRecording(false);
-      setRecordingTime(0);
-      toast({
-        title: "Error",
-        description: "Failed to record voice input.",
-        variant: "destructive",
-      });
-    };
-
-    recognition.onend = () => {
-      setIsRecording(false);
-      setRecordingTime(0);
-    };
-
-    recognition.start();
-  };
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -129,34 +62,9 @@ export function MessageInput({ message, onChange, onSend, isLoading }: MessageIn
               </>
             )}
           </Button>
-          <Button
-            onClick={handleVoiceInput}
-            variant={isRecording ? "destructive" : "outline"}
-            className={`px-4 h-10 transition-all duration-200 hover:scale-105 ${
-              isRecording ? 'animate-pulse' : ''
-            }`}
-            disabled={isLoading}
-          >
-            {isRecording ? (
-              <>
-                <StopCircle className="w-4 h-4 mr-2" />
-                {formatTime(recordingTime)}
-              </>
-            ) : (
-              <>
-                <Mic className="w-4 h-4 mr-2" />
-                Voice
-              </>
-            )}
-          </Button>
+          <VoiceInput onTranscript={onChange} isLoading={isLoading} />
         </div>
       </div>
-      {isRecording && (
-        <div className="text-xs text-muted-foreground animate-pulse flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-          Listening... Click "Stop" when you're done speaking
-        </div>
-      )}
     </div>
   );
 }
