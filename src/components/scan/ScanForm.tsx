@@ -56,7 +56,12 @@ export function ScanForm() {
   };
 
   const stopCamera = () => {
-    codeReader.current.reset();
+    codeReader.current.stopContinuousDecode();
+    if (videoRef.current && videoRef.current.srcObject) {
+      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
     setShowCamera(false);
   };
 
