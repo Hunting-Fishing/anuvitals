@@ -1,0 +1,20 @@
+export const COMMON_ALLERGIES = [
+  "Milk",
+  "Eggs",
+  "Fish",
+  "Shellfish",
+  "Tree Nuts",
+  "Peanuts",
+  "Wheat",
+  "Soybeans",
+  "Sesame",
+  "Celery",
+  "Mustard",
+  "Lupin",
+  "Sulfites",
+  "Gluten",
+  "Corn",
+  "Berries",
+  "Citrus Fruits",
+  "Other"
+];
