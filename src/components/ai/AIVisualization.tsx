@@ -10,7 +10,7 @@ export function AIVisualization() {
       
       <div className="relative flex flex-col items-center gap-3">
         {/* AI Icon */}
-        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
+        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/20 animate-pulse">
           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-700 to-indigo-700 flex items-center justify-center">
               <div className={`w-2 ${isLoading ? 'animate-pulse' : ''}`}>
@@ -47,6 +47,9 @@ export function AIVisualization() {
           ))}
         </div>
       </div>
+
+      {/* Background Animation */}
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 animate-pulse" />
     </div>
   );
 }

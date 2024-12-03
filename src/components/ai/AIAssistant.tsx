@@ -8,6 +8,7 @@ import { HealthDataView } from "./health-analysis/HealthDataView";
 import { useConversation } from "./useConversation";
 import { useToast } from "@/hooks/use-toast";
 import { useAI } from "./AIContext";
+import { Loader2 } from "lucide-react";
 
 export function AIAssistant() {
   const { message, setMessage, sendMessage, messages, isLoading } = useConversation();
@@ -42,7 +43,7 @@ export function AIAssistant() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] max-w-4xl mx-auto p-4 animate-fade-in">
-      <Card className="flex-1 p-6 space-y-4 overflow-hidden shadow-lg border-2 bg-gradient-to-b from-gray-900/50 to-black/50">
+      <Card className="flex-1 p-6 space-y-4 overflow-hidden shadow-lg border-2 bg-gradient-to-b from-gray-900/50 to-black/50 relative">
         <AssistantHeader />
         <AIVisualization />
         
@@ -63,6 +64,15 @@ export function AIAssistant() {
             />
           </div>
         </div>
+
+        {isLoading && (
+          <div className="absolute inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center">
+            <div className="bg-background/95 p-4 rounded-lg shadow-lg flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Processing your request...</span>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );

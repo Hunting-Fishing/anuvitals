@@ -1,13 +1,15 @@
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar } from "@/components/ui/avatar";
-import { Brain, User } from "lucide-react";
+import { Brain, User, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Message {
   role: 'assistant' | 'user';
   content: string;
   timestamp?: Date;
+  error?: boolean;
 }
 
 interface MessageListProps {
@@ -39,7 +41,7 @@ export function MessageList({ messages }: MessageListProps) {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex gap-3 group transition-opacity ${
+            className={`flex gap-3 group transition-opacity animate-fade-in [animation-delay:${index * 100}ms] ${
               message.role === 'assistant' ? 'flex-row' : 'flex-row-reverse'
             }`}
           >
@@ -52,13 +54,23 @@ export function MessageList({ messages }: MessageListProps) {
             </Avatar>
             <div className="flex flex-col gap-1 max-w-[80%]">
               <div
-                className={`rounded-lg px-4 py-2 ${
+                className={`rounded-lg px-4 py-2 group relative ${
                   message.role === 'assistant'
-                    ? 'bg-secondary'
+                    ? 'bg-secondary hover:bg-secondary/90 transition-colors'
                     : 'bg-primary text-primary-foreground'
                 }`}
               >
                 {message.content}
+                {message.error && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <AlertCircle className="w-4 h-4 text-destructive absolute -right-6 top-2" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Error occurred during processing</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               </div>
               {message.timestamp && (
                 <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
