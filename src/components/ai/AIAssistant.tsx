@@ -11,12 +11,10 @@ export function AIAssistant() {
   const { toast } = useToast();
 
   const handleSend = async () => {
+    if (!message.trim()) return;
+    
     try {
       await sendMessage();
-      toast({
-        title: "Message sent",
-        description: "Your message has been sent to the AI assistant.",
-      });
     } catch (error) {
       toast({
         title: "Error",
@@ -28,12 +26,15 @@ export function AIAssistant() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] max-w-4xl mx-auto p-4 animate-fade-in">
-      <Card className="flex-1 p-6 space-y-4 overflow-hidden">
+      <Card className="flex-1 p-6 space-y-4 overflow-hidden shadow-lg border-2">
         <AssistantHeader />
         
         <div className="flex flex-col h-full space-y-4">
           <div className="flex-1 overflow-auto">
-            <MessageList messages={messages} />
+            <MessageList messages={messages.map(msg => ({
+              ...msg,
+              timestamp: new Date()
+            }))} />
           </div>
           
           <div className="pt-4 border-t">

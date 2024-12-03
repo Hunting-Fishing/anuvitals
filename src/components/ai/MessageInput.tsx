@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Loader2 } from "lucide-react";
 
 interface MessageInputProps {
   message: string;
@@ -14,21 +15,30 @@ export function MessageInput({ message, onChange, onSend, isLoading }: MessageIn
       <Textarea
         value={message}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Type your message..."
-        className="flex-1"
+        placeholder="Type your message... (Press Enter to send, Shift+Enter for new line)"
+        className="flex-1 min-h-[80px] resize-none transition-all focus:min-h-[120px]"
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             onSend();
           }
         }}
+        disabled={isLoading}
       />
       <Button
         onClick={onSend}
         disabled={isLoading || !message.trim()}
-        className="self-end"
+        className="self-end h-10 px-6"
+        variant={message.trim() ? "default" : "secondary"}
       >
-        Send
+        {isLoading ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Sending...
+          </>
+        ) : (
+          'Send'
+        )}
       </Button>
     </div>
   );
