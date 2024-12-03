@@ -66,8 +66,8 @@ export function AIAssistant() {
         </div>
 
         {isLoading && (
-          <div className="absolute inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center">
-            <div className="bg-background/95 p-4 rounded-lg shadow-lg flex items-center gap-2">
+          <div className="absolute inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
+            <div className="bg-background/95 p-4 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in">
               <Loader2 className="w-4 h-4 animate-spin" />
               <span>Processing your request...</span>
             </div>
