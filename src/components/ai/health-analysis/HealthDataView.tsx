@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Activity, Apple, Pills } from "lucide-react";
+import { Brain, Activity, Apple, Pill } from "lucide-react";
 
 interface HealthMetric {
   category: string;
@@ -35,7 +35,7 @@ export function HealthDataView() {
       category: "Supplements", 
       value: "2 Recommended",
       status: "alert",
-      icon: <Pills className="w-4 h-4" />
+      icon: <Pill className="w-4 h-4" />
     }
   ];
 
