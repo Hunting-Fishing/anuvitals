@@ -2,6 +2,7 @@ export type MessageCategory = 'general' | 'health' | 'nutrition' | 'exercise' | 
 
 export interface MessageMetadata {
   category?: MessageCategory;
+  timestamp?: string;
   shared?: boolean;
   sharedWith?: string[];
   sharedAt?: string;
