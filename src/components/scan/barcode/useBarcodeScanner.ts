@@ -9,7 +9,10 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
   const { toast } = useToast();
 
   const setupScanner = async (videoElement: HTMLVideoElement | null) => {
-    if (!videoElement) return null;
+    if (!videoElement) {
+      console.error("Video element is not initialized");
+      return null;
+    }
 
     const hints = new Map();
     hints.set(DecodeHintType.POSSIBLE_FORMATS, [
@@ -23,15 +26,8 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
     const codeReader = new BrowserMultiFormatReader(hints);
     
     try {
-      // First check if we have camera permissions
-      const permissionResult = await navigator.permissions.query({ name: 'camera' as PermissionName });
-      if (permissionResult.state === 'denied') {
-        throw new Error("Camera permission is denied. Please enable it in your browser settings.");
-      }
-
-      // Get list of available video devices
       const devices = await BrowserMultiFormatReader.listVideoInputDevices();
-      console.log('Available devices:', devices);
+      console.log('Available camera devices:', devices);
 
       if (devices.length === 0) {
         throw new Error("No camera devices found");
@@ -43,20 +39,19 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
         device.label.toLowerCase().includes('rear')
       );
 
-      // Use back camera if found, otherwise use first available camera
-      const selectedDevice = backCamera || devices[0];
-      console.log('Selected device:', selectedDevice);
-
-      return { codeReader, deviceId: selectedDevice.deviceId };
+      return { 
+        codeReader, 
+        deviceId: backCamera ? backCamera.deviceId : devices[0].deviceId 
+      };
     } catch (error) {
-      console.error("Failed to setup scanner:", error);
+      console.error("Scanner setup error:", error);
       throw error;
     }
   };
 
   const startCamera = async (videoElement: HTMLVideoElement | null) => {
     if (!videoElement) {
-      console.error("Video element is null");
+      console.error("Video element is not initialized");
       toast({
         title: "Camera Error",
         description: "Video element not initialized",
@@ -68,23 +63,32 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
     try {
       setScanning(true);
 
-      // Request camera permissions explicitly first
+      // First check camera permissions
+      const permissionResult = await navigator.permissions.query({ name: 'camera' as PermissionName });
+      if (permissionResult.state === 'denied') {
+        throw new Error("Camera permission is denied. Please enable it in your browser settings.");
+      }
+
+      // Request camera access
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
+        video: { 
+          facingMode: 'environment',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
       });
 
-      // Attach stream to video element
       videoElement.srcObject = stream;
       
       // Wait for video to be ready
-      await new Promise((resolve) => {
+      await new Promise<void>((resolve) => {
         videoElement.onloadedmetadata = () => {
-          resolve(true);
+          resolve();
         };
       });
 
       await videoElement.play();
-      console.log("Video element is playing:", !videoElement.paused);
+      console.log("Video element ready:", !videoElement.paused);
 
       const setup = await setupScanner(videoElement);
       if (!setup) {
@@ -92,7 +96,6 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
       }
 
       const { codeReader, deviceId } = setup;
-
       setShowCamera(true);
 
       await codeReader.decodeFromVideoDevice(
@@ -105,8 +108,8 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
             onBarcodeDetected(barcode);
             stopCamera(videoElement);
             toast({
-              title: "Barcode Detected",
-              description: `Found barcode: ${barcode}`,
+              title: "Success",
+              description: `Barcode detected: ${barcode}`,
             });
           }
           if (err && !(err instanceof TypeError)) {
@@ -133,8 +136,8 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
 
   const stopCamera = (videoElement: HTMLVideoElement | null) => {
     if (videoElement && videoElement.srcObject) {
-      const tracks = (videoElement.srcObject as MediaStream).getTracks();
-      tracks.forEach(track => track.stop());
+      const stream = videoElement.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
       videoElement.srcObject = null;
     }
     setShowCamera(false);

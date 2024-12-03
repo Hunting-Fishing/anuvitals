@@ -12,6 +12,7 @@ export function VideoPreview({ videoRef }: VideoPreviewProps) {
         className="w-full h-full object-cover"
         playsInline
         autoPlay
+        muted
       />
     </div>
   );
