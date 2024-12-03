@@ -10,6 +10,8 @@ export function VideoPreview({ videoRef }: VideoPreviewProps) {
       <video
         ref={videoRef}
         className="w-full h-full object-cover"
+        playsInline
+        autoPlay
       />
     </div>
   );

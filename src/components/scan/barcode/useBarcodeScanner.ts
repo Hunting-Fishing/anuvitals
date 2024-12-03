@@ -23,17 +23,25 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
     const codeReader = new BrowserMultiFormatReader(hints);
     
     try {
-      const videoInputDevices = await BrowserMultiFormatReader.listVideoInputDevices();
-      const selectedDeviceId = videoInputDevices.find(device => 
+      // Get list of available video devices
+      const devices = await BrowserMultiFormatReader.listVideoInputDevices();
+      console.log('Available devices:', devices);
+
+      // Try to find a back camera
+      const backCamera = devices.find(device => 
         device.label.toLowerCase().includes('back') || 
         device.label.toLowerCase().includes('rear')
-      )?.deviceId || videoInputDevices[0]?.deviceId;
+      );
 
-      if (!selectedDeviceId) {
+      // Use back camera if found, otherwise use first available camera
+      const selectedDevice = backCamera || devices[0];
+
+      if (!selectedDevice) {
         throw new Error("No camera found");
       }
 
-      return { codeReader, selectedDeviceId };
+      console.log('Selected device:', selectedDevice);
+      return { codeReader, deviceId: selectedDevice.deviceId };
     } catch (error) {
       console.error("Failed to setup scanner:", error);
       return null;
@@ -42,7 +50,6 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
 
   const startCamera = async (videoElement: HTMLVideoElement | null) => {
     try {
-      setShowCamera(true);
       setScanning(true);
 
       const setup = await setupScanner(videoElement);
@@ -50,10 +57,17 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
         throw new Error("Failed to setup scanner");
       }
 
-      const { codeReader, selectedDeviceId } = setup;
+      const { codeReader, deviceId } = setup;
+
+      // Request camera permissions explicitly
+      await navigator.mediaDevices.getUserMedia({ 
+        video: { deviceId: { exact: deviceId } } 
+      });
+
+      setShowCamera(true);
 
       await codeReader.decodeFromVideoDevice(
-        selectedDeviceId,
+        deviceId,
         videoElement,
         (result, err) => {
           if (result) {
@@ -84,6 +98,7 @@ export function useBarcodeScanner(onBarcodeDetected: (barcode: string) => void) 
         variant: "destructive",
       });
       setScanning(false);
+      setShowCamera(false);
     }
   };
 
