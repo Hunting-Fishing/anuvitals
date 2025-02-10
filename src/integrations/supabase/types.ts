@@ -844,6 +844,36 @@ export type Database = {
         }
         Relationships: []
       }
+      search_history: {
+        Row: {
+          created_at: string
+          execution_time: number | null
+          filters: Json | null
+          id: string
+          query: string
+          results_count: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          execution_time?: number | null
+          filters?: Json | null
+          id?: string
+          query: string
+          results_count?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          execution_time?: number | null
+          filters?: Json | null
+          id?: string
+          query?: string
+          results_count?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       suggested_health_items: {
         Row: {
           created_at: string
@@ -981,6 +1011,10 @@ export type Database = {
           data: string
         }
         Returns: string
+      }
+      cleanup_search_history: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       crosstab: {
         Args: {

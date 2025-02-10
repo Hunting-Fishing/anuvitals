@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { searchProducts, type SearchFilters as SearchFiltersType } from "@/services/OpenFoodFactsService";
@@ -7,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Search } from "lucide-react";
 import { SearchFilters } from "./SearchFilters";
 import { SearchResults } from "./SearchResults";
+import { useSession } from "@supabase/auth-helpers-react";
 
 interface SearchFormProps {
   categories: string[];
@@ -23,6 +25,23 @@ export function SearchForm({ categories, allergens, brands }: SearchFormProps) {
   const [selectedBrand, setSelectedBrand] = useState("all");
   const [page, setPage] = useState(1);
   const { toast } = useToast();
+  const session = useSession();
+
+  const logSearchMetrics = async (query: string, filters: SearchFiltersType, resultsCount: number, executionTime: number) => {
+    if (!session?.user?.id) return;
+
+    try {
+      await supabase.from('search_history').insert({
+        user_id: session.user.id,
+        query,
+        filters,
+        results_count: resultsCount,
+        execution_time: executionTime
+      });
+    } catch (error) {
+      console.error('Error logging search metrics:', error);
+    }
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +55,8 @@ export function SearchForm({ categories, allergens, brands }: SearchFormProps) {
     }
 
     setSearching(true);
+    const startTime = performance.now();
+    
     try {
       const formattedQuery = searchQuery
         .split(' ')
@@ -69,6 +90,10 @@ export function SearchForm({ categories, allergens, brands }: SearchFormProps) {
         .filter(p => p);
       
       setSearchResults(uniqueResults);
+
+      // Log search metrics
+      const executionTime = (performance.now() - startTime) / 1000; // Convert to seconds
+      await logSearchMetrics(searchQuery, filters, uniqueResults.length, executionTime);
       
       if (uniqueResults.length === 0) {
         toast({
