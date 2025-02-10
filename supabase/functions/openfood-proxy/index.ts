@@ -2,6 +2,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 import { corsHeaders } from "../_shared/cors.ts";
+import { requireAuth, handleAuthError } from "../_shared/auth.ts";
 
 const OPENFOOD_API_BASE = "https://world.openfoodfacts.org";
 
@@ -12,6 +13,9 @@ serve(async (req) => {
   }
 
   try {
+    // Authenticate request
+    await requireAuth(req);
+
     const url = new URL(req.url);
     const endpoint = url.searchParams.get("endpoint");
     
@@ -80,6 +84,10 @@ serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
+    if (error.message.includes('Auth failed')) {
+      return handleAuthError(error);
+    }
+    
     console.error('Error in openfood-proxy:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
