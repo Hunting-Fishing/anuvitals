@@ -31,10 +31,19 @@ export function SearchForm({ categories, allergens, brands }: SearchFormProps) {
     if (!session?.user?.id) return;
 
     try {
+      // Convert filters to a plain object that can be serialized as JSON
+      const filtersJson = {
+        page: filters.page,
+        pageSize: filters.pageSize,
+        categories: filters.categories,
+        allergens: filters.allergens,
+        brands: filters.brands
+      };
+
       await supabase.from('search_history').insert({
         user_id: session.user.id,
         query,
-        filters,
+        filters: filtersJson,
         results_count: resultsCount,
         execution_time: executionTime
       });
