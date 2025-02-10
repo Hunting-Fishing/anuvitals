@@ -698,6 +698,30 @@ export type Database = {
           },
         ]
       }
+      health_metrics: {
+        Row: {
+          created_at: string | null
+          date: string
+          health_score: number
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string
+          health_score: number
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          health_score?: number
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_health_analysis: {
         Row: {
           created_at: string
