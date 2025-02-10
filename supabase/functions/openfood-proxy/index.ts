@@ -1,5 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 import { corsHeaders } from "../_shared/cors.ts";
 
 const OPENFOOD_API_BASE = "https://world.openfoodfacts.org";
@@ -28,21 +29,26 @@ serve(async (req) => {
     );
 
     // Check cache first
-    const { data: cachedData } = await supabaseClient
+    const { data: cachedData, error: cacheError } = await supabaseClient
       .from('api_cache')
-      .select('response')
+      .select('response, expires_at')
       .eq('url', `${OPENFOOD_API_BASE}${endpoint}`)
-      .gt('expires_at', new Date().toISOString())
       .single();
 
-    if (cachedData) {
+    if (cacheError) {
+      console.error('Cache check error:', cacheError);
+    }
+
+    // Return cached data if valid
+    if (cachedData && new Date(cachedData.expires_at) > new Date()) {
+      console.log('Returning cached data for:', endpoint);
       return new Response(
         JSON.stringify(cachedData.response),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Make the actual API call
+    console.log('Making API request to:', endpoint);
     const response = await fetch(`${OPENFOOD_API_BASE}${endpoint}`, {
       headers: {
         "User-Agent": "NourishNavigator/1.0 (https://lovable.dev)",
@@ -57,7 +63,7 @@ serve(async (req) => {
     const data = await response.json();
 
     // Cache the response
-    await supabaseClient
+    const { error: upsertError } = await supabaseClient
       .from('api_cache')
       .upsert({
         url: `${OPENFOOD_API_BASE}${endpoint}`,
@@ -65,11 +71,16 @@ serve(async (req) => {
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
       });
 
+    if (upsertError) {
+      console.error('Cache upsert error:', upsertError);
+    }
+
     return new Response(
       JSON.stringify(data),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
+    console.error('Error in openfood-proxy:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
