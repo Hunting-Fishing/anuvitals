@@ -81,6 +81,30 @@ export type Database = {
         }
         Relationships: []
       }
+      api_cache: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          response: Json
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          response: Json
+          url: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          response?: Json
+          url?: string
+        }
+        Relationships: []
+      }
       api_configurations: {
         Row: {
           configuration: Json

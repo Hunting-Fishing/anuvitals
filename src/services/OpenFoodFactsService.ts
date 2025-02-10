@@ -1,4 +1,6 @@
+
 import { API_ENDPOINTS, FALLBACK_ALLERGENS, FALLBACK_BRANDS, FALLBACK_CATEGORIES } from './constants/OpenFoodFactsConstants';
+import { supabase } from "@/integrations/supabase/client";
 
 export interface ProductDetails {
   name: string;
@@ -28,21 +30,22 @@ const API_OPTIONS = {
   headers: {
     'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)',
     'Accept': 'application/json',
-  },
-  mode: 'cors' as RequestMode,
+  }
 };
 
-const handleApiResponse = async (response: Response) => {
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.status}`);
-  }
-  return response.json();
+const callOpenFoodApi = async (endpoint: string) => {
+  const { data, error } = await supabase.functions.invoke('openfood-proxy', {
+    body: { endpoint }
+  });
+
+  if (error) throw error;
+  return data;
 };
 
 export async function fetchProductDetails(barcode: string): Promise<ProductDetails> {
   try {
-    const response = await fetch(API_ENDPOINTS.PRODUCT(barcode), API_OPTIONS);
-    const data = await handleApiResponse(response);
+    const endpoint = `/api/v0/product/${barcode}.json`;
+    const data = await callOpenFoodApi(endpoint);
     
     if (data.status !== 1) {
       throw new Error("Product not found!");
@@ -82,8 +85,8 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
   }
 
   try {
-    const response = await fetch(`${API_ENDPOINTS.SEARCH}?${searchParams.toString()}`, API_OPTIONS);
-    const data = await handleApiResponse(response);
+    const endpoint = `/cgi/search.pl?${searchParams.toString()}`;
+    const data = await callOpenFoodApi(endpoint);
     console.log("API Search Results:", data);
 
     return {
@@ -110,8 +113,7 @@ export async function searchProducts(query: string, filters: SearchFilters = {})
 export async function fetchCategories(): Promise<string[]> {
   try {
     console.log("Fetching categories...");
-    const response = await fetch(API_ENDPOINTS.CATEGORIES, API_OPTIONS);
-    const data = await handleApiResponse(response);
+    const data = await callOpenFoodApi('/categories.json');
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
     console.warn("Failed to fetch categories, using fallback data:", error);
@@ -122,8 +124,7 @@ export async function fetchCategories(): Promise<string[]> {
 export async function fetchAllergens(): Promise<string[]> {
   try {
     console.log("Fetching allergens...");
-    const response = await fetch(API_ENDPOINTS.ALLERGENS, API_OPTIONS);
-    const data = await handleApiResponse(response);
+    const data = await callOpenFoodApi('/allergens.json');
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
     console.warn("Failed to fetch allergens, using fallback data:", error);
@@ -134,15 +135,7 @@ export async function fetchAllergens(): Promise<string[]> {
 export async function fetchBrands(): Promise<string[]> {
   try {
     console.log("Fetching brands...");
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(API_ENDPOINTS.BRANDS)}`;
-    const response = await fetch(proxyUrl, {
-      ...API_OPTIONS,
-      headers: {
-        ...API_OPTIONS.headers,
-        'Origin': window.location.origin
-      }
-    });
-    const data = await handleApiResponse(response);
+    const data = await callOpenFoodApi('/brands.json');
     return data.tags.map((tag: any) => tag.name);
   } catch (error) {
     console.warn("Failed to fetch brands, using fallback data:", error);
@@ -157,20 +150,10 @@ export async function contributeProduct(productData: Partial<ProductDetails>, ba
     formData.append('product_name', productData.name || '');
     formData.append('ingredients_text', productData.ingredients || '');
     
-    const response = await fetch(API_ENDPOINTS.CONTRIBUTE, {
-      method: 'POST',
-      headers: {
-        'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)'
-      },
-      body: formData
-    });
+    const endpoint = '/cgi/product_jqm2.pl';
+    const response = await callOpenFoodApi(endpoint);
 
-    if (!response.ok) {
-      throw new Error(`Contribution API Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    if (data.status !== 1) {
+    if (response.status !== 1) {
       throw new Error("Failed to contribute product!");
     }
   } catch (error) {
