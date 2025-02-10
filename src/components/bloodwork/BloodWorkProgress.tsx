@@ -2,6 +2,7 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 interface BloodWorkProgressProps {
   isUploading: boolean;
@@ -21,7 +22,10 @@ export function BloodWorkProgress({
       {(isUploading || progress) && (
         <div className="space-y-2">
           <Alert>
-            <AlertDescription>{progress}</AlertDescription>
+            <AlertDescription className="flex items-center gap-2">
+              {isUploading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {progress}
+            </AlertDescription>
           </Alert>
           <Progress value={progressPercent} className="w-full" />
         </div>
@@ -29,10 +33,10 @@ export function BloodWorkProgress({
 
       {Object.keys(batchStatus).length > 0 && (
         <div className="space-y-2">
-          <h4 className="font-medium">Batch Processing Status:</h4>
+          <h4 className="font-medium">Processing Status:</h4>
           {Object.entries(batchStatus).map(([filename, status]) => (
             <div key={filename} className="flex items-center justify-between">
-              <span>{filename}</span>
+              <span className="text-sm truncate max-w-[200px]">{filename}</span>
               <span className={cn(
                 "text-sm",
                 status === 'completed' && "text-green-500",
