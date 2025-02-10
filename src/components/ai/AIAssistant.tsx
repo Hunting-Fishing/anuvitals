@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { MessageList } from "./message/MessageList";
@@ -10,8 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAI } from "./AIContext";
 import { Button } from "@/components/ui/button";
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { SearchPanel } from "./search/SearchPanel";
-import { LoadingOverlay } from "./loading/LoadingOverlay";
+import { AISearchPanel } from "./search/AISearchPanel";
+import { LoadingSpinner } from "../shared/LoadingSpinner";
 import { FilterType } from "./filters/MessageFilters";
 
 export function AIAssistant() {
@@ -97,7 +98,7 @@ export function AIAssistant() {
         
         <div className="flex flex-col h-full space-y-4">
           {showFilters && (
-            <SearchPanel
+            <AISearchPanel
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
               filterType={filterType}
@@ -126,7 +127,7 @@ export function AIAssistant() {
           </div>
         </div>
 
-        {isLoading && <LoadingOverlay />}
+        {isLoading && <LoadingSpinner message="Processing your request..." />}
       </Card>
     </div>
   );
