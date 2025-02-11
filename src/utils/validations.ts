@@ -1,5 +1,7 @@
+
 import { z } from "zod";
 
+// Define a strict type for new health metrics
 export const healthMetricSchema = z.object({
   health_score: z.number()
     .min(0, "Health score must be at least 0")

@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { healthMetricSchema } from "@/utils/validations";
 import { useUser } from "@supabase/auth-helpers-react";
 
+// Database row type
 interface HealthMetricRow {
   id: string;
   created_at?: string;
@@ -12,6 +13,12 @@ interface HealthMetricRow {
   date: string;
   user_id: string;
 }
+
+// Input type for new metrics
+type NewHealthMetric = {
+  health_score: number;
+  date: string;
+};
 
 export function useHealthMetricsCache() {
   const queryClient = useQueryClient();
@@ -41,27 +48,24 @@ export function useHealthMetricsCache() {
         }
       }).filter(Boolean);
     },
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    gcTime: 30 * 60 * 1000, // Keep unused data in cache for 30 minutes
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
     enabled: !!user
   });
 
   const addHealthMetric = useMutation({
-    mutationFn: async (newMetric: Omit<HealthMetricRow, "id" | "created_at">) => {
+    mutationFn: async (newMetric: NewHealthMetric) => {
       if (!user?.id) throw new Error("User must be logged in");
       
-      // Create the complete metric object with user_id
-      const metricWithUser = {
-        ...newMetric,
+      const metricToInsert = {
+        health_score: newMetric.health_score,
+        date: newMetric.date,
         user_id: user.id
       };
       
-      // Validate before sending to API
-      const validated = healthMetricSchema.parse(metricWithUser);
-      
       const { data, error } = await supabase
         .from('health_metrics')
-        .insert([validated])
+        .insert([metricToInsert])
         .select()
         .single();
 
