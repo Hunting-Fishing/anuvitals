@@ -1,5 +1,5 @@
 
-import { DashboardCard } from "@/components/shared/DashboardCard";
+import { Card } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useHealthMetrics } from "@/hooks/useHealthMetrics";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -20,14 +20,14 @@ export function HealthOverview() {
 
   if (isLoading) {
     return (
-      <DashboardCard>
+      <Card className="p-6">
         <LoadingSpinner size="lg" message="Loading health data..." />
-      </DashboardCard>
+      </Card>
     );
   }
 
   return (
-    <DashboardCard>
+    <Card className="p-6">
       <h2 className="text-xl font-semibold mb-4">Weekly Health Score</h2>
       <div className="h-[200px]">
         <ResponsiveContainer width="100%" height="100%">
@@ -45,6 +45,6 @@ export function HealthOverview() {
           </LineChart>
         </ResponsiveContainer>
       </div>
-    </DashboardCard>
+    </Card>
   );
 }
