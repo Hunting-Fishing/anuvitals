@@ -1,37 +1,55 @@
+
 import { Card } from "@/components/ui/card";
 import { CheckCircle2, Circle } from "lucide-react";
+import { useUserProgress } from "@/hooks/useUserProgress";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+
+const GETTING_STARTED_STEPS = [
+  {
+    key: "complete_profile",
+    title: "Complete Your Profile",
+    description: "Add your health goals and preferences",
+  },
+  {
+    key: "connect_health_data",
+    title: "Connect Health Data",
+    description: "Sync your fitness devices and apps",
+  },
+  {
+    key: "set_goals",
+    title: "Set Your Goals",
+    description: "Define your health and fitness targets",
+  },
+  {
+    key: "start_tracking",
+    title: "Start Tracking",
+    description: "Begin logging your daily activities",
+  },
+];
 
 export function GettingStartedGuide() {
-  const steps = [
-    {
-      title: "Complete Your Profile",
-      description: "Add your health goals and preferences",
-      completed: true,
-    },
-    {
-      title: "Connect Health Data",
-      description: "Sync your fitness devices and apps",
-      completed: false,
-    },
-    {
-      title: "Set Your Goals",
-      description: "Define your health and fitness targets",
-      completed: false,
-    },
-    {
-      title: "Start Tracking",
-      description: "Begin logging your daily activities",
-      completed: false,
-    },
-  ];
+  const { progress, isLoading } = useUserProgress();
+
+  if (isLoading) {
+    return (
+      <Card className="p-6 border-2 shadow-md">
+        <LoadingSpinner size="lg" message="Loading progress..." />
+      </Card>
+    );
+  }
+
+  const completedSteps = progress?.reduce((acc, p) => {
+    acc[p.item_key] = p.completed;
+    return acc;
+  }, {} as Record<string, boolean>) ?? {};
 
   return (
     <Card className="p-6 border-2 shadow-md">
       <h2 className="text-xl font-semibold mb-4">Getting Started</h2>
       <div className="space-y-4">
-        {steps.map((step, index) => (
-          <div key={index} className="flex items-start space-x-3 group">
-            {step.completed ? (
+        {GETTING_STARTED_STEPS.map((step) => (
+          <div key={step.key} className="flex items-start space-x-3 group">
+            {completedSteps[step.key] ? (
               <CheckCircle2 className="w-6 h-6 text-green-500 mt-0.5" />
             ) : (
               <Circle className="w-6 h-6 text-gray-300 mt-0.5 group-hover:text-primary transition-colors" />
