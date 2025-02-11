@@ -34,8 +34,22 @@ const API_OPTIONS = {
 };
 
 const callOpenFoodApi = async (endpoint: string) => {
+  // Get the session token for authentication
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  
+  if (sessionError) {
+    throw new Error(`Authentication error: ${sessionError.message}`);
+  }
+
+  if (!session?.access_token) {
+    throw new Error('No active session found');
+  }
+
   const { data, error } = await supabase.functions.invoke('openfood-proxy', {
-    body: { endpoint }
+    body: { endpoint },
+    headers: {
+      Authorization: `Bearer ${session.access_token}`
+    }
   });
 
   if (error) throw error;
