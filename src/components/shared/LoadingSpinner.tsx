@@ -1,6 +1,7 @@
 
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";
@@ -20,19 +21,33 @@ export function LoadingSpinner({
   className 
 }: LoadingSpinnerProps) {
   return (
-    <div className={cn(
-      "flex flex-col items-center justify-center p-4 space-y-2",
-      className
-    )}>
-      <Loader2 className={cn(
-        sizeClasses[size],
-        "animate-spin text-primary"
-      )} />
-      {message && (
-        <p className="text-sm text-muted-foreground animate-pulse">
-          {message}
-        </p>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className={cn(
+        "flex flex-col items-center justify-center p-4 space-y-2",
+        className
       )}
-    </div>
+    >
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+      >
+        <Loader2 className={cn(
+          sizeClasses[size],
+          "text-primary"
+        )} />
+      </motion.div>
+      {message && (
+        <motion.p 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-sm text-muted-foreground animate-pulse"
+        >
+          {message}
+        </motion.p>
+      )}
+    </motion.div>
   );
 }
