@@ -1,20 +1,86 @@
+
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        toast({
+          title: "Welcome back!",
+          description: "Successfully signed in",
+        });
+        navigate("/");
+      }
+      if (event === 'USER_DELETED') {
+        toast({
+          title: "Account deleted",
+          description: "Your account has been successfully deleted",
+        });
+      }
+      if (event === 'PASSWORD_RECOVERY') {
+        toast({
+          title: "Password recovery",
+          description: "Check your email for password recovery instructions",
+        });
+      }
+      if (event === 'SIGNED_OUT') {
+        toast({
+          title: "Signed out",
+          description: "You have been signed out successfully",
+        });
+      }
+    });
+
+    // Handle initial session check
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
       if (session) {
         navigate("/");
       }
     });
-  }, [navigate]);
+
+    // Handle auth errors
+    supabase.auth.onError((error) => {
+      let errorMessage = "An error occurred during authentication";
+      
+      // Map common error messages to user-friendly messages
+      if (error.message.includes("Email not confirmed")) {
+        errorMessage = "Please check your email to confirm your account";
+      } else if (error.message.includes("Invalid login credentials")) {
+        errorMessage = "Invalid email or password";
+      } else if (error.message.includes("Email already registered")) {
+        errorMessage = "This email is already registered";
+      } else if (error.message.includes("Password")) {
+        errorMessage = "Password must be at least 6 characters long";
+      }
+
+      toast({
+        title: "Authentication Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate, toast]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -33,6 +99,22 @@ const AuthPage = () => {
             appearance={{ theme: ThemeSupa }}
             theme="light"
             providers={[]}
+            localization={{
+              variables: {
+                sign_in: {
+                  email_label: "Email address",
+                  password_label: "Password",
+                  button_label: "Sign in",
+                  loading_button_label: "Signing in...",
+                },
+                sign_up: {
+                  email_label: "Email address",
+                  password_label: "Create a password",
+                  button_label: "Create account",
+                  loading_button_label: "Creating account...",
+                },
+              },
+            }}
           />
         </div>
       </div>
