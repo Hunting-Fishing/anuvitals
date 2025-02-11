@@ -1,3 +1,4 @@
+
 import { Route } from "react-router-dom";
 import { MainLayout } from "./MainLayout";
 import Index from "@/pages/Index";
@@ -6,6 +7,7 @@ import NutritionPage from "@/pages/Nutrition";
 import BloodWorkPage from "@/pages/BloodWork";
 import AIPage from "@/pages/AI";
 import AboutPage from "@/pages/About";
+import WhiteboardPage from "@/pages/Whiteboard";
 
 export function MainRoutes() {
   return [
@@ -60,6 +62,15 @@ export function MainRoutes() {
       element={
         <MainLayout>
           <AboutPage />
+        </MainLayout>
+      }
+    />,
+    <Route
+      key="whiteboard"
+      path="/whiteboard"
+      element={
+        <MainLayout>
+          <WhiteboardPage />
         </MainLayout>
       }
     />

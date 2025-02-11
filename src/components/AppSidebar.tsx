@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -11,7 +12,8 @@ import {
   Activity, 
   Info, 
   Brain,
-  Apple 
+  Apple,
+  Layout 
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useSidebar } from "./ui/sidebar";
@@ -68,6 +70,12 @@ export function AppSidebar() {
             <Button variant="ghost" className="w-full justify-start">
               <Brain className="mr-2 h-4 w-4" />
               {!collapsed && "AI Assistant"}
+            </Button>
+          </NavLink>
+          <NavLink to="/whiteboard" className={({ isActive }) => cn(isActive && "bg-secondary")}>
+            <Button variant="ghost" className="w-full justify-start">
+              <Layout className="mr-2 h-4 w-4" />
+              {!collapsed && "Whiteboard"}
             </Button>
           </NavLink>
           <NavLink to="/about" className={({ isActive }) => cn(isActive && "bg-secondary")}>
