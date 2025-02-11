@@ -75,7 +75,7 @@ export function AppSidebar() {
           <NavLink to="/whiteboard" className={({ isActive }) => cn(isActive && "bg-secondary")}>
             <Button variant="ghost" className="w-full justify-start">
               <Layout className="mr-2 h-4 w-4" />
-              {!collapsed && "Utilities"}
+              {!collapsed && "Build Utilities"}
             </Button>
           </NavLink>
           <NavLink to="/about" className={({ isActive }) => cn(isActive && "bg-secondary")}>

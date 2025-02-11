@@ -7,7 +7,7 @@ export default function WhiteboardPage() {
   return (
     <div className="container mx-auto p-6">
       <Card className="p-6">
-        <h1 className="text-2xl font-semibold mb-4">Utilities</h1>
+        <h1 className="text-2xl font-semibold mb-4">Build Utilities</h1>
         <div className="space-y-6">
           {/* Miro Section */}
           <div>
