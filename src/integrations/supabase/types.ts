@@ -2022,6 +2022,7 @@ export type Database = {
       }
     }
     Enums: {
+      assistant_type: "chef" | "fitness" | "health" | "diet"
       diet_goal_type:
         | "Weight Loss"
         | "Heart Health"
