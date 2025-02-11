@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, MessageCircle } from "lucide-react";
 
 export default function WhiteboardPage() {
   return (
@@ -9,8 +9,24 @@ export default function WhiteboardPage() {
       <Card className="p-6">
         <h1 className="text-2xl font-semibold mb-4">Build Utilities</h1>
         <div className="space-y-6">
-          {/* Miro Section */}
+          {/* GPT Chat Log Section */}
           <div>
+            <h2 className="text-xl font-medium mb-2">BT Water Bottle Chat Log</h2>
+            <p className="text-muted-foreground mb-4">
+              Access the ChatGPT conversation log for the BT Water Bottle project.
+            </p>
+            <Button
+              onClick={() => window.open('https://chatgpt.com/c/673c1804-f58c-800d-b1c8-9160508b3f6d', '_blank')}
+              className="flex items-center gap-2"
+            >
+              <MessageCircle className="h-4 w-4" />
+              View Chat Log
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Miro Section */}
+          <div className="pt-4 border-t">
             <h2 className="text-xl font-medium mb-2">Miro Whiteboard</h2>
             <p className="text-muted-foreground mb-4">
               Access Miro's collaborative whiteboard platform for visual collaboration, brainstorming, and planning.
