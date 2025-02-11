@@ -7,8 +7,11 @@ import { UploadGuidelines } from "./UploadGuidelines";
 import { BloodWorkProgress } from "./BloodWorkProgress";
 import { BloodWorkErrorBoundary } from "./BloodWorkErrorBoundary";
 import { BloodWorkLoading } from "./BloodWorkLoading";
+import { useUser } from "@supabase/auth-helpers-react";
+import { Navigate } from "react-router-dom";
 
 export function BloodWorkUpload() {
+  const user = useUser();
   const {
     isUploading,
     progress,
@@ -20,6 +23,10 @@ export function BloodWorkUpload() {
     handleVerification,
     handleResultEdit
   } = useBloodworkProcessing();
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
 
   return (
     <BloodWorkErrorBoundary>

@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { CheckCircle2, Circle } from "lucide-react";
 import { useUserProgress } from "@/hooks/useUserProgress";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { useUser } from "@supabase/auth-helpers-react";
+import { Navigate } from "react-router-dom";
 
 const GETTING_STARTED_STEPS = [
   {
@@ -28,7 +30,22 @@ const GETTING_STARTED_STEPS = [
 ];
 
 export function GettingStartedGuide() {
-  const { progress, isLoading } = useUserProgress();
+  const user = useUser();
+  const { progress, isLoading, error } = useUserProgress();
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  if (error) {
+    return (
+      <Card className="p-6 border-2 shadow-md">
+        <div className="text-red-500">
+          Error loading progress: {error.message}
+        </div>
+      </Card>
+    );
+  }
 
   if (isLoading) {
     return (
