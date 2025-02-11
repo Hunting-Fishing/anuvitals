@@ -1,11 +1,13 @@
-
 import { z } from "zod";
 
 export const healthMetricSchema = z.object({
   health_score: z.number()
     .min(0, "Health score must be at least 0")
     .max(100, "Health score must be at most 100"),
-  date: z.date()
+  date: z.string().or(z.date()).transform(val => 
+    typeof val === 'string' ? val : val.toISOString().split('T')[0]
+  ),
+  user_id: z.string()
 });
 
 export const bloodWorkResultSchema = z.object({
