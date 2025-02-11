@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { AuthChangeEvent } from "@supabase/supabase-js";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -13,30 +14,24 @@ const AuthPage = () => {
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
+      if (event === "SIGNED_IN" && session) {
         toast({
           title: "Welcome back!",
           description: "Successfully signed in",
         });
         navigate("/");
       }
-      if (event === 'USER_DELETED') {
-        toast({
-          title: "Account deleted",
-          description: "Your account has been successfully deleted",
-        });
-      }
-      if (event === 'PASSWORD_RECOVERY') {
-        toast({
-          title: "Password recovery",
-          description: "Check your email for password recovery instructions",
-        });
-      }
-      if (event === 'SIGNED_OUT') {
+      if (event === "SIGNED_OUT") {
         toast({
           title: "Signed out",
           description: "You have been signed out successfully",
+        });
+      }
+      if (event === "PASSWORD_RECOVERY") {
+        toast({
+          title: "Password recovery",
+          description: "Check your email for password recovery instructions",
         });
       }
     });
@@ -44,37 +39,28 @@ const AuthPage = () => {
     // Handle initial session check
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
+        let errorMessage = "An error occurred during authentication";
+      
+        // Map common error messages to user-friendly messages
+        if (error.message.includes("Email not confirmed")) {
+          errorMessage = "Please check your email to confirm your account";
+        } else if (error.message.includes("Invalid login credentials")) {
+          errorMessage = "Invalid email or password";
+        } else if (error.message.includes("Email already registered")) {
+          errorMessage = "This email is already registered";
+        } else if (error.message.includes("Password")) {
+          errorMessage = "Password must be at least 6 characters long";
+        }
+
         toast({
           title: "Error",
-          description: error.message,
+          description: errorMessage,
           variant: "destructive",
         });
       }
       if (session) {
         navigate("/");
       }
-    });
-
-    // Handle auth errors
-    supabase.auth.onError((error) => {
-      let errorMessage = "An error occurred during authentication";
-      
-      // Map common error messages to user-friendly messages
-      if (error.message.includes("Email not confirmed")) {
-        errorMessage = "Please check your email to confirm your account";
-      } else if (error.message.includes("Invalid login credentials")) {
-        errorMessage = "Invalid email or password";
-      } else if (error.message.includes("Email already registered")) {
-        errorMessage = "This email is already registered";
-      } else if (error.message.includes("Password")) {
-        errorMessage = "Password must be at least 6 characters long";
-      }
-
-      toast({
-        title: "Authentication Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
     });
 
     return () => {
@@ -123,3 +109,4 @@ const AuthPage = () => {
 };
 
 export default AuthPage;
+
