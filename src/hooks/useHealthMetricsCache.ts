@@ -5,7 +5,9 @@ import { useToast } from "@/hooks/use-toast";
 import { healthMetricSchema } from "@/utils/validations";
 import { useUser } from "@supabase/auth-helpers-react";
 
-interface HealthMetric {
+interface HealthMetricRow {
+  id: string;
+  created_at?: string;
   health_score: number;
   date: string;
   user_id: string;
@@ -41,7 +43,7 @@ export function useHealthMetricsCache() {
   });
 
   const addHealthMetric = useMutation({
-    mutationFn: async (newMetric: Omit<HealthMetric, "user_id">) => {
+    mutationFn: async (newMetric: Omit<HealthMetricRow, "id" | "created_at" | "user_id">) => {
       if (!user?.id) throw new Error("User must be logged in");
       
       // Validate before sending to API
