@@ -32,7 +32,7 @@ export function useHealthMetricsCache() {
       if (error) throw error;
 
       // Validate data before returning
-      return data.map(item => {
+      return (data as HealthMetricRow[]).map(item => {
         try {
           return healthMetricSchema.parse(item);
         } catch (err) {
@@ -47,14 +47,17 @@ export function useHealthMetricsCache() {
   });
 
   const addHealthMetric = useMutation({
-    mutationFn: async (newMetric: Omit<HealthMetricRow, "id" | "created_at" | "user_id">) => {
+    mutationFn: async (newMetric: Omit<HealthMetricRow, "id" | "created_at">) => {
       if (!user?.id) throw new Error("User must be logged in");
       
-      // Validate before sending to API
-      const validated = healthMetricSchema.parse({
+      // Create the complete metric object with user_id
+      const metricWithUser = {
         ...newMetric,
         user_id: user.id
-      });
+      };
+      
+      // Validate before sending to API
+      const validated = healthMetricSchema.parse(metricWithUser);
       
       const { data, error } = await supabase
         .from('health_metrics')
