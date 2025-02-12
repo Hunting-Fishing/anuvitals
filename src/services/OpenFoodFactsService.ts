@@ -25,35 +25,40 @@ export interface SearchResponse {
   products: ProductDetails[];
 }
 
-const API_OPTIONS = {
-  method: 'GET',
-  headers: {
-    'User-Agent': 'NourishNavigator/1.0 (https://lovable.dev)',
-    'Accept': 'application/json',
-  }
-};
-
 const callOpenFoodApi = async (endpoint: string) => {
-  // Get the session token for authentication
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-  
-  if (sessionError) {
-    throw new Error(`Authentication error: ${sessionError.message}`);
-  }
-
-  if (!session?.access_token) {
-    throw new Error('No active session found');
-  }
-
-  const { data, error } = await supabase.functions.invoke('openfood-proxy', {
-    body: { endpoint },
-    headers: {
-      Authorization: `Bearer ${session.access_token}`
+  try {
+    // Get the session token for authentication
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error('Session error:', sessionError);
+      throw new Error(`Authentication error: ${sessionError.message}`);
     }
-  });
 
-  if (error) throw error;
-  return data;
+    if (!session?.access_token) {
+      console.error('No session access token found');
+      throw new Error('No active session found');
+    }
+
+    console.log('Calling OpenFood API endpoint:', endpoint);
+    const { data, error } = await supabase.functions.invoke('openfood-proxy', {
+      body: { endpoint },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (error) {
+      console.error('OpenFood API error:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in callOpenFoodApi:', error);
+    throw error;
+  }
 };
 
 export async function fetchProductDetails(barcode: string): Promise<ProductDetails> {
