@@ -29,12 +29,12 @@ export async function logSearchMetrics({
       brands: filters.brands
     };
 
-    await supabase.from('search_history').insert({
+    await supabase.from('search_analytics').insert({
       user_id: userId,
-      query,
+      search_query: query,
       filters: filtersJson,
       results_count: resultsCount,
-      execution_time: executionTime
+      session_id: window.sessionStorage.getItem('sessionId') || crypto.randomUUID()
     });
   } catch (error) {
     console.error('Error logging search metrics:', error);

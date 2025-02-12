@@ -1,9 +1,13 @@
+
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProductDetails } from "@/services/OpenFoodFactsService";
 import { ProductHealthMetrics } from "./ProductHealthMetrics";
 import { ProductIngredients } from "./ProductIngredients";
 import { getHealthRatingColor } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useUser } from "@supabase/auth-helpers-react";
 
 interface ProductCardProps {
   product: ProductDetails;
@@ -19,6 +23,26 @@ export function ProductCard({
   onToggleOpen 
 }: ProductCardProps) {
   const productId = product.barcode || product.name;
+  const user = useUser();
+  const [viewStartTime, setViewStartTime] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Start tracking view time when dialog opens
+    if (isOpen) {
+      setViewStartTime(Date.now());
+    } else if (viewStartTime && user) {
+      // Log view duration when dialog closes
+      const duration = Math.round((Date.now() - viewStartTime) / 1000); // Convert to seconds
+      supabase.from('product_views').insert({
+        user_id: user.id,
+        product_id: productId,
+        view_duration: duration
+      }).then(({ error }) => {
+        if (error) console.error('Error logging product view:', error);
+      });
+      setViewStartTime(null);
+    }
+  }, [isOpen, productId, user, viewStartTime]);
 
   return (
     <Card className="w-full">
