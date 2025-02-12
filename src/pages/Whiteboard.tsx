@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ExternalLink, MessageCircle, FileText, Globe, GitBranch } from "lucide-react";
+import { ExternalLink, MessageCircle, FileText, Globe, GitBranch, CheckCircle2, XCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function WhiteboardPage() {
@@ -111,11 +111,62 @@ export default function WhiteboardPage() {
                     API Integrations
                   </h3>
                   <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                    <li>OpenFood Facts API - <span className="text-green-500">Active</span></li>
-                    <li>Edamam Recipe API - <span className="text-green-500">Active</span></li>
-                    <li>Spoonacular API - <span className="text-green-500">Active</span></li>
-                    <li>USDA Food Data API - <span className="text-yellow-500">Pending</span></li>
+                    <li className="flex items-center justify-between p-2 hover:bg-secondary/30 rounded-md">
+                      OpenFood Facts API 
+                      <span className="text-green-500">Active</span>
+                    </li>
+                    <li className="flex items-center justify-between p-2 hover:bg-secondary/30 rounded-md">
+                      Edamam Recipe API
+                      <span className="text-green-500">Active</span>
+                    </li>
+                    <li className="flex items-center justify-between p-2 hover:bg-secondary/30 rounded-md">
+                      Spoonacular API
+                      <span className="text-green-500">Active</span>
+                    </li>
+                    <li className="flex items-center justify-between p-2 hover:bg-secondary/30 rounded-md">
+                      USDA Food Data API
+                      <span className="text-yellow-500">Pending</span>
+                    </li>
                   </ul>
+
+                  {/* OpenFood Facts API Details */}
+                  <div className="mt-4 border-t pt-4">
+                    <h4 className="font-medium mb-3">OpenFood Facts API Setup Details</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Authentication</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Product Search</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Product Details</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Categories</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Allergens</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Brands</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Product Contribution</span>
+                        <XCircle className="h-5 w-5 text-yellow-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Error Handling</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
                 {/* Infrastructure Integrations */}
@@ -125,10 +176,22 @@ export default function WhiteboardPage() {
                     Infrastructure Integrations
                   </h3>
                   <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                    <li>Supabase Authentication - <span className="text-green-500">Active</span></li>
-                    <li>Supabase Database - <span className="text-green-500">Active</span></li>
-                    <li>Supabase Edge Functions - <span className="text-green-500">Active</span></li>
-                    <li>Supabase Storage - <span className="text-yellow-500">Pending</span></li>
+                    <li className="flex items-center justify-between p-2 hover:bg-secondary/30 rounded-md">
+                      Supabase Authentication
+                      <span className="text-green-500">Active</span>
+                    </li>
+                    <li className="flex items-center justify-between p-2 hover:bg-secondary/30 rounded-md">
+                      Supabase Database
+                      <span className="text-green-500">Active</span>
+                    </li>
+                    <li className="flex items-center justify-between p-2 hover:bg-secondary/30 rounded-md">
+                      Supabase Edge Functions
+                      <span className="text-green-500">Active</span>
+                    </li>
+                    <li className="flex items-center justify-between p-2 hover:bg-secondary/30 rounded-md">
+                      Supabase Storage
+                      <span className="text-yellow-500">Pending</span>
+                    </li>
                   </ul>
                 </div>
               </div>
