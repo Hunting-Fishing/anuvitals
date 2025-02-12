@@ -284,6 +284,33 @@ export type Database = {
         }
         Relationships: []
       }
+      cached_responses: {
+        Row: {
+          created_at: string
+          endpoint: string
+          expires_at: string
+          id: string
+          request_params: Json | null
+          response: Json
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          expires_at: string
+          id?: string
+          request_params?: Json | null
+          response: Json
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          expires_at?: string
+          id?: string
+          request_params?: Json | null
+          response?: Json
+        }
+        Relationships: []
+      }
       compatibility: {
         Row: {
           compatible_condition: string
