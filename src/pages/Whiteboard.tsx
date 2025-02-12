@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ExternalLink, MessageCircle, FileText } from "lucide-react";
+import { ExternalLink, MessageCircle, FileText, Globe, GitBranch } from "lucide-react";
 
 export default function WhiteboardPage() {
   return (
@@ -39,6 +39,43 @@ export default function WhiteboardPage() {
               View Document
               <ExternalLink className="h-4 w-4" />
             </Button>
+          </div>
+
+          {/* Integration Tracking Section */}
+          <div className="pt-4 border-t">
+            <h2 className="text-xl font-medium mb-2">Integrations Tracking</h2>
+            <p className="text-muted-foreground mb-4">
+              Monitor and track the status of various project integrations.
+            </p>
+            <div className="space-y-4">
+              {/* API Integrations */}
+              <div className="bg-secondary/20 p-4 rounded-lg">
+                <h3 className="font-medium mb-2 flex items-center gap-2">
+                  <Globe className="h-4 w-4" />
+                  API Integrations
+                </h3>
+                <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                  <li>OpenFood Facts API - <span className="text-green-500">Active</span></li>
+                  <li>Edamam Recipe API - <span className="text-green-500">Active</span></li>
+                  <li>Spoonacular API - <span className="text-green-500">Active</span></li>
+                  <li>USDA Food Data API - <span className="text-yellow-500">Pending</span></li>
+                </ul>
+              </div>
+              
+              {/* Infrastructure Integrations */}
+              <div className="bg-secondary/20 p-4 rounded-lg">
+                <h3 className="font-medium mb-2 flex items-center gap-2">
+                  <GitBranch className="h-4 w-4" />
+                  Infrastructure Integrations
+                </h3>
+                <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                  <li>Supabase Authentication - <span className="text-green-500">Active</span></li>
+                  <li>Supabase Database - <span className="text-green-500">Active</span></li>
+                  <li>Supabase Edge Functions - <span className="text-green-500">Active</span></li>
+                  <li>Supabase Storage - <span className="text-yellow-500">Pending</span></li>
+                </ul>
+              </div>
+            </div>
           </div>
 
           {/* Miro Section */}
