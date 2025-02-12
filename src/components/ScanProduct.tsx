@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { fetchCategories, fetchAllergens, fetchBrands } from "@/services/OpenFoodFactsService";
 import { useToast } from "@/hooks/use-toast";
