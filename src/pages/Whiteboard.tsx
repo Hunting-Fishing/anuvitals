@@ -125,9 +125,32 @@ export default function WhiteboardPage() {
                     </li>
                     <li className="flex items-center justify-between p-2 hover:bg-secondary/30 rounded-md">
                       USDA Food Data API
-                      <span className="text-yellow-500">Pending</span>
+                      <span className="text-green-500">Active</span>
                     </li>
                   </ul>
+
+                  {/* USDA Food Data API Details */}
+                  <div className="mt-4 border-t pt-4">
+                    <h4 className="font-medium mb-3">USDA Food Data API Setup Details</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>API Key Configuration</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Food Search</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Detailed Nutrient Information</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-secondary/10 rounded-md">
+                        <span>Error Handling</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                    </div>
+                  </div>
 
                   {/* OpenFood Facts API Details */}
                   <div className="mt-4 border-t pt-4">
