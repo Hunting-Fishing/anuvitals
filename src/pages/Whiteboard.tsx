@@ -32,7 +32,7 @@ export default function WhiteboardPage() {
               Access the direct link to the project documentation file on OneDrive.
             </p>
             <Button
-              onClick={() => window.open('https://onedrive.live.com/personal/beb63686da10b275/_layouts/15/Doc.aspx?resid=BEB63686DA10B275!s6faf09b7eb6a41e48ac95b4c5165c65a&cid=beb63686da10b275&migratedtospo=true&app=Word', '_blank')}
+              onClick={() => window.open('https://1drv.ms/f/c/beb63686da10b275/EpUER6r2fyBKo5Lm0uzpHx0B1a2h1PJ50x93n5qVIroCvw?e=4JdR67', '_blank')}
               className="flex items-center gap-2"
             >
               <FileText className="h-4 w-4" />
