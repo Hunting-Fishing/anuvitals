@@ -1,3 +1,4 @@
+
 export interface ProductDetails {
   name: string;
   ingredients: string;

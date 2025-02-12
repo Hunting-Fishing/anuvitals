@@ -1,3 +1,4 @@
+
 export const API_BASE_URL = "https://world.openfoodfacts.org";
 export const API_ENDPOINTS = {
   PRODUCT: (barcode: string) => `${API_BASE_URL}/api/v0/product/${barcode}.json`,
@@ -15,36 +16,13 @@ export const FALLBACK_CATEGORIES = [
 ];
 
 export const FALLBACK_ALLERGENS = [
-  "Milk",
-  "Eggs",
-  "Fish",
-  "Crustaceans",
-  "Shellfish",
-  "Tree nuts",
-  "Almonds",
-  "Brazil nuts",
-  "Cashews",
-  "Hazelnuts",
-  "Macadamia",
-  "Pecans",
-  "Pine nuts",
-  "Pistachios",
-  "Walnuts",
-  "Peanuts",
-  "Wheat",
-  "Soybeans",
-  "Sesame",
-  "Mustard",
-  "Celery",
-  "Lupin",
-  "Molluscs",
-  "Sulphites",
-  "Gluten",
-  "Lactose",
-  "Corn",
-  "Gelatin",
-  "Coconut",
-  "Sunflower seeds"
+  "Milk", "Eggs", "Fish", "Crustaceans", "Shellfish",
+  "Tree nuts", "Almonds", "Brazil nuts", "Cashews",
+  "Hazelnuts", "Macadamia", "Pecans", "Pine nuts",
+  "Pistachios", "Walnuts", "Peanuts", "Wheat",
+  "Soybeans", "Sesame", "Mustard", "Celery", "Lupin",
+  "Molluscs", "Sulphites", "Gluten", "Lactose", "Corn",
+  "Gelatin", "Coconut", "Sunflower seeds"
 ];
 
 export const FALLBACK_BRANDS = [
