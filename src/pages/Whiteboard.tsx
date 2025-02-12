@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ExternalLink, MessageCircle } from "lucide-react";
+import { ExternalLink, MessageCircle, FileText } from "lucide-react";
 
 export default function WhiteboardPage() {
   return (
@@ -21,6 +21,22 @@ export default function WhiteboardPage() {
             >
               <MessageCircle className="h-4 w-4" />
               View Chat Log
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Direct File Link Section */}
+          <div className="pt-4 border-t">
+            <h2 className="text-xl font-medium mb-2">Project Documentation</h2>
+            <p className="text-muted-foreground mb-4">
+              Access the direct link to the project documentation file on OneDrive.
+            </p>
+            <Button
+              onClick={() => window.open('https://onedrive.live.com/personal/beb63686da10b275/_layouts/15/Doc.aspx?resid=BEB63686DA10B275!s6faf09b7eb6a41e48ac95b4c5165c65a&cid=beb63686da10b275&migratedtospo=true&app=Word', '_blank')}
+              className="flex items-center gap-2"
+            >
+              <FileText className="h-4 w-4" />
+              View Document
               <ExternalLink className="h-4 w-4" />
             </Button>
           </div>
