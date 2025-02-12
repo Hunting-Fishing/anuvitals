@@ -1341,6 +1341,10 @@ export type Database = {
         }
         Returns: string
       }
+      cleanup_expired_cache: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_search_history: {
         Args: Record<PropertyKey, never>
         Returns: undefined
