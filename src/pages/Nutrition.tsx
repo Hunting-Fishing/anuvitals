@@ -1,6 +1,7 @@
 
 import { USDAFoodAnalyzer } from "@/components/nutrition/USDAFoodAnalyzer";
 import { OpenFoodAnalyzer } from "@/components/nutrition/OpenFoodFacts/OpenFoodAnalyzer";
+import { NutritionAnalyzer } from "@/components/nutrition/NutritionAnalyzer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 
