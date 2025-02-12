@@ -11,7 +11,7 @@ export default function WhiteboardPage() {
         <div className="space-y-6">
           {/* GPT Chat Log Section */}
           <div>
-            <h2 className="text-xl font-medium mb-2">BT Water Bottle Chat Log</h2>
+            <h2 className="text-xl font-medium mb-2">Bluetooth Chat Implementations</h2>
             <p className="text-muted-foreground mb-4">
               Access the ChatGPT conversation log for the BT Water Bottle project.
             </p>
