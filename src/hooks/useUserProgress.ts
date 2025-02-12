@@ -11,6 +11,7 @@ export interface UserProgress {
   completed: boolean;
   completed_at: string | null;
   created_at: string;
+  percentage: number;
 }
 
 export function useUserProgress() {

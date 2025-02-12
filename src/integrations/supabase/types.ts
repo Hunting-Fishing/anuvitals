@@ -983,6 +983,7 @@ export type Database = {
           created_at: string | null
           id: string
           item_key: string
+          percentage: number
           user_id: string
         }
         Insert: {
@@ -991,6 +992,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           item_key: string
+          percentage?: number
           user_id: string
         }
         Update: {
@@ -999,6 +1001,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           item_key?: string
+          percentage?: number
           user_id?: string
         }
         Relationships: []
