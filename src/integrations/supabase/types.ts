@@ -722,6 +722,74 @@ export type Database = {
         }
         Relationships: []
       }
+      list_products: {
+        Row: {
+          added_at: string | null
+          id: string
+          list_id: string | null
+          product_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          id?: string
+          list_id?: string | null
+          product_id: string
+        }
+        Update: {
+          added_at?: string | null
+          id?: string
+          list_id?: string | null
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "list_products_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "user_product_lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_dietary_scores: {
+        Row: {
+          additive_score: number | null
+          allergen_score: number | null
+          analysis_version: string | null
+          created_at: string | null
+          dietary_restrictions: Json | null
+          id: string
+          nutritional_score: number | null
+          product_id: string
+          sustainability_score: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          additive_score?: number | null
+          allergen_score?: number | null
+          analysis_version?: string | null
+          created_at?: string | null
+          dietary_restrictions?: Json | null
+          id?: string
+          nutritional_score?: number | null
+          product_id: string
+          sustainability_score?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          additive_score?: number | null
+          allergen_score?: number | null
+          analysis_version?: string | null
+          created_at?: string | null
+          dietary_restrictions?: Json | null
+          id?: string
+          nutritional_score?: number | null
+          product_id?: string
+          sustainability_score?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       product_health_analysis: {
         Row: {
           created_at: string
@@ -759,6 +827,90 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      product_recommendations: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string
+          recommendation_type: string
+          score: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id: string
+          recommendation_type: string
+          score?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          recommendation_type?: string
+          score?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      product_reviews: {
+        Row: {
+          created_at: string | null
+          helpful_votes: number | null
+          id: string
+          product_id: string
+          rating: number | null
+          review_text: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          helpful_votes?: number | null
+          id?: string
+          product_id: string
+          rating?: number | null
+          review_text?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          helpful_votes?: number | null
+          id?: string
+          product_id?: string
+          rating?: number | null
+          review_text?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      product_views: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string
+          user_id: string | null
+          view_duration: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id: string
+          user_id?: string | null
+          view_duration?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          user_id?: string | null
+          view_duration?: number | null
+        }
+        Relationships: []
       }
       products: {
         Row: {
@@ -868,6 +1020,36 @@ export type Database = {
         }
         Relationships: []
       }
+      search_analytics: {
+        Row: {
+          created_at: string | null
+          filters: Json | null
+          id: string
+          results_count: number | null
+          search_query: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          filters?: Json | null
+          id?: string
+          results_count?: number | null
+          search_query?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          filters?: Json | null
+          id?: string
+          results_count?: number | null
+          search_query?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       search_history: {
         Row: {
           created_at: string
@@ -934,6 +1116,42 @@ export type Database = {
         }
         Relationships: []
       }
+      sync_queue: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          payload: Json | null
+          processed_at: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       usda_food_data: {
         Row: {
           created_at: string
@@ -973,6 +1191,36 @@ export type Database = {
           publication_date?: string | null
           search_text?: unknown | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_product_lists: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
